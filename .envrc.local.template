@@ -1,0 +1,25 @@
+# The environment where the application is running, e.g. 'local', 'staging', 'production'.
+export ENVIRONMENT=local
+
+# URL of the oCIS instance
+export OWNCLOUD_BASE_URL=https://local.cloud.holi.social
+
+# Admin username for the oCIS instance
+export OCIS_ADMIN_USERNAME=admin
+
+# Admin password for the oCIS instance
+export OCIS_ADMIN_PASSWORD=password
+
+# OIDC issuer for the oCIS instance (i.e. Ory)
+export OCIS_OIDC_ISSUER=https://dev-auth.holi.social
+
+export OCIS_INTEGRATION_DB_HOST=localhost
+export OCIS_INTEGRATION_DB_NAME=ocis-integration-local
+export OCIS_INTEGRATION_DB_USERNAME=postgres
+export OCIS_INTEGRATION_DB_PASSWORD=password
+export OCIS_INTEGRATION_DB_PORT=8087
+
+# Used by @databases/pg-migrations CLI to automatically maintain the local database schema.  
+export DATABASE_URL=postgresql://$OCIS_INTEGRATION_DB_USERNAME:$OCIS_INTEGRATION_DB_PASSWORD@$OCIS_INTEGRATION_DB_HOST:$OCIS_INTEGRATION_DB_PORT/$OCIS_INTEGRATION_DB_NAME
+
+export DB_CONTAINER_NAME=ocis-postgres
