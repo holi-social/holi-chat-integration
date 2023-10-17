@@ -122,7 +122,7 @@ export type SpaceUserRemovedDataPayload = {
 }
 
 /**
- * Enumeration of oCIS API paths
+ * Enumeration of Chat API paths
  *
  * @readonly
  * @enum {string}
@@ -130,7 +130,7 @@ export type SpaceUserRemovedDataPayload = {
  * @property {string} SHARE_API_PATH - Path for the Share API
  * @property {string} SETTINGS_API_PATH - Path for the Settings API
  */
-export enum OcisApi {
+export enum ChatApi {
   LIBRE_GRAPH_API_PATH = 'graph/v1.0',
   SHARE_API_PATH = 'ocs/v2.php/apps/files_sharing/api/v1/shares',
   SETTINGS_API_PATH = 'api/v0/settings',
@@ -146,7 +146,7 @@ export enum OcisApi {
  * @property {string} GROUPS - The groups route
  * @property {string} MEMBERS - The members route
  */
-export enum OcisLibreGraphRoute {
+export enum ChatLibreGraphRoute {
   USERS = 'users',
   DRIVES = 'drives',
   GROUPS = 'groups',
@@ -154,32 +154,31 @@ export enum OcisLibreGraphRoute {
 }
 
 /**
- * Enumeration of oCIS user types
+ * Enumeration of Chat user types
  *
  * @readonly
  * @enum {string}
  * @property {string} MEMBER - The member user type
  * @property {string} GUEST - The guest user type
  */
-export enum OcisUserType {
+export enum ChatUserType {
   MEMBER = 'Member',
   GUEST = 'Guest',
 }
 
 /**
- * Enumeration of default UUID roles in oCIS.
- * https://github.com/owncloud/ocis/blob/40ab22195d0f9c48b55e8d9133965bb46f8bc90c/services/settings/pkg/store/defaults/defaults.go#L13
+ * Enumeration of default UUID roles in Chat.
  *
  * @readonly
  * @enum {string}
  * @property {string} LIGHTWEIGHT_USER - The UUID for the Lightweight User role (i.e. a user without a personal space).
  */
-export enum OcisDefaultUUIDRole {
+export enum ChatDefaultUUIDRole {
   LIGHTWEIGHT_USER = '38071a68-456a-4553-846a-fa67bf5596cc',
 }
 
 /**
- * Enumeration of oCIS roles
+ * Enumeration of Chat roles
  *
  * @readonly
  * @enum {string}
@@ -187,27 +186,27 @@ export enum OcisDefaultUUIDRole {
  * @property {string} EDITOR - The editor role
  * @property {string} MANAGER - The manager role
  */
-export enum OcisRole {
+export enum ChatRole {
   VIEWER = 'viewer',
   EDITOR = 'editor',
   MANAGER = 'manager',
 }
 
 /**
- * Enumeration of oCIS share types
+ * Enumeration of Chat share types
  *
  * @readonly
  * @enum {number}
  * @property {number} SHARE_SPACE - The share space type
  */
-export enum OcisShareType {
-  SHARE_SPACE = 7, // https://github.com/owncloud/ocis/blob/67296caf144ec053279ef04cf533628f3a2183f4/tests/acceptance/features/bootstrap/SpacesContext.php#L2021
+export enum ChatShareType {
+  SHARE_SPACE = 7,
 }
 
 /**
- * Represents a user in the oCIS system.
+ * Represents a user in the Chat system.
  *
- * @typedef {Object} OcisUser
+ * @typedef {Object} ChatUser
  * @property {string} id - The unique identifier of the user.
  * @property {boolean} accountEnabled - Whether the user's account is enabled.
  * @property {string} displayName - The display name of the user.
@@ -217,7 +216,7 @@ export enum OcisShareType {
  * @property {string} surname - The surname of the user.
  * @property {string} userType - The type of user.
  */
-export type OcisUser = {
+export type ChatUser = {
   id: string
   accountEnabled: boolean
   displayName: string
@@ -229,9 +228,9 @@ export type OcisUser = {
 }
 
 /**
- * Represents the root folder of a space in oCIS.
+ * Represents the root folder of a space in Chat.
  *
- * @typedef {Object} OcisSpaceRoot
+ * @typedef {Object} ChatSpaceRoot
  * @property {string} eTag - The ETag of the root folder.
  * @property {string} id - The unique identifier of the root folder.
  * @property {Object[]} permissions - The permissions for the root folder.
@@ -240,7 +239,7 @@ export type OcisUser = {
  * @property {string[]} permissions.roles - The roles granted to the identities.
  * @property {string} webDavUrl - The WebDAV URL of the root folder.
  */
-type OcisSpaceRoot = {
+type ChatSpaceRoot = {
   eTag: string
   id: string
   permissions: [
@@ -260,15 +259,15 @@ type OcisSpaceRoot = {
 }
 
 /**
- * Represents the quota of a space in oCIS.
+ * Represents the quota of a space in Chat.
  *
- * @typedef {Object} OcisSpaceQuota
+ * @typedef {Object} ChatSpaceQuota
  * @property {number} remaining - The remaining space available in bytes.
  * @property {string} state - The state of the quota.
  * @property {number} total - The total space available in bytes.
  * @property {number} used - The space used in bytes.
  */
-type OcisSpaceQuota = {
+type ChatSpaceQuota = {
   remaining: number
   state: string
   total: number
@@ -276,14 +275,14 @@ type OcisSpaceQuota = {
 }
 
 /**
- * Represents the owner of a space in oCIS.
+ * Represents the owner of a space in Chat.
  *
- * @typedef {Object} OcisSpaceOwner
+ * @typedef {Object} ChatSpaceOwner
  * @property {Object} user - The user that owns the space.
  * @property {string} user.displayName - The display name of the user.
  * @property {string} user.id - The unique identifier of the user.
  */
-type OcisSpaceOwner = {
+type ChatSpaceOwner = {
   user: {
     displayName: string
     id: string
@@ -291,27 +290,27 @@ type OcisSpaceOwner = {
 }
 
 /**
- * Represents a space in oCIS.
+ * Represents a space in Chat.
  *
- * @typedef {Object} OcisSpace
+ * @typedef {Object} ChatSpace
  * @property {string} driveAlias - The alias of the drive.
  * @property {string} driveType - The type of the drive.
  * @property {string} id - The unique identifier of the space.
  * @property {string} lastModifiedDateTime - The date and time the space was last modified.
  * @property {string} name - The name of the space.
- * @property {OcisSpaceOwner} owner - The owner of the space.
- * @property {OcisSpaceQuota} quota - The quota of the space.
- * @property {OcisSpaceRoot} root - The root folder of the space.
+ * @property {ChatSpaceOwner} owner - The owner of the space.
+ * @property {ChatSpaceQuota} quota - The quota of the space.
+ * @property {ChatSpaceRoot} root - The root folder of the space.
  * @property {string} webUrl - The URL of the space.
  */
-export type OcisSpace = {
+export type ChatSpace = {
   driveAlias: string
   driveType: string
   id: string
   lastModifiedDateTime: string
   name: string
-  owner: OcisSpaceOwner
-  quota: OcisSpaceQuota
-  root: OcisSpaceRoot
+  owner: ChatSpaceOwner
+  quota: ChatSpaceQuota
+  root: ChatSpaceRoot
   webUrl: string
 }

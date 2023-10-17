@@ -13,15 +13,15 @@ import {
   shareSpaceWithUser,
   removeSpaceUser,
   updateUser,
-} from '../ocis-api'
+} from '../chat-api'
 import {
-  OcisApi,
-  OcisLibreGraphRoute,
-  OcisRole,
-  OcisShareType,
-  OcisSpace,
-  OcisUser,
-  OcisUserType,
+  ChatApi,
+  ChatLibreGraphRoute,
+  ChatRole,
+  ChatShareType,
+  ChatSpace,
+  ChatUser,
+  ChatUserType,
   SpacePayload,
   UserPayload,
 } from '../types'
@@ -41,7 +41,7 @@ describe('/users', () => {
     name: 'Test User',
     email: 'test-email@example.com',
   }
-  const data: OcisUser = {
+  const data: ChatUser = {
     id,
     onPremisesSamAccountName: 'test-username',
     mail: 'test-email@example.com',
@@ -49,7 +49,7 @@ describe('/users', () => {
     accountEnabled: true,
     givenName: '',
     surname: '',
-    userType: OcisUserType.MEMBER,
+    userType: ChatUserType.MEMBER,
   }
 
   describe('findUserById', () => {
@@ -58,7 +58,7 @@ describe('/users', () => {
     })
 
     it('should return the user data when the request is successful', async () => {
-      const response: AxiosResponse<OcisUser> = {
+      const response: AxiosResponse<ChatUser> = {
         data: data,
         status: 200,
         statusText: 'OK',
@@ -95,7 +95,7 @@ describe('/users', () => {
       }
       mockedAxios.get.mockRejectedValueOnce(response)
 
-      await expect(findUserById(id)).rejects.toThrowError(`Failed to find an oCIS user with ID ${id}`)
+      await expect(findUserById(id)).rejects.toThrowError(`Failed to find an chat user with ID ${id}`)
     })
   })
 
@@ -105,7 +105,7 @@ describe('/users', () => {
     })
 
     it('should return the user data when the request is successful', async () => {
-      const response: AxiosResponse<OcisUser> = {
+      const response: AxiosResponse<ChatUser> = {
         data: data,
         status: 200,
         statusText: 'OK',
@@ -142,7 +142,7 @@ describe('/users', () => {
       mockedAxios.get.mockRejectedValueOnce(response)
 
       await expect(findUserByAccountName(id)).rejects.toThrowError(
-        `Failed to find an oCIS user with account name ${HOLI_PREFIX}_${id}`
+        `Failed to find an chat user with account name ${HOLI_PREFIX}_${id}`
       )
     })
   })
@@ -153,7 +153,7 @@ describe('/users', () => {
     })
 
     it('should create a user and return the created user data', async () => {
-      const response: AxiosResponse<OcisUser> = {
+      const response: AxiosResponse<ChatUser> = {
         data: data,
         status: 201,
         statusText: 'Created',
@@ -165,12 +165,12 @@ describe('/users', () => {
       const user = await createUser(userPayload)
 
       expect(mockedAxios.post).toHaveBeenCalledWith(
-        expect.stringContaining(OcisLibreGraphRoute.USERS),
+        expect.stringContaining(ChatLibreGraphRoute.USERS),
         {
           mail: 'test-user-id@holi.team',
           displayName: 'Test User',
           onPremisesSamAccountName: 'holi_test-user-id',
-          userType: OcisUserType.MEMBER,
+          userType: ChatUserType.MEMBER,
           identities: expect.any(Array),
         },
         {
@@ -187,7 +187,7 @@ describe('/users', () => {
       mockedAxios.post.mockRejectedValueOnce(error)
 
       await expect(createUser(userPayload)).rejects.toThrowError(
-        `Failed to create an oCIS account for user with ID ${userPayload.id}`
+        `Failed to create an chat account for user with ID ${userPayload.id}`
       )
     })
   })
@@ -199,24 +199,24 @@ describe('/users', () => {
       email: 'test-email@example.com',
     }
 
-    const ocisUserId = 'ocis-user-id'
+    const chatUserId = 'chat-user-id'
 
-    const data: OcisUser = {
-      id: ocisUserId,
+    const data: ChatUser = {
+      id: chatUserId,
       onPremisesSamAccountName: 'holi_test-user-id',
       mail: 'test-user-id@holi.team',
       displayName: 'New Test User',
       accountEnabled: true,
       givenName: '',
       surname: '',
-      userType: OcisUserType.MEMBER,
+      userType: ChatUserType.MEMBER,
     }
     afterEach(() => {
       jest.resetAllMocks()
     })
 
     it('should update a user and return the updated user data', async () => {
-      const response: AxiosResponse<OcisUser> = {
+      const response: AxiosResponse<ChatUser> = {
         data,
         status: 201,
         statusText: 'Created',
@@ -225,10 +225,10 @@ describe('/users', () => {
       }
       mockedAxios.patch.mockResolvedValueOnce(response)
 
-      const user = await updateUser(ocisUserId, userPaylaod)
+      const user = await updateUser(chatUserId, userPaylaod)
 
       expect(mockedAxios.patch).toHaveBeenCalledWith(
-        expect.stringContaining(`${OcisLibreGraphRoute.USERS}/${ocisUserId}`),
+        expect.stringContaining(`${ChatLibreGraphRoute.USERS}/${chatUserId}`),
         {
           displayName: 'New Test User',
         },
@@ -245,14 +245,14 @@ describe('/users', () => {
       const error = new Error('User update failed')
       mockedAxios.patch.mockRejectedValueOnce(error)
 
-      await expect(updateUser(ocisUserId, userPaylaod)).rejects.toThrowError(
-        `Failed to update oCIS account for user with ID ${userPaylaod.id}`
+      await expect(updateUser(chatUserId, userPaylaod)).rejects.toThrowError(
+        `Failed to update chat account for user with ID ${userPaylaod.id}`
       )
     })
   })
 
   describe('assignUserRole', () => {
-    const userId = 'ocis-test-user-id'
+    const userId = 'chat-test-user-id'
     const roleId = 'role-id'
     afterEach(() => {
       jest.resetAllMocks()
@@ -305,7 +305,7 @@ describe('/users', () => {
 
       await deleteUserById(id)
 
-      expect(mockedAxios.delete).toHaveBeenCalledWith(expect.stringContaining(`${OcisLibreGraphRoute.USERS}/${id}`), {
+      expect(mockedAxios.delete).toHaveBeenCalledWith(expect.stringContaining(`${ChatLibreGraphRoute.USERS}/${id}`), {
         auth: expect.any(Object),
         httpsAgent: expect.any(Object),
       })
@@ -327,7 +327,7 @@ describe('/drives', () => {
       slug: 'test-space',
     }
 
-    const data: OcisSpace = {
+    const data: ChatSpace = {
       driveAlias: 'test-space-id',
       driveType: 'project',
       id: 'test-drive-id',
@@ -370,7 +370,7 @@ describe('/drives', () => {
     })
 
     it('should create a space and return the created space data', async () => {
-      const response: AxiosResponse<OcisSpace> = {
+      const response: AxiosResponse<ChatSpace> = {
         data,
         status: 201,
         statusText: 'Created',
@@ -382,7 +382,7 @@ describe('/drives', () => {
       const space = await createSpace(spacePayload)
 
       expect(mockedAxios.post).toHaveBeenCalledWith(
-        expect.stringContaining(OcisLibreGraphRoute.DRIVES),
+        expect.stringContaining(ChatLibreGraphRoute.DRIVES),
         {
           name: spacePayload.name,
           driveAlias: spacePayload.slug,
@@ -404,7 +404,7 @@ describe('/drives', () => {
       mockedAxios.post.mockRejectedValueOnce(error)
 
       await expect(createSpace(spacePayload)).rejects.toThrowError(
-        `Failed to create an oCIS drive for space ${spacePayload.id}`
+        `Failed to create an chat drive for space ${spacePayload.id}`
       )
     })
   })
@@ -412,7 +412,7 @@ describe('/drives', () => {
   describe('shareSpaceWithUser', () => {
     const spaceId = 'test-space-id'
     const username = 'test-user-username'
-    const role = OcisRole.EDITOR
+    const role = ChatRole.EDITOR
 
     afterEach(() => {
       jest.resetAllMocks()
@@ -427,8 +427,8 @@ describe('/drives', () => {
       await shareSpaceWithUser(spaceId, username, role)
 
       expect(mockedAxios.post).toHaveBeenCalledWith(
-        expect.stringContaining(OcisApi.SHARE_API_PATH),
-        `space_ref=${spaceId}&shareType=${OcisShareType.SHARE_SPACE}&shareWith=${username}&role=${role}`,
+        expect.stringContaining(ChatApi.SHARE_API_PATH),
+        `space_ref=${spaceId}&shareType=${ChatShareType.SHARE_SPACE}&shareWith=${username}&role=${role}`,
         {
           auth: expect.any(Object),
           httpsAgent: expect.any(Object),
@@ -441,7 +441,7 @@ describe('/drives', () => {
       mockedAxios.post.mockRejectedValueOnce(error)
 
       await expect(shareSpaceWithUser(spaceId, username, role)).rejects.toThrowError(
-        `Failed to share the oCIS space ${spaceId} with user ${username}`
+        `Failed to share the chat space ${spaceId} with user ${username}`
       )
     })
   })
@@ -449,7 +449,7 @@ describe('/drives', () => {
   describe('findSpaceById', () => {
     const id = 'test-space-id'
 
-    const data: OcisSpace = {
+    const data: ChatSpace = {
       driveAlias: 'test-space-id',
       driveType: 'project',
       id: 'test-drive-id',
@@ -492,7 +492,7 @@ describe('/drives', () => {
     })
 
     it('should return the space data when the request is successful', async () => {
-      const response: AxiosResponse<OcisSpace> = {
+      const response: AxiosResponse<ChatSpace> = {
         data,
         status: 200,
         statusText: 'OK',
@@ -504,7 +504,7 @@ describe('/drives', () => {
       const space = await findSpaceById(id)
 
       expect(mockedAxios.get).toHaveBeenCalledWith(
-        expect.stringContaining(`${OcisLibreGraphRoute.DRIVES}/${id}`),
+        expect.stringContaining(`${ChatLibreGraphRoute.DRIVES}/${id}`),
         expect.any(Object)
       )
       expect(space).toEqual(data)
@@ -518,7 +518,7 @@ describe('/drives', () => {
       }
       mockedAxios.get.mockRejectedValueOnce(response)
 
-      await expect(findSpaceById(id)).rejects.toThrowError(`Failed to find an oCIS space with ID ${id}`)
+      await expect(findSpaceById(id)).rejects.toThrowError(`Failed to find an chat space with ID ${id}`)
     })
   })
 
@@ -543,7 +543,7 @@ describe('/drives', () => {
       await disableSpaceById(id)
 
       expect(mockedAxios.delete).toHaveBeenCalledWith(
-        expect.stringContaining(`${OcisLibreGraphRoute.DRIVES}/${id}`),
+        expect.stringContaining(`${ChatLibreGraphRoute.DRIVES}/${id}`),
         expect.any(Object)
       )
     })
@@ -557,7 +557,7 @@ describe('/drives', () => {
 
       mockedAxios.delete.mockRejectedValueOnce(response)
 
-      await expect(disableSpaceById(id)).rejects.toThrowError(`Failed to disable oCIS space with ID ${id}`)
+      await expect(disableSpaceById(id)).rejects.toThrowError(`Failed to disable chat space with ID ${id}`)
     })
   })
 
@@ -582,7 +582,7 @@ describe('/drives', () => {
       await deleteSpaceById(id)
       expect(mockedAxios.delete).toHaveBeenCalledTimes(2)
       expect(mockedAxios.delete).toHaveBeenCalledWith(
-        expect.stringContaining(`${OcisLibreGraphRoute.DRIVES}/${id}`),
+        expect.stringContaining(`${ChatLibreGraphRoute.DRIVES}/${id}`),
         expect.any(Object)
       )
     })
@@ -606,7 +606,7 @@ describe('/drives', () => {
 
       mockedAxios.delete.mockRejectedValueOnce(deleteSpaceResponse)
 
-      await expect(deleteSpaceById(id)).rejects.toThrowError(`Failed to delete oCIS space with ID ${id}`)
+      await expect(deleteSpaceById(id)).rejects.toThrowError(`Failed to delete chat space with ID ${id}`)
     })
   })
 
@@ -627,7 +627,7 @@ describe('/drives', () => {
       await removeSpaceUser(spaceId, username)
 
       expect(mockedAxios.delete).toHaveBeenCalledWith(
-        expect.stringContaining(`${OcisApi.SHARE_API_PATH}/${spaceId}?shareWith=${username}`),
+        expect.stringContaining(`${ChatApi.SHARE_API_PATH}/${spaceId}?shareWith=${username}`),
         {
           auth: expect.any(Object),
           httpsAgent: expect.any(Object),
@@ -640,7 +640,7 @@ describe('/drives', () => {
       mockedAxios.delete.mockRejectedValueOnce(error)
 
       await expect(removeSpaceUser(spaceId, username)).rejects.toThrowError(
-        `Failed to remove user ${username} from oCIS space with ID ${spaceId}`
+        `Failed to remove user ${username} from chat space with ID ${spaceId}`
       )
     })
   })
