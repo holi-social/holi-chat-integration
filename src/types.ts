@@ -26,6 +26,7 @@ export type UserPayload = {
   id: string
   email: string
   name: string
+  identity: string
 }
 
 /**
@@ -41,6 +42,7 @@ export type SpacePayload = {
   id: string
   name: string
   slug: string
+  avatarDefaultColor: string
 }
 
 /**
