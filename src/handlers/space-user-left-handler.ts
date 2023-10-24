@@ -1,5 +1,4 @@
 import { logPhase, logger } from '../logger'
-import { removeSpaceUser } from '../chat-api'
 import { SpaceUserLeftDataPayload } from '../types'
 
 //Handles the SpaceUserLeft event from Google Cloud Pub/Sub.

@@ -1,5 +1,4 @@
 import { logPhase, logger } from '../logger'
-import { deleteUserById } from '../chat-api'
 import { UserDeletedDataPayload } from '../types'
 
 //Handles the UserDeleted event from Google Cloud Pub/Sub.

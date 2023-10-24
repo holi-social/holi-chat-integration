@@ -1,5 +1,4 @@
 import { logPhase, logger } from '../logger'
-import { shareSpaceWithUser } from '../chat-api'
 import { ChatRole, SpaceUserAddedDataPayload } from '../types'
 
 //Handles the SpaceUserAdded event from Google Cloud Pub/Sub.

@@ -1,4 +1,4 @@
-import 'whatwg-fetch'
+// import fetch from 'node-fetch'
 import { spaceCreatedHandler } from './handlers/space-created-handler'
 import { spaceDeletedHandler } from './handlers/space-deleted-handler'
 import { spaceUserAddedHandler } from './handlers/space-user-added-handler'
@@ -7,12 +7,10 @@ import { spaceUserRemovedHandler } from './handlers/space-user-removed-handler'
 import { userDeletedHandler } from './handlers/user-deleted-handler'
 import { userNameUpdatedHandler } from './handlers/user-name-updated-handler'
 import { logPhase, logger } from './logger'
-const sdk = require('matrix-js-sdk')
 
 import { EventType } from './types'
-import { HOLI_CHAT_SERVER_URL } from './constants'
 
-//Processes events received from both the Google Pub/Sub Emulator and Cloud Pub/Sub, which have different body structures.
+// Processes events received from both the Google Pub/Sub Emulator and Cloud Pub/Sub, which have different body structures.
 const extractEventDetails = (request) => {
   try {
     const {
@@ -30,21 +28,10 @@ const extractEventDetails = (request) => {
   }
 }
 
-const chatClient = sdk.createClient({
-  baseUrl: HOLI_CHAT_SERVER_URL,
-  // accessToken: 'admin-token',
-  // userId: '@chat:local.chat.holi.social',
-})
-
-console.log('-*-*-*-*-*', chatClient)
-
 export const receiveEvent = async (request, response): Promise<void> => {
-  console.log('!!!! +++++++++++++++++= receive_event: REQUEST', request.body.message)
-
   logger.debug('Event received', { event: request.body.message })
 
   const { eventType, event, messageId } = extractEventDetails(request)
-  console.log('+++++++++++++++++= receive_event: EVENT TYPE', eventType, event, messageId, request.body.message)
 
   try {
     switch (eventType) {
