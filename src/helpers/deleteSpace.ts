@@ -1,8 +1,8 @@
 import { SpacePayload } from '../types'
-import { awaitDeletionComplete, getRoomIdsToDelete, initRoomDeletion } from './rooms'
+import { awaitDeletionComplete, getRoomIdsForHoliSpace, initRoomDeletion } from './rooms'
 
 export const deleteSpaceRoom = async ({ id }: SpacePayload) => {
-  const roomIdsToDelete = await getRoomIdsToDelete(id)
+  const roomIdsToDelete = await getRoomIdsForHoliSpace(id)
 
   const roomDeletion = roomIdsToDelete.map(async (roomId) => {
     console.debug('**'.repeat(10) + ' FOUND ROOM TO DELETE', roomId)

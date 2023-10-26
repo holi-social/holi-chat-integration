@@ -2,13 +2,14 @@ import { logPhase } from '../logger'
 import { SpaceCreatedDataPayload } from '../types'
 import { addGeneralRoomToSpaceContainer, createSpaceContainer, createSpaceGeneralRoom } from '../helpers/createSpace'
 import { startChatClient, stopChatClient } from '../helpers/_chatClient'
+import { getMatrixUserId } from '../helpers/rooms'
 
 // Handles the SpaceCreated event from Google Cloud Pub/Sub.
 export const spaceCreatedHandler = async (messageId: string, payload: SpaceCreatedDataPayload): Promise<void> => {
   await startChatClient()
 
   const { space: spacePayload, creator } = payload
-  const creatorId = `@${creator.identity}:local.chat.holi.social`
+  const creatorId = getMatrixUserId(creator.identity)
 
   try {
     const parentSpaceRoomId = await logPhase(
