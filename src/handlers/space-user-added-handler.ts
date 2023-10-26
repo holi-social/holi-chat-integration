@@ -1,30 +1,13 @@
+import { inviteUserToSpace } from '../helpers/inviteUserToSpace'
 import { logPhase, logger } from '../logger'
-import { ChatRole, SpaceUserAddedDataPayload } from '../types'
+import { SpaceUserAddedDataPayload } from '../types'
 
-//Handles the SpaceUserAdded event from Google Cloud Pub/Sub.
+// Handles the SpaceUserAdded event from Google Cloud Pub/Sub.
 export const spaceUserAddedHandler = async (messageId: string, payload: SpaceUserAddedDataPayload): Promise<void> => {
-  console.log('++++++++= space_user_added_handler: SPACE USER ADDED', messageId, payload)
-
-  // try {
-  //   const { user, space } = payload
-
-  //   const ocisUser = await logPhase(
-  //     messageId,
-  //     'spaceUserAddedHandler.findOrCreateOcisUser'
-  //   )(() => findOrCreateOcisUser(user))
-
-  //   const ocisSpace = await logPhase(
-  //     messageId,
-  //     'spaceUserAddedHandler.findOrCreateOcisSpace'
-  //   )(() => findOrCreateOcisSpace(space))
-
-  //   //Shares the space with the user with the "editor" role
-  //   await logPhase(
-  //     messageId,
-  //     'spaceUserAddedHandler.shareSpaceWithUser'
-  //   )(() => shareSpaceWithUser(ocisSpace.id, ocisUser.onPremisesSamAccountName, OcisRole.EDITOR))
-  //   logger.debug('User added to space successfully', { ocisUser, ocisSpace })
-  // } catch (error) {
-  //   throw new Error(`Failed to add user to space ${error}`)
-  // }
+  try {
+    await logPhase(messageId, 'spaceUserAddedHandler.findOrCreateOcisUser')(() => inviteUserToSpace(payload))
+    logger.debug('User added to space successfully', { user: payload.user.id, space: payload.space.id })
+  } catch (error) {
+    throw new Error(`Failed to add user to space ${error}`)
+  }
 }

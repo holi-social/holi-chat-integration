@@ -1,13 +1,18 @@
 import { HOLI_CHAT_ADMIN_ACCESS_TOKEN, HOLI_CHAT_SERVER_URL } from '../constants'
 import { ChatRoomEvent } from './type'
 
-export const getRooms = async () => {
-  const resp = await fetch(`${HOLI_CHAT_SERVER_URL}/_synapse/admin/v1/rooms`, {
-    method: 'GET',
-    headers: {
-      Authorization: `Bearer ${HOLI_CHAT_ADMIN_ACCESS_TOKEN}`,
-    },
-  })
+export const getMatrixUserId = (holiIdentity: string) => `@${holiIdentity}:local.chat.holi.social`
+
+export const getRooms = async (searchTerm?: string) => {
+  const resp = await fetch(
+    `${HOLI_CHAT_SERVER_URL}/_synapse/admin/v1/rooms${searchTerm ? `?search_term=${searchTerm}` : ''}`,
+    {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${HOLI_CHAT_ADMIN_ACCESS_TOKEN}`,
+      },
+    }
+  )
 
   const { rooms } = await resp.json()
 
@@ -49,19 +54,23 @@ const isRoomSharedDataEvent = (event: RoomSharedDataEvent | StateEvent): event i
 
 interface SpaceSharedData {
   holiSpaceId: string
+  parentSpaceRoomId: string
 }
 
-export const getRoomIdsToDelete = async (holiSpaceId: string) => {
-  const rooms: { room_id: string }[] = await getRooms()
+/**
+ * Delete room helpers
+ */
+export const getRoomIdsForHoliSpace = async (holiSpaceId: string, searchTerm?: string) => {
+  const rooms: { room_id: string }[] = await getRooms(searchTerm)
 
   return rooms.reduce<Promise<string[]>>(async (accPromise, room) => {
-    const acc = await accPromise
+    let acc = await accPromise
     const { room_id } = room
     const state = await getRoomSharedData(room_id)
     const { content } = state.find(isRoomSharedDataEvent) ?? {}
 
     if (content && content.holiSpaceId === holiSpaceId) {
-      acc.push(room_id)
+      acc = Array.from(new Set<string>([...acc, room_id, content.parentSpaceRoomId].filter((id) => !!id)))
     }
 
     return acc
