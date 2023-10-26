@@ -1,15 +1,15 @@
-import { HOLI_CHAT_ADMIN_ACCESS_TOKEN, HOLI_CHAT_SERVER_URL } from '../constants'
+import { CHAT_ADMIN_ACCESS_TOKEN, CHAT_SERVER_URL } from '../constants'
 import { ChatRoomEvent } from './type'
 
 export const getMatrixUserId = (holiIdentity: string) => `@${holiIdentity}:local.chat.holi.social`
 
 export const getRooms = async (searchTerm?: string) => {
   const resp = await fetch(
-    `${HOLI_CHAT_SERVER_URL}/_synapse/admin/v1/rooms${searchTerm ? `?search_term=${searchTerm}` : ''}`,
+    `${CHAT_SERVER_URL}/_synapse/admin/v1/rooms${searchTerm ? `?search_term=${searchTerm}` : ''}`,
     {
       method: 'GET',
       headers: {
-        Authorization: `Bearer ${HOLI_CHAT_ADMIN_ACCESS_TOKEN}`,
+        Authorization: `Bearer ${CHAT_ADMIN_ACCESS_TOKEN}`,
       },
     }
   )
@@ -20,10 +20,10 @@ export const getRooms = async (searchTerm?: string) => {
 }
 
 export const getRoomSharedData = async (roomId: string) => {
-  const resp = await fetch(`${HOLI_CHAT_SERVER_URL}/_synapse/admin/v1/rooms/${roomId}/state`, {
+  const resp = await fetch(`${CHAT_SERVER_URL}/_synapse/admin/v1/rooms/${roomId}/state`, {
     method: 'GET',
     headers: {
-      Authorization: `Bearer ${HOLI_CHAT_ADMIN_ACCESS_TOKEN}`,
+      Authorization: `Bearer ${CHAT_ADMIN_ACCESS_TOKEN}`,
     },
   })
 
@@ -83,10 +83,10 @@ interface DeleteStatus {
 
 export const awaitDeletionComplete = async (roomId, delete_id) => {
   const getDeleteStatus = async (deleteId: string) => {
-    const resp = await fetch(`${HOLI_CHAT_SERVER_URL}/_synapse/admin/v2/rooms/delete_status/${deleteId}`, {
+    const resp = await fetch(`${CHAT_SERVER_URL}/_synapse/admin/v2/rooms/delete_status/${deleteId}`, {
       method: 'GET',
       headers: {
-        Authorization: `Bearer ${HOLI_CHAT_ADMIN_ACCESS_TOKEN}`,
+        Authorization: `Bearer ${CHAT_ADMIN_ACCESS_TOKEN}`,
       },
     })
 
@@ -105,10 +105,10 @@ export const awaitDeletionComplete = async (roomId, delete_id) => {
 }
 
 export const initRoomDeletion = async (roomId: string) => {
-  const resp = await fetch(`${HOLI_CHAT_SERVER_URL}/_synapse/admin/v2/rooms/${roomId}`, {
+  const resp = await fetch(`${CHAT_SERVER_URL}/_synapse/admin/v2/rooms/${roomId}`, {
     method: 'DELETE',
     headers: {
-      Authorization: `Bearer ${HOLI_CHAT_ADMIN_ACCESS_TOKEN}`,
+      Authorization: `Bearer ${CHAT_ADMIN_ACCESS_TOKEN}`,
     },
     body: JSON.stringify({
       purge: true,

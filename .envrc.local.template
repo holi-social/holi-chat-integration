@@ -1,25 +1,10 @@
 # The environment where the application is running, e.g. 'local', 'staging', 'production'.
 export ENVIRONMENT=local
 
-# URL of the chat instance
-export OWNCLOUD_BASE_URL=https://local.cloud.holi.social
-
-# Admin username for the chat instance
-export CHAT_ADMIN_USERNAME=admin
-
-# Admin password for the chat instance
-export CHAT_ADMIN_PASSWORD=password
-
 # OIDC issuer for the chat instance (i.e. Ory)
 export CHAT_OIDC_ISSUER=https://dev-auth.holi.social
 
-export CHAT_INTEGRATION_DB_HOST=localhost
-export CHAT_INTEGRATION_DB_NAME=chat-integration-local
-export CHAT_INTEGRATION_DB_USERNAME=postgres
-export CHAT_INTEGRATION_DB_PASSWORD=password
-export CHAT_INTEGRATION_DB_PORT=8087
-
-# Used by @databases/pg-migrations CLI to automatically maintain the local database schema.  
-export DATABASE_URL=postgresql://$CHAT_INTEGRATION_DB_USERNAME:$CHAT_INTEGRATION_DB_PASSWORD@$CHAT_INTEGRATION_DB_HOST:$CHAT_INTEGRATION_DB_PORT/$CHAT_INTEGRATION_DB_NAME
-
-export DB_CONTAINER_NAME=chat-postgres
+# Chat environment variables
+export CHAT_SERVER_URL="http://192.168.180.44:8008"
+export CHAT_ADMIN_USERNAME=""
+export CHAT_ADMIN_ACCESS_TOKEN=""

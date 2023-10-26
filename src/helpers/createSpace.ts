@@ -1,7 +1,7 @@
 import { Preset, Visibility, EventType, RoomType } from 'matrix-js-sdk'
 
 import { chatClient } from './_chatClient'
-import { HOLI_CHAT_SERVER_URL } from '../constants'
+import { CHAT_SERVER_URL } from '../constants'
 import { SpacePayload } from '../types'
 import { ChatRoomEvent } from './type'
 
@@ -53,7 +53,7 @@ export const addGeneralRoomToSpaceContainer = async (
   await chatClient.sendStateEvent(
     parentSpaceRoomId,
     EventType.SpaceChild,
-    { via: [HOLI_CHAT_SERVER_URL] },
+    { via: [CHAT_SERVER_URL] },
     generalSpaceRoomId
   )
 }
