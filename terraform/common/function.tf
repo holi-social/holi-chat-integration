@@ -55,8 +55,8 @@ data "google_secret_manager_secret" "chat_admin_username_development" {
   project   = data.terraform_remote_state.holi_infra_state.outputs.shared_project_id
 }
 
-data "google_secret_manager_secret" "chat_admin_password_development" {
-  secret_id = "CHAT_ADMIN_PASSWORD_DEVELOPMENT"
+data "google_secret_manager_secret" "chat_admin_access_token_development" {
+  secret_id = "CHAT_ADMIN_ACCESS_TOKEN_DEVELOPMENT"
   project   = data.terraform_remote_state.holi_infra_state.outputs.shared_project_id
 }
 
@@ -65,8 +65,8 @@ data "google_secret_manager_secret" "chat_admin_username_production" {
   project   = data.terraform_remote_state.holi_infra_state.outputs.shared_project_id
 }
 
-data "google_secret_manager_secret" "chat_admin_password_production" {
-  secret_id = "CHAT_ADMIN_PASSWORD_PRODUCTION"
+data "google_secret_manager_secret" "chat_admin_access_token_production" {
+  secret_id = "CHAT_ADMIN_ACCESS_TOKEN_PRODUCTION"
   project   = data.terraform_remote_state.holi_infra_state.outputs.shared_project_id
 }
 
@@ -96,13 +96,7 @@ resource "google_cloudfunctions2_function" "holi-chat-integration-staging" {
     environment_variables = {
       ENVIRONMENT                  = "staging"
       CHAT_OIDC_ISSUER             = "https://dev-auth.holi.social"
-      OWNCLOUD_BASE_URL            = "https://development.cloud.holi.social"
-      CHAT_INTEGRATION_DB_HOST     = data.terraform_remote_state.holi_infra_state.outputs.database_ip_address_development
-      CHAT_INTEGRATION_DB_PORT     = local.chat_integration_database_port
-      CHAT_INTEGRATION_DB_NAME     = google_sql_database.database_development.name
-      CHAT_INTEGRATION_DB_USERNAME = google_sql_user.chat_integration_db_user_development.name
-      CHAT_INTEGRATION_DB_PASSWORD = google_sql_user.chat_integration_db_user_development.password
-      INSTANCE_CONNECTION_NAME     = data.terraform_remote_state.holi_infra_state.outputs.database_name_development
+      CHAT_SERVER_URL              = "https://development-chat.holi.social"
     }
     vpc_connector                  = data.terraform_remote_state.holi_infra_state.outputs.vpc_access_connector_name
     vpc_connector_egress_settings  = "PRIVATE_RANGES_ONLY"
@@ -118,9 +112,9 @@ resource "google_cloudfunctions2_function" "holi-chat-integration-staging" {
     }
 
     secret_environment_variables {
-      key        = "CHAT_ADMIN_PASSWORD"
+      key        = "CHAT_ADMIN_ACCESS_TOKEN"
       project_id = data.terraform_remote_state.holi_infra_state.outputs.shared_project_id
-      secret     = data.google_secret_manager_secret.chat_admin_password_development.secret_id
+      secret     = data.google_secret_manager_secret.chat_admin_access_token_development.secret_id
       version    = "latest"
     }
   }
@@ -159,13 +153,7 @@ resource "google_cloudfunctions2_function" "holi-chat-integration-production" {
     environment_variables = {
       ENVIRONMENT                  = "production"
       CHAT_OIDC_ISSUER             = "https://auth.holi.social"
-      OWNCLOUD_BASE_URL            = "https://production.cloud.holi.social"
-      CHAT_INTEGRATION_DB_HOST     = data.terraform_remote_state.holi_infra_state.outputs.database_ip_address_production
-      CHAT_INTEGRATION_DB_PORT     = local.chat_integration_database_port
-      CHAT_INTEGRATION_DB_NAME     = google_sql_database.database_production.name
-      CHAT_INTEGRATION_DB_USERNAME = google_sql_user.chat_integration_db_user_production.name
-      CHAT_INTEGRATION_DB_PASSWORD = google_sql_user.chat_integration_db_user_production.password
-      INSTANCE_CONNECTION_NAME     = data.terraform_remote_state.holi_infra_state.outputs.database_name_production
+      CHAT_SERVER_URL              = "https://chat.holi.social"
     }
     vpc_connector                  = data.terraform_remote_state.holi_infra_state.outputs.vpc_access_connector_name
     vpc_connector_egress_settings  = "PRIVATE_RANGES_ONLY"
@@ -181,9 +169,9 @@ resource "google_cloudfunctions2_function" "holi-chat-integration-production" {
     }
 
     secret_environment_variables {
-      key        = "CHAT_ADMIN_PASSWORD"
+      key        = "CHAT_ADMIN_ACCESS_TOKEN"
       project_id = data.terraform_remote_state.holi_infra_state.outputs.shared_project_id
-      secret     = data.google_secret_manager_secret.chat_admin_password_production.secret_id
+      secret     = data.google_secret_manager_secret.chat_admin_access_token_production.secret_id
       version    = "latest"
     }
   }

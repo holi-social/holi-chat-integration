@@ -1,13 +1,13 @@
-import { HOLI_CHAT_ADMIN_ACCESS_TOKEN, HOLI_CHAT_ADMIN_ID, HOLI_CHAT_SERVER_URL } from '../constants'
+import { CHAT_ADMIN_ACCESS_TOKEN, CHAT_ADMIN_USERNAME, CHAT_SERVER_URL } from '../constants'
 import { ClientEvent, MatrixClient, MatrixScheduler, SyncState, createClient } from 'matrix-js-sdk'
 
 export let chatClient: MatrixClient
 
 export const startChatClient = async () => {
   chatClient = createClient({
-    baseUrl: HOLI_CHAT_SERVER_URL,
-    userId: HOLI_CHAT_ADMIN_ID,
-    accessToken: HOLI_CHAT_ADMIN_ACCESS_TOKEN,
+    baseUrl: CHAT_SERVER_URL,
+    userId: CHAT_ADMIN_USERNAME,
+    accessToken: CHAT_ADMIN_ACCESS_TOKEN,
     timelineSupport: true,
     scheduler: new MatrixScheduler(),
   })
