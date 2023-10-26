@@ -60,15 +60,15 @@ data "google_secret_manager_secret" "chat_admin_access_token_development" {
   project   = data.terraform_remote_state.holi_infra_state.outputs.shared_project_id
 }
 
-data "google_secret_manager_secret" "chat_admin_username_production" {
-  secret_id = "CHAT_ADMIN_USERNAME_PRODUCTION"
-  project   = data.terraform_remote_state.holi_infra_state.outputs.shared_project_id
-}
+# data "google_secret_manager_secret" "chat_admin_username_production" {
+#   secret_id = "CHAT_ADMIN_USERNAME_PRODUCTION"
+#   project   = data.terraform_remote_state.holi_infra_state.outputs.shared_project_id
+# }
 
-data "google_secret_manager_secret" "chat_admin_access_token_production" {
-  secret_id = "CHAT_ADMIN_ACCESS_TOKEN_PRODUCTION"
-  project   = data.terraform_remote_state.holi_infra_state.outputs.shared_project_id
-}
+# data "google_secret_manager_secret" "chat_admin_access_token_production" {
+#   secret_id = "CHAT_ADMIN_ACCESS_TOKEN_PRODUCTION"
+#   project   = data.terraform_remote_state.holi_infra_state.outputs.shared_project_id
+# }
 
 resource "google_cloudfunctions2_function" "holi-chat-integration-staging" {
   project     = data.terraform_remote_state.holi_infra_state.outputs.shared_project_id
@@ -127,59 +127,59 @@ resource "google_cloudfunctions2_function" "holi-chat-integration-staging" {
   }
 }
 
-resource "google_cloudfunctions2_function" "holi-chat-integration-production" {
-  project     = data.terraform_remote_state.holi_infra_state.outputs.shared_project_id
-  name        = "holi-chat-integration-production"
-  location    = "europe-north1"
-  description = "holi-chat-integration-production function"
+# resource "google_cloudfunctions2_function" "holi-chat-integration-production" {
+#   project     = data.terraform_remote_state.holi_infra_state.outputs.shared_project_id
+#   name        = "holi-chat-integration-production"
+#   location    = "europe-north1"
+#   description = "holi-chat-integration-production function"
 
-  build_config {
-    runtime     = "nodejs18"
-    entry_point = "receiveEvent"
+#   build_config {
+#     runtime     = "nodejs18"
+#     entry_point = "receiveEvent"
 
-    source {
-      storage_source {
-        bucket = google_storage_bucket.bucket.name
-        object = google_storage_bucket_object.function_source.name
-      }
-    }
-  }
+#     source {
+#       storage_source {
+#         bucket = google_storage_bucket.bucket.name
+#         object = google_storage_bucket_object.function_source.name
+#       }
+#     }
+#   }
 
-  service_config {
-    max_instance_count = 3
-    min_instance_count = 0
-    available_memory   = "128Mi"
-    timeout_seconds    = 60
-    environment_variables = {
-      ENVIRONMENT                  = "production"
-      CHAT_OIDC_ISSUER             = "https://auth.holi.social"
-      CHAT_SERVER_URL              = "https://chat.holi.social"
-    }
-    vpc_connector                  = data.terraform_remote_state.holi_infra_state.outputs.vpc_access_connector_name
-    vpc_connector_egress_settings  = "PRIVATE_RANGES_ONLY"
-    ingress_settings               = "ALLOW_INTERNAL_ONLY"
-    all_traffic_on_latest_revision = true
-    service_account_email          = google_service_account.account.email
+#   service_config {
+#     max_instance_count = 3
+#     min_instance_count = 0
+#     available_memory   = "128Mi"
+#     timeout_seconds    = 60
+#     environment_variables = {
+#       ENVIRONMENT                  = "production"
+#       CHAT_OIDC_ISSUER             = "https://auth.holi.social"
+#       CHAT_SERVER_URL              = "https://chat.holi.social"
+#     }
+#     vpc_connector                  = data.terraform_remote_state.holi_infra_state.outputs.vpc_access_connector_name
+#     vpc_connector_egress_settings  = "PRIVATE_RANGES_ONLY"
+#     ingress_settings               = "ALLOW_INTERNAL_ONLY"
+#     all_traffic_on_latest_revision = true
+#     service_account_email          = google_service_account.account.email
 
-    secret_environment_variables {
-      key        = "CHAT_ADMIN_USERNAME"
-      project_id = data.terraform_remote_state.holi_infra_state.outputs.shared_project_id
-      secret     = data.google_secret_manager_secret.chat_admin_username_production.secret_id
-      version    = "latest"
-    }
+#     secret_environment_variables {
+#       key        = "CHAT_ADMIN_USERNAME"
+#       project_id = data.terraform_remote_state.holi_infra_state.outputs.shared_project_id
+#       secret     = data.google_secret_manager_secret.chat_admin_username_production.secret_id
+#       version    = "latest"
+#     }
 
-    secret_environment_variables {
-      key        = "CHAT_ADMIN_ACCESS_TOKEN"
-      project_id = data.terraform_remote_state.holi_infra_state.outputs.shared_project_id
-      secret     = data.google_secret_manager_secret.chat_admin_access_token_production.secret_id
-      version    = "latest"
-    }
-  }
+#     secret_environment_variables {
+#       key        = "CHAT_ADMIN_ACCESS_TOKEN"
+#       project_id = data.terraform_remote_state.holi_infra_state.outputs.shared_project_id
+#       secret     = data.google_secret_manager_secret.chat_admin_access_token_production.secret_id
+#       version    = "latest"
+#     }
+#   }
 
-  # taken from https://github.com/hashicorp/terraform-provider-google/issues/1938#issuecomment-1229042663
-  lifecycle {
-    replace_triggered_by = [
-      google_storage_bucket_object.function_source
-    ]
-  }
-}
+#   # taken from https://github.com/hashicorp/terraform-provider-google/issues/1938#issuecomment-1229042663
+#   lifecycle {
+#     replace_triggered_by = [
+#       google_storage_bucket_object.function_source
+#     ]
+#   }
+# }
