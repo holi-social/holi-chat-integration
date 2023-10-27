@@ -1,7 +1,7 @@
-import { CHAT_ADMIN_ACCESS_TOKEN, CHAT_SERVER_URL } from '../constants'
+import { CHAT_ADMIN_ACCESS_TOKEN, CHAT_SERVER_NAME, CHAT_SERVER_URL } from '../constants'
 import { ChatRoomEvent } from './type'
 
-export const getMatrixUserId = (holiIdentity: string) => `@${holiIdentity}:local.chat.holi.social`
+export const getMatrixUserId = (holiIdentity: string) => `@${holiIdentity}:${CHAT_SERVER_NAME}`
 
 export const getRooms = async (searchTerm?: string) => {
   const resp = await fetch(

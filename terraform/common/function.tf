@@ -97,6 +97,7 @@ resource "google_cloudfunctions2_function" "holi-chat-integration-staging" {
       ENVIRONMENT                  = "staging"
       CHAT_OIDC_ISSUER             = "https://dev-auth.holi.social"
       CHAT_SERVER_URL              = "https://development-chat.holi.social"
+      CHAT_SERVER_NAME             = "development-chat.holi.social"
     }
     vpc_connector                  = data.terraform_remote_state.holi_infra_state.outputs.vpc_access_connector_name
     vpc_connector_egress_settings  = "PRIVATE_RANGES_ONLY"
@@ -154,6 +155,7 @@ resource "google_cloudfunctions2_function" "holi-chat-integration-staging" {
 #       ENVIRONMENT                  = "production"
 #       CHAT_OIDC_ISSUER             = "https://auth.holi.social"
 #       CHAT_SERVER_URL              = "https://chat.holi.social"
+#       CHAT_SERVER_NAME             = "chat.holi.social"
 #     }
 #     vpc_connector                  = data.terraform_remote_state.holi_infra_state.outputs.vpc_access_connector_name
 #     vpc_connector_egress_settings  = "PRIVATE_RANGES_ONLY"

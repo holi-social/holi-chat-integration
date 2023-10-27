@@ -6,5 +6,6 @@ export CHAT_OIDC_ISSUER=https://dev-auth.holi.social
 
 # Chat environment variables
 export CHAT_SERVER_URL="http://192.168.180.44:8008"
+export CHAT_SERVER_NAME="local.chat.holi.social"
 export CHAT_ADMIN_USERNAME=""
 export CHAT_ADMIN_ACCESS_TOKEN=""
