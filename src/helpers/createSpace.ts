@@ -8,7 +8,6 @@ import { ChatRoomEvent } from './type'
 export const createSpaceContainer = async ({ id, name }: SpacePayload, inviteUsers: string[]): Promise<string> => {
   const { room_id: parentSpaceRoomId } = await chatClient.createRoom({
     name: name,
-    room_alias_name: name.toLowerCase().replace(/[ ]/g, '.').trim(),
     preset: Preset.PrivateChat,
     visibility: Visibility.Private,
     is_direct: false,
