@@ -2,7 +2,7 @@ import { logPhase } from '../logger'
 import { SpaceCreatedDataPayload } from '../types'
 import { addGeneralRoomToSpaceContainer, createSpaceContainer, createSpaceGeneralRoom } from '../helpers/createSpace'
 import { startChatClient, stopChatClient } from '../helpers/_chatClient'
-import { getMatrixUserId } from '../helpers/rooms'
+import { getMatrixUserId, getRoomIdsForHoliSpace } from '../helpers/rooms'
 
 // Handles the SpaceCreated event from Google Cloud Pub/Sub.
 export const spaceCreatedHandler = async (messageId: string, payload: SpaceCreatedDataPayload): Promise<void> => {
@@ -12,6 +12,10 @@ export const spaceCreatedHandler = async (messageId: string, payload: SpaceCreat
   const creatorId = getMatrixUserId(creator.identity)
 
   try {
+    // check if Space already has rooms
+    const rooms = await getRoomIdsForHoliSpace(payload.space.id)
+    if (rooms.length > 0) return
+
     const parentSpaceRoomId = await logPhase(
       messageId,
       'spaceCreatedHandler.createSpaceContainer'
