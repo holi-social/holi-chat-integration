@@ -5,6 +5,7 @@ import {
   getHoliSpaceRoomsSharedData,
   hasRoomUpdatedValues,
   isSpaceGeneralRoomSharedData,
+  setRoomAvatar,
   setRoomSharedData,
 } from '../helpers/rooms'
 
@@ -26,6 +27,7 @@ export const spaceUpdatedHandler = async (messageId: string, payload: SpaceUpdat
       if (!hasRoomUpdatedValues(sharedData, spacePayload)) return
 
       await setRoomSharedData(roomId, sharedData.parentSpaceRoomId, spacePayload)
+      await setRoomAvatar(roomId, spacePayload.avatar)
     })
   } catch (error) {
     throw new Error(`Failed to create space ${error}`)
