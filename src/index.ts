@@ -1,6 +1,7 @@
 // import fetch from 'node-fetch'
 import { spaceCreatedHandler } from './handlers/space-created-handler'
 import { spaceDeletedHandler } from './handlers/space-deleted-handler'
+import { spaceUpdatedHandler } from './handlers/space-updated-handler'
 import { spaceUserAddedHandler } from './handlers/space-user-added-handler'
 import { spaceUserLeftHandler } from './handlers/space-user-left-handler'
 import { spaceUserRemovedHandler } from './handlers/space-user-removed-handler'
@@ -39,6 +40,14 @@ export const receiveEvent = async (request, response): Promise<void> => {
         await logPhase(messageId, 'spaceCreatedHandler')(() => spaceCreatedHandler(messageId, event))
         response.sendStatus(201)
         break
+      case EventType.SPACE_UPDATED:
+        await logPhase(messageId, 'spaceUpdatedHandler')(() => spaceUpdatedHandler(messageId, event))
+        response.sendStatus(201)
+        break
+      case EventType.SPACE_DELETED:
+        await logPhase(messageId, 'spaceDeletedHandler')(() => spaceDeletedHandler(messageId, event))
+        response.sendStatus(204)
+        break
       case EventType.SPACE_USER_ADDED:
         await logPhase(messageId, 'spaceUserAddedHandler')(() => spaceUserAddedHandler(messageId, event))
         response.sendStatus(200)
@@ -46,10 +55,6 @@ export const receiveEvent = async (request, response): Promise<void> => {
       case EventType.USER_NAME_UPDATED:
         await logPhase(messageId, 'userNameUpdatedHandler')(() => userNameUpdatedHandler(messageId, event))
         response.sendStatus(200)
-        break
-      case EventType.SPACE_DELETED:
-        await logPhase(messageId, 'spaceDeletedHandler')(() => spaceDeletedHandler(messageId, event))
-        response.sendStatus(204)
         break
       case EventType.USER_DELETED:
         await logPhase(messageId, 'userDeletedHandler')(() => userDeletedHandler(messageId, event))
