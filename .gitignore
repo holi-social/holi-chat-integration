@@ -8,5 +8,7 @@ node_modules
 terraform/.holi-terraform.key
 dist
 .envrc.local
+.env
+.env.local
 coverage/
 *.zip
