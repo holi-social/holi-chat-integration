@@ -1,4 +1,6 @@
 import { CHAT_ADMIN_ACCESS_TOKEN, CHAT_SERVER_NAME, CHAT_SERVER_URL } from '../constants'
+import { SpacePayload } from '../types'
+import { chatClient } from './_chatClient'
 import { ChatRoomEvent } from './type'
 
 export const getMatrixUserId = (holiIdentity: string) => `@${holiIdentity}:${CHAT_SERVER_NAME}`
@@ -52,31 +54,69 @@ interface RoomSharedDataEvent {
 const isRoomSharedDataEvent = (event: RoomSharedDataEvent | StateEvent): event is RoomSharedDataEvent =>
   event.type === ChatRoomEvent.SharedData
 
-interface SpaceSharedData {
-  holiSpaceId: string
-  parentSpaceRoomId: string
+export const isSpaceGeneralRoomSharedData = (data: SpaceSharedData): data is SpaceGeneralRoomSharedData => {
+  return 'parentSpaceRoomId' in data && 'spaceName' in data
 }
 
-/**
- * Delete room helpers
- */
-export const getRoomIdsForHoliSpace = async (holiSpaceId: string, searchTerm?: string) => {
-  const rooms: { room_id: string }[] = await getRooms(searchTerm)
+interface SpaceRoomSharedData {
+  holiSpaceId: string
+}
 
-  return rooms.reduce<Promise<string[]>>(async (accPromise, room) => {
+interface SpaceGeneralRoomSharedData extends SpaceRoomSharedData {
+  parentSpaceRoomId: string
+  spaceName: string
+  avatar: string
+  avatarDefaultColor: string
+}
+
+export type SpaceSharedData = SpaceRoomSharedData | SpaceGeneralRoomSharedData
+
+export const getHoliSpaceRoomsSharedData = async (
+  holiSpaceId: string,
+  searchTerm?: string
+): Promise<Record<string, SpaceSharedData>> => {
+  const rooms: { room_id: string; name: string }[] = await getRooms(searchTerm)
+
+  return rooms.reduce<Promise<Record<string, SpaceSharedData>>>(async (accPromise, room) => {
     let acc = await accPromise
     const { room_id } = room
     const state = await getRoomSharedData(room_id)
     const { content } = state.find(isRoomSharedDataEvent) ?? {}
 
-    if (content && content.holiSpaceId === holiSpaceId) {
-      acc = Array.from(new Set<string>([...acc, room_id, content.parentSpaceRoomId].filter((id) => !!id)))
-    }
-
-    return acc
-  }, Promise.resolve([]))
+    return content && content.holiSpaceId === holiSpaceId
+      ? {
+          ...acc,
+          [room_id]: content,
+        }
+      : acc
+  }, Promise.resolve({}))
 }
 
+export const getRoomIdsForHoliSpace = async (holiSpaceId: string, searchTerm?: string): Promise<string[]> => {
+  const holiSpaceRoomsRecord = await getHoliSpaceRoomsSharedData(holiSpaceId, searchTerm)
+  return Object.keys(holiSpaceRoomsRecord)
+}
+
+/**
+ * Create room helpers
+ */
+export const setRoomSharedData = async (
+  roomId: string,
+  parentSpaceRoomId: string,
+  { id, name, avatar, avatarDefaultColor }: SpacePayload
+) => {
+  await chatClient.sendStateEvent(roomId, ChatRoomEvent.SharedData, {
+    holiSpaceId: id,
+    spaceName: name,
+    avatar,
+    avatarDefaultColor,
+    parentSpaceRoomId,
+  })
+}
+
+/**
+ * Delete room helpers
+ */
 interface DeleteStatus {
   status: 'active' | 'shutting_down' | 'purging' | 'complete' | 'failed'
 }
@@ -119,4 +159,16 @@ export const initRoomDeletion = async (roomId: string) => {
   const { delete_id }: { delete_id: string } = await resp.json()
 
   return delete_id
+}
+
+/**
+ * Update room helpers
+ */
+export const hasRoomUpdatedValues = (
+  oldSharedData: SpaceGeneralRoomSharedData,
+  spacePayload: SpacePayload
+): boolean => {
+  const { spaceName, avatar, avatarDefaultColor } = oldSharedData
+  const { name: newSpaceName, avatar: newAvatar, avatarDefaultColor: newAvatarDefaultColor } = spacePayload
+  return spaceName !== newSpaceName || avatar !== newAvatar || avatarDefaultColor !== newAvatarDefaultColor
 }

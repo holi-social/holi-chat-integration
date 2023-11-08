@@ -4,6 +4,7 @@ import { chatClient } from './_chatClient'
 import { CHAT_SERVER_URL } from '../constants'
 import { SpacePayload } from '../types'
 import { ChatRoomEvent } from './type'
+import { setRoomSharedData } from './rooms'
 
 export const createSpaceContainer = async ({ id, name }: SpacePayload, inviteUsers: string[]): Promise<string> => {
   const { room_id: parentSpaceRoomId } = await chatClient.createRoom({
@@ -38,15 +39,10 @@ export const createSpaceGeneralRoom = async (inviteUsers: string[]): Promise<str
 export const addGeneralRoomToSpaceContainer = async (
   parentSpaceRoomId: string,
   generalSpaceRoomId: string,
-  { id, name, avatarDefaultColor }: SpacePayload
+  spacePayload: SpacePayload
 ): Promise<void> => {
   // 1. add custom data into general room
-  await chatClient.sendStateEvent(generalSpaceRoomId, ChatRoomEvent.SharedData, {
-    holiSpaceId: id,
-    spaceName: name,
-    avatarDefaultColor,
-    parentSpaceRoomId,
-  })
+  await setRoomSharedData(generalSpaceRoomId, parentSpaceRoomId, spacePayload)
 
   // 2. add general room into space room
   await chatClient.sendStateEvent(
