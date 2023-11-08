@@ -1,3 +1,4 @@
+import { EventType } from 'matrix-js-sdk'
 import { CHAT_ADMIN_ACCESS_TOKEN, CHAT_SERVER_NAME, CHAT_SERVER_URL } from '../constants'
 import { SpacePayload } from '../types'
 import { chatClient } from './_chatClient'
@@ -103,12 +104,11 @@ export const getRoomIdsForHoliSpace = async (holiSpaceId: string, searchTerm?: s
 export const setRoomSharedData = async (
   roomId: string,
   parentSpaceRoomId: string,
-  { id, name, avatar, avatarDefaultColor }: SpacePayload
+  { id, name, avatarDefaultColor }: SpacePayload
 ) => {
   await chatClient.sendStateEvent(roomId, ChatRoomEvent.SharedData, {
     holiSpaceId: id,
     spaceName: name,
-    avatar,
     avatarDefaultColor,
     parentSpaceRoomId,
   })
@@ -171,4 +171,8 @@ export const hasRoomUpdatedValues = (
   const { spaceName, avatar, avatarDefaultColor } = oldSharedData
   const { name: newSpaceName, avatar: newAvatar, avatarDefaultColor: newAvatarDefaultColor } = spacePayload
   return spaceName !== newSpaceName || avatar !== newAvatar || avatarDefaultColor !== newAvatarDefaultColor
+}
+
+export const setRoomAvatar = (roomId: string, avatarUrl: string) => {
+  return chatClient.sendStateEvent(roomId, EventType.RoomAvatar, { url: avatarUrl })
 }
