@@ -11,17 +11,51 @@ This repository contains Google Cloud Functions implementation for the integrati
 
 #### Create Matrix Admin User
 
-Follow the steps in the below Synapse documentation link on how to create your Matrix Admin User.
-- [Synapse Create Admin](https://matrix-org.github.io/synapse/latest/admin_api/register_api.html)
-
-For the first step when fetching the **nonce** make sure that mprocs is running and that you are using the following Chat Server URL:
-
+Please make sure that mprocs is running locally and that you are using the following Chat Server URL:
 ```bash
-  # ${CHAT_SERVER_URL}/_synapse/admin/v1/register
   http://127.0.0.1:8008/_synapse/admin/v1/register
+  # ${CHAT_SERVER_URL}/_synapse/admin/v1/register
 ```
 
-Once we generate the HMAC as described in the documentation, the **nonce** can be used to do the PUT Request to get the admin user name and access token.
+We will be following the steps described in the Synapse documentation on [how to create a Matrix Admin User](https://matrix-org.github.io/synapse/latest/admin_api/register_api.html).
+
+
+1. Get Nonce:
+<sub>Navigate to the following address to get a generated nonce:</sub>
+
+```bash
+GET http://127.0.0.1:8008/_synapse/admin/v1/register
+```
+
+2. Generate HMAC:
+<sub>Run the following code in your terminal:</sub>
+
+```bash
+nonce="nonce_you_just_created"
+username="admin"
+password="admin"
+admin="admin"
+secret="shared_secret_in_passbolt"
+
+printf '%s\0%s\0%s\0%s' "$nonce" "$username" "$password" "$admin" |
+  openssl sha1 -hmac "$secret" |
+  awk '{print $2}'
+```
+
+3. Create Admin user:
+<sub>Finally, make this POST Request to the following URL:</sub>
+
+```bash
+POST http://127.0.0.1:8008/_synapse/admin/v1/register
+{
+   "nonce": "nonce_you_just_created",
+   "username": "admin",
+   "password": "admin",
+   "admin": true,
+   "mac": "hmac_you_just_created"
+  }
+```
+
 
 ## Links
 
