@@ -16,7 +16,7 @@ export const spaceUpdatedHandler = async (messageId: string, payload: SpaceUpdat
   try {
     await logPhase(
       messageId,
-      'spaceUpdatedHandler'
+      'spaceUpdatedHandler: ' + payload.space.slug
     )(async () => {
       const { space: spacePayload } = payload
       const [roomId, sharedData] = Object.entries(await getHoliSpaceRoomsSharedData(spacePayload.id, 'general')).find(

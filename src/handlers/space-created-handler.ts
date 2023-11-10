@@ -18,17 +18,17 @@ export const spaceCreatedHandler = async (messageId: string, payload: SpaceCreat
 
     const parentSpaceRoomId = await logPhase(
       messageId,
-      'spaceCreatedHandler.createSpaceContainer'
+      'spaceCreatedHandler.createSpaceContainer: ' + payload.space.slug
     )(() => createSpaceContainer(spacePayload, [creatorId]))
 
     const generalSpaceRoomId = await logPhase(
       messageId,
-      'spaceCreatedHandler.createSpaceGeneralRoom'
+      'spaceCreatedHandler.createSpaceGeneralRoom: ' + payload.space.slug
     )(() => createSpaceGeneralRoom([creatorId]))
 
     await logPhase(
       messageId,
-      'spaceCreatedHandler.addGeneralRoomToSpaceContainer'
+      'spaceCreatedHandler.addGeneralRoomToSpaceContainer: ' + payload.space.slug
     )(() => addGeneralRoomToSpaceContainer(parentSpaceRoomId, generalSpaceRoomId, spacePayload))
   } catch (error) {
     throw new Error(`Failed to create space ${error}`)
