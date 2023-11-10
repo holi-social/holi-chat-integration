@@ -55,7 +55,7 @@ resource "google_cloudfunctions2_function" "holi-chat-integration" {
   service_config {
     max_instance_count = 1
     min_instance_count = 0
-    available_memory   = "128Mi"
+    available_memory   = "150Mi"
     timeout_seconds    = 60
     environment_variables = {
       ENVIRONMENT      = local.environment_name
