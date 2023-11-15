@@ -5,11 +5,11 @@ import { getMatrixUserId, getRoomIdsForHoliSpace } from './rooms'
 export const inviteUserToSpace = async ({
   user: { identity },
   space: { id: holiSpaceId },
-}: SpaceUserAddedDataPayload) => {
-  const roomsToInvite = await getRoomIdsForHoliSpace(holiSpaceId, 'general')
+}: SpaceUserAddedDataPayload): Promise<Response[]> => {
+  const roomsToInvite = await getRoomIdsForHoliSpace(holiSpaceId)
 
-  return roomsToInvite.map(async (roomId) => {
-    await fetch(`${CHAT_SERVER_URL}/_synapse/admin/v1/join/${roomId}`, {
+  const responses = roomsToInvite.map(async (roomId) => {
+    return await fetch(`${CHAT_SERVER_URL}/_synapse/admin/v1/join/${roomId}`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${CHAT_ADMIN_ACCESS_TOKEN}`,
@@ -19,4 +19,6 @@ export const inviteUserToSpace = async ({
       }),
     })
   })
+
+  return Promise.all(responses)
 }
