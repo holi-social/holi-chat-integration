@@ -13,6 +13,7 @@ import {
 export const spaceUpdatedHandler = async (messageId: string, payload: SpaceUpdatedDataPayload): Promise<void> => {
   console.log('spaceUpdatedHandler Event', messageId, payload)
   await startChatClient()
+  console.log('spaceUpdatedHandler client initialized')
 
   try {
     await logPhase(
