@@ -11,6 +11,7 @@ import {
 
 // Handles the SpaceCreated event from Google Cloud Pub/Sub.
 export const spaceUpdatedHandler = async (messageId: string, payload: SpaceUpdatedDataPayload): Promise<void> => {
+  console.log('spaceUpdatedHandler Event', messageId, payload)
   await startChatClient()
 
   try {
