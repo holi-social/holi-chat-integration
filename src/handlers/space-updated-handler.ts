@@ -11,11 +11,7 @@ import {
 
 // Handles the SpaceCreated event from Google Cloud Pub/Sub.
 export const spaceUpdatedHandler = async (messageId: string, payload: SpaceUpdatedDataPayload): Promise<void> => {
-  console.log('spaceUpdatedHandler Event', messageId, JSON.stringify(payload, null, 2))
   await startChatClient()
-  console.log('spaceUpdatedHandler client initialized')
-
-  console.log('------------- UPDATE - init:', JSON.stringify(payload, null, 4), payload)
 
   try {
     await logPhase(
@@ -28,18 +24,19 @@ export const spaceUpdatedHandler = async (messageId: string, payload: SpaceUpdat
           isSpaceGeneralRoomSharedData(data)
         ) ?? []
 
-      console.log('------------- UPDATE - getHoliSpaceRoomsSharedData:', roomId, JSON.stringify(sharedData, null, 4))
-
-      if (!roomId || !sharedData) return
+      if (!roomId || !sharedData) {
+        console.error(
+          'spaceUpdatedHandler - getHoliSpaceRoomsSharedData roomId or sharedData is undefined processing event:',
+          messageId,
+          JSON.stringify(payload, null, 4)
+        )
+        return
+      }
       if (!isSpaceGeneralRoomSharedData(sharedData)) return
       if (!hasRoomUpdatedValues(sharedData, spacePayload)) return
 
-      console.log('------------- UPDATE - before updating')
-
       await setRoomSharedData(roomId, sharedData.parentSpaceRoomId, spacePayload)
       await setRoomAvatar(roomId, spacePayload.avatar)
-
-      console.log('------------- UPDATE - after updating')
     })
   } catch (error) {
     throw new Error(`Failed to update space with ID '${payload.space.id}': ${error}`)
