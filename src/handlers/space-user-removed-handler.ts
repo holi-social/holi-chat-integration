@@ -1,3 +1,5 @@
+import { startChatClient, stopChatClient } from '../helpers/_chatClient'
+import { kickUserFromSpace } from '../helpers/kickUserFromSpace'
 import { logPhase, logger } from '../logger'
 import { SpaceUserRemovedDataPayload } from '../types'
 
@@ -6,27 +8,17 @@ export const spaceUserRemovedHandler = async (
   messageId: string,
   payload: SpaceUserRemovedDataPayload
 ): Promise<void> => {
-  console.log('++++++++= space_user_removed_handler: SPACE USER REMOVED', messageId, payload)
+  await startChatClient()
 
-  // try {
-  //   const { user, space } = payload
-
-  //   const ocisUser = await logPhase(
-  //     messageId,
-  //     'spaceUserRemovedHandler.findOrCreateOcisUser'
-  //   )(() => findOrCreateOcisUser(user))
-
-  //   const ocisSpace = await logPhase(
-  //     messageId,
-  //     'spaceUserRemovedHandler.findOrCreateOcisSpace'
-  //   )(() => findOrCreateOcisSpace(space))
-
-  //   await logPhase(
-  //     messageId,
-  //     'spaceUserRemovedHandler.removeSpaceUser'
-  //   )(() => removeSpaceUser(ocisSpace.id, ocisUser.onPremisesSamAccountName))
-  //   logger.debug('User removed from space successfully', { ocisUser, ocisSpace })
-  // } catch (error) {
-  //   throw new Error(`Failed to remove user from space ${error}`)
-  // }
+  try {
+    await logPhase(
+      messageId,
+      'spaceUserRemovedHandler.kickUserFromSpace: ' + payload.space.slug + ' - ' + payload.user.id
+    )(() => kickUserFromSpace(payload))
+    logger.debug('User kicked from space successfully', { user: payload.user.id, space: payload.space.id })
+  } catch (error) {
+    throw new Error(`Failed to kick user "${payload.user.id}" from the space "${payload.space.id}": ${error}`)
+  } finally {
+    await stopChatClient()
+  }
 }
