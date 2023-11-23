@@ -12,9 +12,9 @@ export const spaceUserLeftHandler = async (messageId: string, payload: SpaceUser
       messageId,
       'spaceUserLeftHandler.kickUserFromSpace: ' + payload.space.slug + ' - ' + payload.user.id
     )(() => kickUserFromSpace(payload))
-    logger.debug('User removed from space successfully', { user: payload.user.id, space: payload.space.id })
+    logger.debug('User left space successfully', { user: payload.user.id, space: payload.space.id })
   } catch (error) {
-    throw new Error(`Failed to remove user "${payload.user.id}" from space "${payload.space.id}": ${error}`)
+    throw new Error(`Failed user to leave "${payload.user.id}" the space "${payload.space.id}": ${error}`)
   } finally {
     await stopChatClient()
   }
