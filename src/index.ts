@@ -30,9 +30,10 @@ const extractEventDetails = (request) => {
 }
 
 export const receiveEvent = async (request, response): Promise<void> => {
-  logger.debug('Event received', { event: request.body.message })
+  const messageId = request.body.message.messageId
+  logger.debug('[' + messageId + '] Event received: ' + JSON.stringify(request.body.message))
 
-  const { eventType, event, messageId } = extractEventDetails(request)
+  const { eventType, event } = extractEventDetails(request)
 
   await processEvent(messageId, eventType, event, response)
 }
