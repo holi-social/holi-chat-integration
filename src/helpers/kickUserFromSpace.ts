@@ -1,5 +1,5 @@
 import { SpaceUserAddedDataPayload } from '../types'
-import { chatClient } from './_chatClient'
+import { getChatClient } from './_chatClient'
 import { getMatrixUserId, getRoomIdsForHoliSpace } from './rooms'
 
 export const kickUserFromSpace = async ({
@@ -11,6 +11,7 @@ export const kickUserFromSpace = async ({
   let count = 12
 
   const roomsDeletedPromises = roomsIdsToLeave.map(async function kickUser(roomId) {
+    const chatClient = await getChatClient()
     const room = chatClient.getRoom(roomId)
     const roomMember = room?.getMember(userId)
 

@@ -1,10 +1,16 @@
 import { CHAT_ADMIN_ACCESS_TOKEN, CHAT_ADMIN_USERNAME, CHAT_SERVER_URL } from '../constants'
 import { ClientEvent, MatrixClient, MatrixScheduler, SyncState, createClient } from 'matrix-js-sdk'
+import { logger } from '../logger'
 
-export let chatClient: MatrixClient
+export const getChatClient = async () => {
+  return await chatClientPromise
+}
 
-export const startChatClient = async () => {
-  chatClient = createClient({
+const startChatClient = async () => {
+  logger.debug(
+    'Starting Matrix Chat Client ' + CHAT_SERVER_URL + ', ' + CHAT_ADMIN_USERNAME + ', ' + CHAT_ADMIN_ACCESS_TOKEN
+  )
+  const chatClient = createClient({
     baseUrl: CHAT_SERVER_URL,
     userId: CHAT_ADMIN_USERNAME,
     accessToken: CHAT_ADMIN_ACCESS_TOKEN,
@@ -12,22 +18,18 @@ export const startChatClient = async () => {
     scheduler: new MatrixScheduler(),
   })
 
+  logger.debug('Start Client')
   await chatClient.startClient()
 
   return await new Promise<MatrixClient>((resolve) => {
     chatClient.on(ClientEvent.Sync, (state) => {
       console.debug('~~'.repeat(10) + ' CHAT CLIENT STATE', state)
       if (state === SyncState.Prepared) {
+        logger.debug('Matrix Chat Client PREPARED')
         resolve(chatClient)
       }
     })
   })
 }
 
-export const stopChatClient = async () => {
-  // TODO: check if we need this code except chatClient.stopClient()
-  await chatClient.store.deleteAllData()
-  await chatClient.store.destroy()
-  chatClient.stopClient()
-  await chatClient.clearStores()
-}
+const chatClientPromise: Promise<MatrixClient> = startChatClient()
