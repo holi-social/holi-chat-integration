@@ -11,7 +11,7 @@ export const spaceUserRemovedHandler = async (
     await logPhase(
       messageId,
       'spaceUserRemovedHandler.kickUserFromSpace: ' + payload.space.slug + ' - ' + payload.user.id
-    )(() => kickUserFromSpace(payload))
+    )(() => kickUserFromSpace(messageId, payload))
     logger.debug('[' + messageId + '] User kicked from space successfully: ' + payload.space.slug + ' - ' + payload.user.id)
   } catch (error) {
     throw new Error(`Failed to kick user "${payload.user.id}" from the space "${payload.space.id}": ${error}`)

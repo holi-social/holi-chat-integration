@@ -8,7 +8,7 @@ export const spaceUserLeftHandler = async (messageId: string, payload: SpaceUser
     await logPhase(
       messageId,
       'spaceUserLeftHandler.kickUserFromSpace: ' + payload.space.slug + ' - ' + payload.user.id
-    )(() => kickUserFromSpace(payload))
+    )(() => kickUserFromSpace(messageId, payload))
     logger.debug('[' + messageId + '] User left space successfully: ' + payload.space.slug + ' - ' + payload.user.id)
   } catch (error) {
     throw new Error(`Failed user to leave "${payload.user.id}" the space "${payload.space.id}": ${error}`)
