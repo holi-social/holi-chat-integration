@@ -9,8 +9,12 @@ const RETRY_DELAY = 5000
 export const kickUserFromSpace = async (
   messageId,
   { user: { identity }, space: { id: holiSpaceId } }: SpaceUserAddedDataPayload
-): Promise<string[]> => {
+) => {
   const roomsIdsToLeave = await getRoomIdsForHoliSpace(holiSpaceId)
+  if (roomsIdsToLeave.length == 0) {
+    logger.debug('[' + messageId + '] kickUserFromSpace: No rooms found for space: ' + holiSpaceId)
+    return
+  }
   const userId = getMatrixUserId(identity)
 
   const roomsDeletedPromises = roomsIdsToLeave.map((roomId) => {
@@ -46,5 +50,5 @@ export const kickUserFromSpace = async (
     return kickUser(roomId, 0)
   })
 
-  return Promise.all(roomsDeletedPromises)
+  await Promise.all(roomsDeletedPromises)
 }
