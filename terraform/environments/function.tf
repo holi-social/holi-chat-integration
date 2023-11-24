@@ -53,10 +53,12 @@ resource "google_cloudfunctions2_function" "holi-chat-integration" {
   }
 
   service_config {
-    max_instance_count = 1
-    min_instance_count = local.environment_name == "production" ? 1 : 0
-    available_memory   = "200Mi"
-    timeout_seconds    = 60
+    max_instance_count               = 1
+    min_instance_count               = local.environment_name == "production" ? 1 : 0
+    available_memory                 = "200Mi"
+    timeout_seconds                  = 60
+    max_instance_request_concurrency = 50
+
     environment_variables = {
       ENVIRONMENT      = local.environment_name
       CHAT_OIDC_ISSUER = local.environment_name == "production" ? "https://auth.holi.social" : "https://dev-auth.holi.social"
