@@ -3,5 +3,8 @@
   "singleQuote": true,
   "tabWidth": 2,
   "useTabs": false,
-  "printWidth": 120
+  "printWidth": 120,
+  "importOrder": ["<THIRD_PARTY_MODULES>", "^@react-navigation/(.*)$", "^@holi/(.*)$", "^@holi-apps/(.*)$", "^[./]"],
+  "importOrderSeparation": true,
+  "importOrderSortSpecifiers": true
 }
