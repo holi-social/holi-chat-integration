@@ -1,6 +1,10 @@
+import { logger } from '../logger'
 import { SpaceUserAddedDataPayload } from '../types'
 import { getChatClient } from './_chatClient'
 import { getMatrixUserId, getRoomIdsForHoliSpace } from './rooms'
+
+const NUMBER_OF_RETRIES = 12
+const RETRY_DELAY = 5000
 
 export const kickUserFromSpace = async ({
   user: { identity },
@@ -8,27 +12,28 @@ export const kickUserFromSpace = async ({
 }: SpaceUserAddedDataPayload): Promise<string[]> => {
   const roomsIdsToLeave = await getRoomIdsForHoliSpace(holiSpaceId)
   const userId = getMatrixUserId(identity)
-  let count = 12
 
-  const roomsDeletedPromises = roomsIdsToLeave.map(async function kickUser(roomId) {
-    if (count <= 0) return
-    const chatClient = await getChatClient()
-    const room = chatClient.getRoom(roomId)
-    const roomMember = room?.getMember(userId)
+  const roomsDeletedPromises = roomsIdsToLeave.map((roomId) => {
+    async function kickUser(roomId, count) {
+      logger.debug('kickUserFromSpace: ' + holiSpaceId + ' - ' + roomId + ' - ' + identity)
+      const chatClient = await getChatClient()
+      const room = chatClient.getRoom(roomId)
+      const roomMember = room?.getMember(userId)
+      if (!roomMember) {
+        count++
+        if (count > NUMBER_OF_RETRIES) {
+          logger.debug('kickUserFromSpace: User ' + identity + ' not found. Giving up.')
+          return
+        }
+        // try 12 times every 5000 if user not found
+        logger.debug('kickUserFromSpace: User ' + identity + ' not found. Retry ' + count + ' in ' + RETRY_DELAY + 'ms')
+        await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY))
+        return await kickUser(roomId, count)
+      }
 
-    if (!roomMember) {
-      // try 12 times every 5000 if user not found
-      await new Promise((resolve) =>
-        setTimeout(() => {
-          count--
-          resolve(true)
-        }, 5000)
-      )
-      return await kickUser(roomId)
+      await chatClient.kick(roomId, userId)
     }
-
-    await chatClient.kick(roomId, userId)
-    count = 0 // stop retries
+    return kickUser(roomId, 0)
   })
 
   return Promise.all(roomsDeletedPromises)
