@@ -34,6 +34,10 @@ export const receiveEvent = async (request, response): Promise<void> => {
 
   const { eventType, event, messageId } = extractEventDetails(request)
 
+  await processEvent(messageId, eventType, event, response)
+}
+
+export const processEvent = async (messageId, eventType, event, response) => {
   try {
     switch (eventType) {
       case EventType.SPACE_CREATED:

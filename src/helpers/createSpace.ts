@@ -1,12 +1,13 @@
 import { Preset, Visibility, EventType, RoomType } from 'matrix-js-sdk'
 
-import { chatClient } from './_chatClient'
+import { getChatClient } from './_chatClient'
 import { CHAT_SERVER_URL } from '../constants'
 import { SpacePayload } from '../types'
 import { ChatRoomEvent } from './type'
 import { setRoomSharedData } from './rooms'
 
 export const createSpaceContainer = async ({ id, name }: SpacePayload, inviteUsers: string[]): Promise<string> => {
+  const chatClient = await getChatClient()
   const { room_id: parentSpaceRoomId } = await chatClient.createRoom({
     name: name,
     preset: Preset.PrivateChat,
@@ -25,6 +26,7 @@ export const createSpaceContainer = async ({ id, name }: SpacePayload, inviteUse
 
 // Shares the new space with the user with the "admin" role
 export const createSpaceGeneralRoom = async (inviteUsers: string[]): Promise<string> => {
+  const chatClient = await getChatClient()
   const { room_id: generalSpaceRoomId } = await chatClient.createRoom({
     is_direct: false,
     preset: Preset.PrivateChat,
@@ -45,6 +47,7 @@ export const addGeneralRoomToSpaceContainer = async (
   await setRoomSharedData(generalSpaceRoomId, parentSpaceRoomId, spacePayload)
 
   // 2. add general room into space room
+  const chatClient = await getChatClient()
   await chatClient.sendStateEvent(
     parentSpaceRoomId,
     EventType.SpaceChild,

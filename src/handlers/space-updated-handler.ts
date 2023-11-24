@@ -1,6 +1,5 @@
 import { logPhase } from '../logger'
 import { SpaceUpdatedDataPayload } from '../types'
-import { startChatClient, stopChatClient } from '../helpers/_chatClient'
 import {
   getHoliSpaceRoomsSharedData,
   hasRoomUpdatedValues,
@@ -11,8 +10,6 @@ import {
 
 // Handles the SpaceCreated event from Google Cloud Pub/Sub.
 export const spaceUpdatedHandler = async (messageId: string, payload: SpaceUpdatedDataPayload): Promise<void> => {
-  await startChatClient()
-
   try {
     await logPhase(
       messageId,
@@ -40,7 +37,5 @@ export const spaceUpdatedHandler = async (messageId: string, payload: SpaceUpdat
     })
   } catch (error) {
     throw new Error(`Failed to update space with ID '${payload.space.id}': ${error}`)
-  } finally {
-    await stopChatClient()
   }
 }

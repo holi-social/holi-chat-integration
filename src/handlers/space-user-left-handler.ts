@@ -1,12 +1,9 @@
-import { startChatClient, stopChatClient } from '../helpers/_chatClient'
 import { kickUserFromSpace } from '../helpers/kickUserFromSpace'
 import { logPhase, logger } from '../logger'
 import { SpaceUserLeftDataPayload } from '../types'
 
 //Handles the SpaceUserLeft event from Google Cloud Pub/Sub.
 export const spaceUserLeftHandler = async (messageId: string, payload: SpaceUserLeftDataPayload): Promise<void> => {
-  await startChatClient()
-
   try {
     await logPhase(
       messageId,
@@ -15,7 +12,5 @@ export const spaceUserLeftHandler = async (messageId: string, payload: SpaceUser
     logger.debug('User left space successfully', { user: payload.user.id, space: payload.space.id })
   } catch (error) {
     throw new Error(`Failed user to leave "${payload.user.id}" the space "${payload.space.id}": ${error}`)
-  } finally {
-    await stopChatClient()
   }
 }
