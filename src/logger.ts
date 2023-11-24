@@ -8,8 +8,15 @@ export const logger = createLogger({
 export const logPhase = (messageId: string, phaseName: string) => (fn: () => Promise<any>) => {
   const before = Date.now()
   logger.debug('[' + messageId + '] Starting ' + phaseName)
-  return fn().finally(() => {
-    const duration = Date.now() - before
-    logger.debug('[' + messageId + '] Completed ' + phaseName + ' after ' + duration + ' ms')
-  })
+  return fn()
+    .then((result) => {
+      const duration = Date.now() - before
+      logger.debug('[' + messageId + '] Completed ' + phaseName + ' after ' + duration + ' ms successfully')
+      return result
+    })
+    .catch((error) => {
+      const duration = Date.now() - before
+      logger.debug('[' + messageId + '] Completed ' + phaseName + ' after ' + duration + ' ms with ERROR: ' + error)
+      throw error
+    })
 }
