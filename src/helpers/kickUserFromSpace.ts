@@ -11,11 +11,11 @@ export const kickUserFromSpace = async ({
   let count = 12
 
   const roomsDeletedPromises = roomsIdsToLeave.map(async function kickUser(roomId) {
+    if (count <= 0) return
     const chatClient = await getChatClient()
     const room = chatClient.getRoom(roomId)
     const roomMember = room?.getMember(userId)
 
-    if (count <= 0) return
     if (!roomMember) {
       // try 12 times every 5000 if user not found
       await new Promise((resolve) =>
@@ -28,6 +28,7 @@ export const kickUserFromSpace = async ({
     }
 
     await chatClient.kick(roomId, userId)
+    count = 0 // stop retries
   })
 
   return Promise.all(roomsDeletedPromises)

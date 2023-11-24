@@ -138,7 +138,10 @@ export const awaitDeletionComplete = async (roomId, delete_id) => {
   try {
     console.debug('-*'.repeat(10) + ' ROOM IS DELETING', roomId)
     const status = await getDeleteStatus(delete_id)
-    if (status !== 'complete') throw new Error('Deletion is not completed')
+    if (status !== 'complete') {
+      await new Promise((resolve) => setTimeout(resolve, 5000))
+      return awaitDeletionComplete(roomId, delete_id)
+    }
   } catch (error) {
     await new Promise((resolve) => setTimeout(resolve, 5000))
     return awaitDeletionComplete(roomId, delete_id)
