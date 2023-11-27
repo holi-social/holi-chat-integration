@@ -1,5 +1,5 @@
 import { CHAT_SERVER_NAME } from '../constants'
-import { fetchWithAuth, fetchWithAuthX } from '../utils'
+import { authedFetchJson, authedFetchResponse } from '../utils'
 
 export enum EventType {
   RoomAvatar = 'm.room.avatar',
@@ -73,28 +73,28 @@ export const isSpaceGeneralRoomSharedData = (data: SpaceSharedData): data is Spa
 export const getMatrixUserId = (holiIdentity: string) => `@${holiIdentity}:${CHAT_SERVER_NAME}`
 
 export const sendStateEvent = async (roomId: string, eventType: string, content: object, stateKey = '') => {
-  return await fetchWithAuth(`/_matrix/client/v3/rooms/${roomId}/state/${eventType}/${stateKey}`, 'PUT', content)
+  return await authedFetchJson(`/_matrix/client/v3/rooms/${roomId}/state/${eventType}/${stateKey}`, 'PUT', content)
 }
 
 export const createRoom = async (content: object): Promise<{ room_id: string }> => {
-  return await fetchWithAuth('/_matrix/client/v3/createRoom', 'POST', content)
+  return await authedFetchJson('/_matrix/client/v3/createRoom', 'POST', content)
 }
 
 export const kick = async (roomId: string, userId: string, reason?: string) => {
-  return await fetchWithAuthX(`/_matrix/client/v3/rooms/${roomId}/kick`, 'POST', {
+  return await authedFetchResponse(`/_matrix/client/v3/rooms/${roomId}/kick`, 'POST', {
     user_id: userId,
     reason: reason,
   })
 }
 
 export const joinRoom = async (roomId: string, userId: string) => {
-  return await fetchWithAuth(`/_synapse/admin/v1/join/${roomId}`, 'POST', {
+  return await authedFetchJson(`/_synapse/admin/v1/join/${roomId}`, 'POST', {
     user_id: getMatrixUserId(userId),
   })
 }
 
 export const getRoomSharedData = async (roomId: string) => {
-  const { state }: { state: (RoomSharedDataEvent | StateEvent)[] } = await fetchWithAuth(
+  const { state }: { state: (RoomSharedDataEvent | StateEvent)[] } = await authedFetchJson(
     `/_synapse/admin/v1/rooms/${roomId}/state`,
     'GET'
   )
@@ -102,7 +102,7 @@ export const getRoomSharedData = async (roomId: string) => {
 }
 
 export const initRoomDeletion = async (roomId: string) => {
-  const { delete_id }: { delete_id: string } = await fetchWithAuth(`/_synapse/admin/v2/rooms/${roomId}`, 'DELETE', {
+  const { delete_id }: { delete_id: string } = await authedFetchJson(`/_synapse/admin/v2/rooms/${roomId}`, 'DELETE', {
     purge: true,
     block: true,
   })
@@ -110,12 +110,12 @@ export const initRoomDeletion = async (roomId: string) => {
 }
 
 export const getDeleteStatus = async (deleteId: string) => {
-  const { status }: DeleteStatus = await fetchWithAuth(`/_synapse/admin/v2/rooms/delete_status/${deleteId}`, 'GET')
+  const { status }: DeleteStatus = await authedFetchJson(`/_synapse/admin/v2/rooms/delete_status/${deleteId}`, 'GET')
   return status
 }
 
 export const getRooms = async (searchTerm?: string) => {
-  const { rooms } = await fetchWithAuth(
+  const { rooms } = await authedFetchJson(
     `/_synapse/admin/v1/rooms${searchTerm ? `?search_term=${searchTerm}` : ''}`,
     'GET'
   )

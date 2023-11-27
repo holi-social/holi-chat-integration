@@ -13,7 +13,7 @@ export const sanitizeSpaceName = (name: string): string => {
   return sanitized.replace(/\s+/g, ' ')
 }
 
-export const fetchWithAuthX = async (url: string, method: string, body?: object) => {
+export const authedFetchResponse = async (url: string, method: string, body?: object) => {
   const init = {
     method: method,
     headers: { Authorization: `Bearer ${CHAT_ADMIN_ACCESS_TOKEN}` },
@@ -25,8 +25,8 @@ export const fetchWithAuthX = async (url: string, method: string, body?: object)
   return { status: response.status, json: await response.json() }
 }
 
-export const fetchWithAuth = async (url: string, method: string, body?: object) => {
-  const response = await fetchWithAuthX(url, method, body)
+export const authedFetchJson = async (url: string, method: string, body?: object) => {
+  const response = await authedFetchResponse(url, method, body)
   if (response.status >= 300) {
     throw new Error(`Matrix request failed with status ${response.status}: ${response.json}`)
   }
