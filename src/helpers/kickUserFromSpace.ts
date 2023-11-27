@@ -1,7 +1,7 @@
 import { logger } from '../logger'
 import { SpaceUserAddedDataPayload } from '../types'
-import { kick } from './matrixClient'
-import { getMatrixUserId, getRoomIdsForHoliSpace } from './rooms'
+import { getMatrixUserId, kick } from './matrixClient'
+import { getRoomIdsForHoliSpace } from './rooms'
 
 const NUMBER_OF_RETRIES = 12
 const RETRY_DELAY = 5000

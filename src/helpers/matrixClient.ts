@@ -1,3 +1,4 @@
+import { CHAT_SERVER_NAME } from '../constants'
 import { fetchWithAuth, fetchWithAuthX } from '../utils'
 
 export enum EventType {
@@ -23,6 +24,54 @@ export enum RoomType {
   ElementVideo = 'io.element.video',
 }
 
+interface StateEvent {
+  type: string
+}
+
+export enum ChatRoomEvent {
+  SharedData = 'holi.room.shared.data',
+  SpaceDeleted = 'holi.room.space.deleted',
+}
+
+interface SpaceRoomSharedData {
+  holiSpaceId: string
+}
+
+export interface SpaceGeneralRoomSharedData extends SpaceRoomSharedData {
+  parentSpaceRoomId: string
+  spaceName: string
+  avatar: string
+  avatarDefaultColor: string
+}
+
+export type SpaceSharedData = SpaceRoomSharedData | SpaceGeneralRoomSharedData
+
+interface RoomSharedDataEvent {
+  type: ChatRoomEvent.SharedData
+  room_id: string
+  sender: string
+  content: SpaceSharedData
+  state_key: string
+  origin_server_ts: number
+  unsigned: any
+  event_id: string
+  user_id: string
+  age: number
+}
+
+interface DeleteStatus {
+  status: 'active' | 'shutting_down' | 'purging' | 'complete' | 'failed'
+}
+
+export const isRoomSharedDataEvent = (event: RoomSharedDataEvent | StateEvent): event is RoomSharedDataEvent =>
+  event.type === ChatRoomEvent.SharedData
+
+export const isSpaceGeneralRoomSharedData = (data: SpaceSharedData): data is SpaceGeneralRoomSharedData => {
+  return 'parentSpaceRoomId' in data && 'spaceName' in data
+}
+
+export const getMatrixUserId = (holiIdentity: string) => `@${holiIdentity}:${CHAT_SERVER_NAME}`
+
 export const sendStateEvent = async (roomId: string, eventType: string, content: object, stateKey = '') => {
   return await fetchWithAuth(`/_matrix/client/v3/rooms/${roomId}/state/${eventType}/${stateKey}`, 'PUT', content)
 }
@@ -36,4 +85,39 @@ export const kick = async (roomId: string, userId: string, reason?: string) => {
     user_id: userId,
     reason: reason,
   })
+}
+
+export const joinRoom = async (roomId: string, userId: string) => {
+  return await fetchWithAuth(`/_synapse/admin/v1/join/${roomId}`, 'POST', {
+    user_id: getMatrixUserId(userId),
+  })
+}
+
+export const getRoomSharedData = async (roomId: string) => {
+  const { state }: { state: (RoomSharedDataEvent | StateEvent)[] } = await fetchWithAuth(
+    `/_synapse/admin/v1/rooms/${roomId}/state`,
+    'GET'
+  )
+  return state
+}
+
+export const initRoomDeletion = async (roomId: string) => {
+  const { delete_id }: { delete_id: string } = await fetchWithAuth(`/_synapse/admin/v2/rooms/${roomId}`, 'DELETE', {
+    purge: true,
+    block: true,
+  })
+  return delete_id
+}
+
+export const getDeleteStatus = async (deleteId: string) => {
+  const { status }: DeleteStatus = await fetchWithAuth(`/_synapse/admin/v2/rooms/delete_status/${deleteId}`, 'GET')
+  return status
+}
+
+export const getRooms = async (searchTerm?: string) => {
+  const { rooms } = await fetchWithAuth(
+    `/_synapse/admin/v1/rooms${searchTerm ? `?search_term=${searchTerm}` : ''}`,
+    'GET'
+  )
+  return rooms
 }

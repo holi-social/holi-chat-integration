@@ -1,63 +1,15 @@
-import { CHAT_SERVER_NAME } from '../constants'
 import { SpacePayload } from '../types'
-import { EventType, sendStateEvent } from './matrixClient'
-import { ChatRoomEvent } from './type'
-import { fetchWithAuth } from '../utils'
-
-export const getMatrixUserId = (holiIdentity: string) => `@${holiIdentity}:${CHAT_SERVER_NAME}`
-
-export const getRooms = async (searchTerm?: string) => {
-  const { rooms } = await fetchWithAuth(
-    `/_synapse/admin/v1/rooms${searchTerm ? `?search_term=${searchTerm}` : ''}`,
-    'GET'
-  )
-  return rooms
-}
-
-export const getRoomSharedData = async (roomId: string) => {
-  const { state }: { state: (RoomSharedDataEvent | StateEvent)[] } = await fetchWithAuth(
-    `/_synapse/admin/v1/rooms/${roomId}/state`,
-    'GET'
-  )
-  return state
-}
-
-interface StateEvent {
-  type: string
-}
-
-interface RoomSharedDataEvent {
-  type: ChatRoomEvent.SharedData
-  room_id: string
-  sender: string
-  content: SpaceSharedData
-  state_key: string
-  origin_server_ts: number
-  unsigned: any
-  event_id: string
-  user_id: string
-  age: number
-}
-
-const isRoomSharedDataEvent = (event: RoomSharedDataEvent | StateEvent): event is RoomSharedDataEvent =>
-  event.type === ChatRoomEvent.SharedData
-
-export const isSpaceGeneralRoomSharedData = (data: SpaceSharedData): data is SpaceGeneralRoomSharedData => {
-  return 'parentSpaceRoomId' in data && 'spaceName' in data
-}
-
-interface SpaceRoomSharedData {
-  holiSpaceId: string
-}
-
-interface SpaceGeneralRoomSharedData extends SpaceRoomSharedData {
-  parentSpaceRoomId: string
-  spaceName: string
-  avatar: string
-  avatarDefaultColor: string
-}
-
-export type SpaceSharedData = SpaceRoomSharedData | SpaceGeneralRoomSharedData
+import {
+  ChatRoomEvent,
+  EventType,
+  SpaceGeneralRoomSharedData,
+  SpaceSharedData,
+  getDeleteStatus,
+  getRoomSharedData,
+  getRooms,
+  isRoomSharedDataEvent,
+  sendStateEvent,
+} from './matrixClient'
 
 export const getHoliSpaceRoomsSharedData = async (
   holiSpaceId: string,
@@ -101,18 +53,7 @@ export const setRoomSharedData = async (
   })
 }
 
-/**
- * Delete room helpers
- */
-interface DeleteStatus {
-  status: 'active' | 'shutting_down' | 'purging' | 'complete' | 'failed'
-}
-
-export const awaitDeletionComplete = async (roomId, delete_id) => {
-  const getDeleteStatus = async (deleteId: string) => {
-    const { status }: DeleteStatus = await fetchWithAuth(`/_synapse/admin/v2/rooms/delete_status/${deleteId}`, 'GET')
-    return status
-  }
+export const awaitDeletionComplete = async (roomId: string, delete_id: string) => {
   try {
     console.debug('-*'.repeat(10) + ' ROOM IS DELETING', roomId)
     const status = await getDeleteStatus(delete_id)
@@ -124,14 +65,6 @@ export const awaitDeletionComplete = async (roomId, delete_id) => {
     await new Promise((resolve) => setTimeout(resolve, 5000))
     return awaitDeletionComplete(roomId, delete_id)
   }
-}
-
-export const initRoomDeletion = async (roomId: string) => {
-  const { delete_id }: { delete_id: string } = await fetchWithAuth(`/_synapse/admin/v2/rooms/${roomId}`, 'DELETE', {
-    purge: true,
-    block: true,
-  })
-  return delete_id
 }
 
 /**

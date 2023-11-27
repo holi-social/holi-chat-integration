@@ -1,6 +1,6 @@
 import { SpaceUserAddedDataPayload } from '../types'
-import { fetchWithAuth } from '../utils'
-import { getMatrixUserId, getRoomIdsForHoliSpace } from './rooms'
+import { joinRoom } from './matrixClient'
+import { getRoomIdsForHoliSpace } from './rooms'
 
 export const inviteUserToSpace = async ({
   user: { identity },
@@ -9,9 +9,7 @@ export const inviteUserToSpace = async ({
   const roomsToInvite = await getRoomIdsForHoliSpace(holiSpaceId)
 
   const responses = roomsToInvite.map(async (roomId) => {
-    return await fetchWithAuth(`/_synapse/admin/v1/join/${roomId}`, 'POST', {
-      user_id: getMatrixUserId(identity),
-    })
+    return await joinRoom(roomId, identity)
   })
 
   return Promise.all(responses)

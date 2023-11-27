@@ -1,8 +1,7 @@
 import { CHAT_SERVER_URL } from '../constants'
 import { SpacePayload } from '../types'
-import { ChatRoomEvent } from './type'
 import { setRoomSharedData } from './rooms'
-import { EventType, Preset, RoomType, Visibility, createRoom, sendStateEvent } from './matrixClient'
+import { ChatRoomEvent, EventType, Preset, RoomType, Visibility, createRoom, sendStateEvent } from './matrixClient'
 
 export const createSpaceContainer = async ({ id, name }: SpacePayload, inviteUsers: string[]): Promise<string> => {
   const { room_id: parentSpaceRoomId } = await createRoom({
