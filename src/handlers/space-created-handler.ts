@@ -1,7 +1,8 @@
 import { logPhase } from '../logger'
 import { SpaceCreatedDataPayload } from '../types'
 import { addGeneralRoomToSpaceContainer, createSpaceContainer, createSpaceGeneralRoom } from '../helpers/createSpace'
-import { getMatrixUserId, getRoomIdsForHoliSpace } from '../helpers/rooms'
+import { getRoomIdsForHoliSpace } from '../helpers/rooms'
+import { getMatrixUserId } from '../helpers/matrixClient'
 
 // Handles the SpaceCreated event from Google Cloud Pub/Sub.
 export const spaceCreatedHandler = async (messageId: string, payload: SpaceCreatedDataPayload): Promise<void> => {
