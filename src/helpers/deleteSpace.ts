@@ -1,5 +1,6 @@
 import { SpacePayload } from '../types'
-import { awaitDeletionComplete, getRoomIdsForHoliSpace, initRoomDeletion } from './rooms'
+import { initRoomDeletion } from './matrixClient'
+import { awaitDeletionComplete, getRoomIdsForHoliSpace } from './rooms'
 
 export const deleteSpaceRoom = async ({ id }: SpacePayload) => {
   const roomIdsToDelete = await getRoomIdsForHoliSpace(id)

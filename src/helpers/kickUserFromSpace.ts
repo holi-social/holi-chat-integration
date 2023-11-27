@@ -1,7 +1,7 @@
 import { logger } from '../logger'
 import { SpaceUserAddedDataPayload } from '../types'
-import { getChatClient } from './_chatClient'
-import { getMatrixUserId, getRoomIdsForHoliSpace } from './rooms'
+import { getMatrixUserId, kick } from './matrixClient'
+import { getRoomIdsForHoliSpace } from './rooms'
 
 const NUMBER_OF_RETRIES = 12
 const RETRY_DELAY = 5000
@@ -20,10 +20,8 @@ export const kickUserFromSpace = async (
   const roomsDeletedPromises = roomsIdsToLeave.map((roomId) => {
     async function kickUser(roomId, count) {
       logger.debug('[' + messageId + '] kickUserFromSpace: ' + holiSpaceId + ' - ' + roomId + ' - ' + identity)
-      const chatClient = await getChatClient()
-      const room = chatClient.getRoom(roomId)
-      const roomMember = room?.getMember(userId)
-      if (!roomMember) {
+      const resp = await kick(roomId, userId)
+      if (resp.status == 403 && resp.json.errcode == 'M_FORBIDDEN') {
         count++
         if (count > NUMBER_OF_RETRIES) {
           logger.debug('[' + messageId + '] kickUserFromSpace: User ' + identity + ' not found. Giving up.')
@@ -44,8 +42,6 @@ export const kickUserFromSpace = async (
         await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY))
         return await kickUser(roomId, count)
       }
-
-      await chatClient.kick(roomId, userId)
     }
     return kickUser(roomId, 0)
   })

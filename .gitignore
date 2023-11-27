@@ -1,12 +1,14 @@
+.DS_Store
 .idea/
 .vscode/
-node_modules/
+.fleet
 build/
 tmp/
 temp/
 node_modules
-terraform/.holi-terraform.key
+.holi-terraform.key
 dist
 .envrc.local
-coverage/
+coverage
 *.zip
+yarn-error.log
