@@ -62,7 +62,6 @@ resource "google_cloudfunctions2_function" "holi-chat-integration" {
 
     environment_variables = {
       ENVIRONMENT      = local.environment_name
-      CHAT_OIDC_ISSUER = local.environment_name == "production" ? "https://auth.holi.social" : "https://dev-auth.holi.social"
       CHAT_SERVER_URL  = local.environment_name == "production" ? "https://chat.holi.social" : "https://development-chat.holi.social"
       CHAT_SERVER_NAME = local.environment_name == "production" ? "chat.holi.social" : "development-chat.holi.social"
     }

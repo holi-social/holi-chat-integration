@@ -1,9 +1,6 @@
 # The environment where the application is running, e.g. 'local', 'staging', 'production'.
 export ENVIRONMENT=local
 
-# OIDC issuer for the chat instance (i.e. Ory)
-export CHAT_OIDC_ISSUER=https://dev-auth.holi.social
-
 # Chat environment variables
 export CHAT_SERVER_URL="http://192.168.180.44:8008"
 export CHAT_SERVER_NAME="local.chat.holi.social"

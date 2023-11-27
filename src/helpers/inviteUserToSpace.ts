@@ -1,5 +1,5 @@
-import { CHAT_ADMIN_ACCESS_TOKEN, CHAT_SERVER_URL } from '../constants'
 import { SpaceUserAddedDataPayload } from '../types'
+import { fetchWithAuth } from '../utils'
 import { getMatrixUserId, getRoomIdsForHoliSpace } from './rooms'
 
 export const inviteUserToSpace = async ({
@@ -9,14 +9,8 @@ export const inviteUserToSpace = async ({
   const roomsToInvite = await getRoomIdsForHoliSpace(holiSpaceId)
 
   const responses = roomsToInvite.map(async (roomId) => {
-    return await fetch(`${CHAT_SERVER_URL}/_synapse/admin/v1/join/${roomId}`, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${CHAT_ADMIN_ACCESS_TOKEN}`,
-      },
-      body: JSON.stringify({
-        user_id: getMatrixUserId(identity),
-      }),
+    return await fetchWithAuth(`/_synapse/admin/v1/join/${roomId}`, 'POST', {
+      user_id: getMatrixUserId(identity),
     })
   })
 

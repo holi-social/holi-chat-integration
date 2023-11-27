@@ -1,37 +1,24 @@
-import { EventType } from 'matrix-js-sdk'
-import { CHAT_ADMIN_ACCESS_TOKEN, CHAT_SERVER_NAME, CHAT_SERVER_URL } from '../constants'
+import { CHAT_SERVER_NAME } from '../constants'
 import { SpacePayload } from '../types'
-import { getChatClient } from './_chatClient'
+import { EventType, sendStateEvent } from './matrixClient'
 import { ChatRoomEvent } from './type'
+import { fetchWithAuth } from '../utils'
 
 export const getMatrixUserId = (holiIdentity: string) => `@${holiIdentity}:${CHAT_SERVER_NAME}`
 
 export const getRooms = async (searchTerm?: string) => {
-  const resp = await fetch(
-    `${CHAT_SERVER_URL}/_synapse/admin/v1/rooms${searchTerm ? `?search_term=${searchTerm}` : ''}`,
-    {
-      method: 'GET',
-      headers: {
-        Authorization: `Bearer ${CHAT_ADMIN_ACCESS_TOKEN}`,
-      },
-    }
+  const { rooms } = await fetchWithAuth(
+    `/_synapse/admin/v1/rooms${searchTerm ? `?search_term=${searchTerm}` : ''}`,
+    'GET'
   )
-
-  const { rooms } = await resp.json()
-
   return rooms
 }
 
 export const getRoomSharedData = async (roomId: string) => {
-  const resp = await fetch(`${CHAT_SERVER_URL}/_synapse/admin/v1/rooms/${roomId}/state`, {
-    method: 'GET',
-    headers: {
-      Authorization: `Bearer ${CHAT_ADMIN_ACCESS_TOKEN}`,
-    },
-  })
-
-  const { state }: { state: (RoomSharedDataEvent | StateEvent)[] } = await resp.json()
-
+  const { state }: { state: (RoomSharedDataEvent | StateEvent)[] } = await fetchWithAuth(
+    `/_synapse/admin/v1/rooms/${roomId}/state`,
+    'GET'
+  )
   return state
 }
 
@@ -106,8 +93,7 @@ export const setRoomSharedData = async (
   parentSpaceRoomId: string,
   { id, name, avatarDefaultColor }: SpacePayload
 ) => {
-  const chatClient = await getChatClient()
-  await chatClient.sendStateEvent(roomId, ChatRoomEvent.SharedData, {
+  await sendStateEvent(roomId, ChatRoomEvent.SharedData, {
     holiSpaceId: id,
     spaceName: name,
     avatarDefaultColor,
@@ -124,15 +110,7 @@ interface DeleteStatus {
 
 export const awaitDeletionComplete = async (roomId, delete_id) => {
   const getDeleteStatus = async (deleteId: string) => {
-    const resp = await fetch(`${CHAT_SERVER_URL}/_synapse/admin/v2/rooms/delete_status/${deleteId}`, {
-      method: 'GET',
-      headers: {
-        Authorization: `Bearer ${CHAT_ADMIN_ACCESS_TOKEN}`,
-      },
-    })
-
-    const { status }: DeleteStatus = await resp.json()
-
+    const { status }: DeleteStatus = await fetchWithAuth(`/_synapse/admin/v2/rooms/delete_status/${deleteId}`, 'GET')
     return status
   }
   try {
@@ -149,19 +127,10 @@ export const awaitDeletionComplete = async (roomId, delete_id) => {
 }
 
 export const initRoomDeletion = async (roomId: string) => {
-  const resp = await fetch(`${CHAT_SERVER_URL}/_synapse/admin/v2/rooms/${roomId}`, {
-    method: 'DELETE',
-    headers: {
-      Authorization: `Bearer ${CHAT_ADMIN_ACCESS_TOKEN}`,
-    },
-    body: JSON.stringify({
-      purge: true,
-      block: true,
-    }),
+  const { delete_id }: { delete_id: string } = await fetchWithAuth(`/_synapse/admin/v2/rooms/${roomId}`, 'DELETE', {
+    purge: true,
+    block: true,
   })
-
-  const { delete_id }: { delete_id: string } = await resp.json()
-
   return delete_id
 }
 
@@ -177,8 +146,6 @@ export const hasRoomUpdatedValues = (
   return spaceName !== newSpaceName || avatar !== newAvatar || avatarDefaultColor !== newAvatarDefaultColor
 }
 
-export const setRoomAvatar = (roomId: string, avatarUrl: string) => {
-  return getChatClient().then((chatClient) =>
-    chatClient.sendStateEvent(roomId, EventType.RoomAvatar, { url: avatarUrl })
-  )
+export const setRoomAvatar = async (roomId: string, avatarUrl: string) => {
+  return await sendStateEvent(roomId, EventType.RoomAvatar, { url: avatarUrl })
 }

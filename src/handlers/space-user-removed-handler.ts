@@ -1,5 +1,5 @@
 import { kickUserFromSpace } from '../helpers/kickUserFromSpace'
-import { logPhase, logger } from '../logger'
+import { logPhase } from '../logger'
 import { SpaceUserRemovedDataPayload } from '../types'
 
 //Handles the spaceUserRemoved event from Google Cloud Pub/Sub.

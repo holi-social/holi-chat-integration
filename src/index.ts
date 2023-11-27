@@ -20,8 +20,9 @@ const extractEventDetails = (request) => {
       messageId,
     } = request.body.message
     const buffer = Buffer.from(data, 'base64')
-    const event = JSON.parse(buffer.toString())
-    logger.debug('[' + messageId + '] Event of type ' + eventType + ' extracted successfully', { event })
+    const eventStr = buffer.toString()
+    const event = JSON.parse(eventStr)
+    logger.debug('[' + messageId + '] Event of type ' + eventType + ' extracted successfully: ' + eventStr)
     return { eventType, event, messageId }
   } catch (e) {
     logger.error('Error parsing message:', e)
@@ -31,7 +32,7 @@ const extractEventDetails = (request) => {
 
 export const receiveEvent = async (request, response): Promise<void> => {
   const messageId = request.body.message.messageId
-  logger.debug('[' + messageId + '] Event received: ' + JSON.stringify(request.body.message))
+  logger.debug('[' + messageId + '] Event received')
 
   const { eventType, event } = extractEventDetails(request)
 
