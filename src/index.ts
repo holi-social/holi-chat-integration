@@ -58,10 +58,10 @@ export const processEvent = async (messageId, eventType, event, response) => {
         await logPhase(messageId, 'spaceUserAddedHandler')(() => spaceUserAddedHandler(messageId, event))
         response.sendStatus(200)
         break
-      case EventType.USER_NAME_UPDATED:
-        await logPhase(messageId, 'userNameUpdatedHandler')(() => userNameUpdatedHandler(messageId, event))
-        response.sendStatus(200)
-        break
+      // case EventType.USER_NAME_UPDATED:
+      //   await logPhase(messageId, 'userNameUpdatedHandler')(() => userNameUpdatedHandler(messageId, event))
+      //   response.sendStatus(200)
+      //   break
       case EventType.USER_DELETED:
         await logPhase(messageId, 'userDeletedHandler')(() => userDeletedHandler(messageId, event))
         response.sendStatus(204)
