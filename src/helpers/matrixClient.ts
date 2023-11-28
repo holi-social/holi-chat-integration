@@ -89,7 +89,7 @@ export const kick = async (roomId: string, userId: string, reason?: string) => {
 
 export const joinRoom = async (roomId: string, userId: string) => {
   return await authedFetchJson(`/_synapse/admin/v1/join/${roomId}`, 'POST', {
-    user_id: getMatrixUserId(userId),
+    user_id: userId,
   })
 }
 
@@ -122,14 +122,14 @@ export const getRooms = async (searchTerm?: string) => {
   return rooms
 }
 
-export const setUserName = async (userId: string, displayname: string) => {
+export const setDisplayName = async (displayname: string, userId: string) => {
   await authedFetchJson(`/_matrix/client/v3/profile/${userId}/displayname`, 'PUT', {
     displayname,
   })
 }
 
-export const setAvatar = async (userId: string, avatar_url: string) => {
+export const setAvatarUrl = async (avatarUrl: string, userId: string) => {
   await authedFetchJson(`/_matrix/client/v3/profile/${userId}/avatar_url`, 'PUT', {
-    avatar_url: avatar_url || '',
+    avatar_url: avatarUrl || '',
   })
 }

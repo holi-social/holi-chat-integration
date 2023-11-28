@@ -1,5 +1,5 @@
 import { SpaceUserAddedDataPayload } from '../types'
-import { joinRoom } from './matrixClient'
+import { getMatrixUserId, joinRoom } from './matrixClient'
 import { getRoomIdsForHoliSpace } from './rooms'
 
 export const inviteUserToSpace = async ({
@@ -9,7 +9,7 @@ export const inviteUserToSpace = async ({
   const roomsToInvite = await getRoomIdsForHoliSpace(holiSpaceId)
 
   const responses = roomsToInvite.map(async (roomId) => {
-    return await joinRoom(roomId, identity)
+    return await joinRoom(roomId, getMatrixUserId(identity))
   })
 
   return Promise.all(responses)
