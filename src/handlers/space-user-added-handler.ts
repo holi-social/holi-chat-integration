@@ -10,6 +10,6 @@ export const spaceUserAddedHandler = async (messageId: string, payload: SpaceUse
       'spaceUserAddedHandler.inviteUserToSpace: ' + payload.space.slug + ' - ' + payload.user.id
     )(() => inviteUserToSpace(payload))
   } catch (error) {
-    throw new Error(`Failed to add user "${payload.user.id}" to space "${payload.space.id}": ${error}`)
+    throw new Error(`Failed to add user "${payload.user.id}" to space "${payload.space.id}": ${JSON.stringify(error)}`)
   }
 }

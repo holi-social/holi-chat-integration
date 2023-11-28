@@ -78,7 +78,7 @@ export const processEvent = async (messageId, eventType, event, response) => {
         throw new Error(`Received unexpected event of type ${eventType}`)
     }
   } catch (e) {
-    logger.error('[' + messageId + '] Error while processing message:', e)
+    logger.error(`[${messageId}] Error while processing message: ${e.name} - ${e.message}`)
     response.sendStatus(500)
     throw e
   }

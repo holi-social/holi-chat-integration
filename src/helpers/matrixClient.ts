@@ -121,3 +121,15 @@ export const getRooms = async (searchTerm?: string) => {
   )
   return rooms
 }
+
+export const setUserName = async (userId: string, displayname: string) => {
+  await authedFetchJson(`/_matrix/client/v3/profile/${userId}/displayname`, 'PUT', {
+    displayname,
+  })
+}
+
+export const setAvatar = async (userId: string, avatar_url: string) => {
+  await authedFetchJson(`/_matrix/client/v3/profile/${userId}/avatar_url`, 'PUT', {
+    avatar_url: avatar_url || '',
+  })
+}
