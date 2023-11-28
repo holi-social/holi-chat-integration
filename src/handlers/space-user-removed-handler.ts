@@ -13,6 +13,8 @@ export const spaceUserRemovedHandler = async (
       'spaceUserRemovedHandler.kickUserFromSpace: ' + payload.space.slug + ' - ' + payload.user.id
     )(() => kickUserFromSpace(messageId, payload))
   } catch (error) {
-    throw new Error(`Failed to kick user "${payload.user.id}" from the space "${payload.space.id}": ${error}`)
+    throw new Error(
+      `Failed to kick user "${payload.user.id}" from the space "${payload.space.id}": ${JSON.stringify(error)}`
+    )
   }
 }

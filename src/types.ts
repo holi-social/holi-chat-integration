@@ -28,6 +28,7 @@ export type UserPayload = {
   email: string
   name: string
   identity: string
+  avatar: string
 }
 
 /**

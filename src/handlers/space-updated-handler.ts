@@ -31,6 +31,6 @@ export const spaceUpdatedHandler = async (messageId: string, payload: SpaceUpdat
       await setRoomAvatar(roomId, spacePayload.avatar)
     })
   } catch (error) {
-    throw new Error(`Failed to update space with ID '${payload.space.id}': ${error}`)
+    throw new Error(`Failed to update space with ID '${payload.space.id}': ${JSON.stringify(error)}`)
   }
 }

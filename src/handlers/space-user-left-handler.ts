@@ -10,6 +10,8 @@ export const spaceUserLeftHandler = async (messageId: string, payload: SpaceUser
       'spaceUserLeftHandler.kickUserFromSpace: ' + payload.space.slug + ' - ' + payload.user.id
     )(() => kickUserFromSpace(messageId, payload))
   } catch (error) {
-    throw new Error(`Failed user to leave "${payload.user.id}" the space "${payload.space.id}": ${error}`)
+    throw new Error(
+      `Failed user to leave "${payload.user.id}" the space "${payload.space.id}": ${JSON.stringify(error)}`
+    )
   }
 }
