@@ -7,6 +7,7 @@ import { spaceUserLeftHandler } from './handlers/space-user-left-handler'
 import { spaceUserRemovedHandler } from './handlers/space-user-removed-handler'
 import { userDeletedHandler } from './handlers/user-deleted-handler'
 import { userNameUpdatedHandler } from './handlers/user-name-updated-handler'
+import { deleteCount } from './helpers/retryCounter'
 import { logPhase, logger } from './logger'
 
 import { EventType } from './types'
@@ -77,6 +78,7 @@ export const processEvent = async (messageId, eventType, event, response) => {
       default:
         throw new Error(`Received unexpected event of type ${eventType}`)
     }
+    deleteCount(messageId)
   } catch (e) {
     logger.error(`[${messageId}] Error while processing message: ${e.name} - ${e.message}`)
     response.sendStatus(500)

@@ -29,6 +29,6 @@ export const spaceCreatedHandler = async (messageId: string, payload: SpaceCreat
       'spaceCreatedHandler.addGeneralRoomToSpaceContainer: ' + payload.space.slug
     )(() => addGeneralRoomToSpaceContainer(parentSpaceRoomId, generalSpaceRoomId, spacePayload))
   } catch (error) {
-    throw new Error(`Failed to create space: ${JSON.stringify(error)}`)
+    throw new Error(`Failed to create space: ${error.message}`)
   }
 }

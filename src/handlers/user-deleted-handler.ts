@@ -13,6 +13,6 @@ export const userDeletedHandler = async (messageId: string, { user }: UserDelete
       }
     })
   } catch (error) {
-    throw new Error(`Failed to delete user profile: ${JSON.stringify(error)}`)
+    throw new Error(`Failed to delete user profile: ${error.message}`)
   }
 }

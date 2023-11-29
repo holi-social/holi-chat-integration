@@ -7,6 +7,6 @@ export const spaceDeletedHandler = async (messageId: string, { space }: SpaceDel
   try {
     await logPhase(messageId, 'spaceDeletedHandler.deleteSpaceRoom: ' + space.slug)(() => deleteSpaceRoom(space))
   } catch (error) {
-    throw new Error(`Failed to delete space room: ${JSON.stringify(error)}`)
+    throw new Error(`Failed to delete space room: ${error.message}`)
   }
 }
