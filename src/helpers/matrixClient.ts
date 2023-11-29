@@ -133,3 +133,12 @@ export const setAvatarUrl = async (avatarUrl: string, userId: string) => {
     avatar_url: avatarUrl || '',
   })
 }
+
+export const deactivateAccount = async (userId: string) => {
+  await authedFetchJson(`/_synapse/admin/v1/deactivate/${userId}`, 'POST', { erase: true })
+}
+
+export const isUsernameAvailable = async (localpart: string) => {
+  const response = await authedFetchResponse(`/_synapse/admin/v1/username_available?username=${localpart}`, 'GET')
+  return response.status === 200
+}

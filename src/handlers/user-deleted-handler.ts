@@ -1,20 +1,18 @@
-import { logPhase, logger } from '../logger'
+import { deactivateAccount, getMatrixUserId } from '../helpers/matrixClient'
+import { logPhase } from '../logger'
 import { UserDeletedDataPayload } from '../types'
 
-//Handles the UserDeleted event from Google Cloud Pub/Sub.
-export const userDeletedHandler = async (messageId: string, payload: UserDeletedDataPayload): Promise<void> => {
-  console.log('++++++++= user_deleted_handler: USER DELETED', messageId, payload)
-
-  // try {
-  //   const { user } = payload
-  //   const ocisUser = await logPhase(messageId, 'userDeletedHandler.findOcisUser')(() => findOcisUser(user))
-  //   if (!ocisUser) {
-  //     logger.warn(`User with ID ${user.id} not found in oCIS, nothing to delete`, { user })
-  //   } else {
-  //     await logPhase(messageId, 'userDeletedHandler.deleteUser')(() => deleteUserById(ocisUser.id))
-  //     logger.debug('User deleted successfully', { ocisUser })
-  //   }
-  // } catch (error) {
-  //   throw new Error(`Failed to delete user ${error}`)
-  // }
+export const userDeletedHandler = async (messageId: string, { user }: UserDeletedDataPayload): Promise<void> => {
+  try {
+    await logPhase(
+      messageId,
+      'userDeleteHandler.deleteUser: ' + user.identity
+    )(async () => {
+      if (user.identity) {
+        await deactivateAccount(getMatrixUserId(user.identity))
+      }
+    })
+  } catch (error) {
+    throw new Error(`Failed to delete user profile: ${JSON.stringify(error)}`)
+  }
 }
