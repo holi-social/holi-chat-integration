@@ -18,6 +18,6 @@ export const userNameUpdatedHandler = async (
       }
     })
   } catch (error) {
-    throw new Error(`Failed to update user profile: ${JSON.stringify(error)}`)
+    throw new Error(`Failed to update user profile: ${error.name} - ${error.message}`)
   }
 }
