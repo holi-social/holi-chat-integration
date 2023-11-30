@@ -135,7 +135,9 @@ export const setAvatarUrl = async (avatarUrl: string, userId: string) => {
 }
 
 export const deactivateAccount = async (userId: string) => {
-  await authedFetchJson(`/_synapse/admin/v1/deactivate/${userId}`, 'POST', { erase: true })
+  const response = await authedFetchResponse(`/_synapse/admin/v1/deactivate/${userId}`, 'POST', { erase: true })
+  if (response.status >= 300 && response.status !== 404)
+    throw new Error(`Deactivating account did not succeed ${response.status}: ${response.json}`)
 }
 
 export const isUsernameAvailable = async (localpart: string) => {
