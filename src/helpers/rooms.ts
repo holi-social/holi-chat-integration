@@ -11,25 +11,36 @@ import {
   sendStateEvent,
 } from './matrixClient'
 
+interface Room {
+  room_id: string
+  name: string
+}
+
 export const getHoliSpaceRoomsSharedData = async (
   holiSpaceId: string,
   searchTerm?: string
 ): Promise<Record<string, SpaceSharedData>> => {
-  const rooms: { room_id: string; name: string }[] = await getRooms(searchTerm)
+  var nextBatch = undefined
+  var result = {}
+  do {
+    const { rooms, next_batch }: { rooms: Room[]; next_batch: string } = await getRooms(nextBatch, searchTerm)
+    nextBatch = next_batch
 
-  return rooms.reduce<Promise<Record<string, SpaceSharedData>>>(async (accPromise, room) => {
-    let acc = await accPromise
-    const { room_id } = room
-    const state = await getRoomSharedData(room_id)
-    const { content } = state.find(isRoomSharedDataEvent) ?? {}
+    result = await rooms.reduce<Promise<Record<string, SpaceSharedData>>>(async (accPromise, room) => {
+      let acc = await accPromise
+      const { room_id } = room
+      const state = await getRoomSharedData(room_id)
+      const { content } = state.find(isRoomSharedDataEvent) ?? {}
 
-    return content && content.holiSpaceId === holiSpaceId
-      ? {
-          ...acc,
-          [room_id]: content,
-        }
-      : acc
-  }, Promise.resolve({}))
+      return content && content.holiSpaceId === holiSpaceId
+        ? {
+            ...acc,
+            [room_id]: content,
+          }
+        : acc
+    }, Promise.resolve(result))
+  } while (nextBatch)
+  return result
 }
 
 export const getRoomIdsForHoliSpace = async (holiSpaceId: string, searchTerm?: string): Promise<string[]> => {

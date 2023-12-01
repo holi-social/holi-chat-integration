@@ -1,5 +1,6 @@
 import { CHAT_SERVER_NAME } from '../constants'
 import { authedFetchJson, authedFetchResponse } from '../utils'
+import * as querystring from 'querystring'
 
 export enum EventType {
   RoomAvatar = 'm.room.avatar',
@@ -114,12 +115,12 @@ export const getDeleteStatus = async (deleteId: string) => {
   return status
 }
 
-export const getRooms = async (searchTerm?: string) => {
-  const { rooms } = await authedFetchJson(
-    `/_synapse/admin/v1/rooms${searchTerm ? `?search_term=${searchTerm}` : ''}`,
-    'GET'
-  )
-  return rooms
+export const getRooms = async (from?: string, searchTerm?: string) => {
+  const queryParams = {}
+  if (from) queryParams['from'] = from
+  if (searchTerm) queryParams['searchTerm'] = searchTerm
+  const queryString = querystring.stringify(queryParams)
+  return await authedFetchJson(`/_synapse/admin/v1/rooms${queryString ? '?' + queryString : ''}`, 'GET')
 }
 
 export const setDisplayName = async (displayname: string, userId: string) => {

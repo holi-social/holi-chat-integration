@@ -12,6 +12,9 @@ export const createSpaceContainer = async ({ id, name }: SpacePayload, inviteUse
     creation_content: {
       type: RoomType.Space,
     },
+    power_level_content_override: {
+      events_default: 100, // prevents users from sending messages into the space room
+    },
     invite: inviteUsers,
   })
 
@@ -37,9 +40,16 @@ export const addGeneralRoomToSpaceContainer = async (
   generalSpaceRoomId: string,
   spacePayload: SpacePayload
 ): Promise<void> => {
-  // 1. add custom data into general room
+  // add custom data to general room
   await setRoomSharedData(generalSpaceRoomId, parentSpaceRoomId, spacePayload)
 
-  // 2. add general room into space room
+  // add general room as child of space
   await sendStateEvent(parentSpaceRoomId, EventType.SpaceChild, { via: [CHAT_SERVER_URL] }, generalSpaceRoomId)
+  // add space as parent of general room
+  await sendStateEvent(
+    generalSpaceRoomId,
+    EventType.SpaceParent,
+    { canonical: true, via: [CHAT_SERVER_URL] },
+    generalSpaceRoomId
+  )
 }
