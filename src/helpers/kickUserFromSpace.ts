@@ -3,7 +3,7 @@ import { SpaceUserAddedDataPayload } from '../types'
 import { getMatrixUserId, kick } from './matrixClient'
 import { getRoomIdsForHoliSpace } from './rooms'
 
-const NUMBER_OF_RETRIES = 8
+const NUMBER_OF_RETRIES = 10
 const RETRY_DELAY = 5000
 
 export const kickUserFromSpace = async (
@@ -24,10 +24,10 @@ export const kickUserFromSpace = async (
       if (resp.status == 403 && resp.json.errcode == 'M_FORBIDDEN') {
         count++
         if (count > NUMBER_OF_RETRIES) {
-          logger.debug('[' + messageId + '] kickUserFromSpace: User ' + identity + ' not found. Giving up.')
+          logger.info('[' + messageId + '] kickUserFromSpace: User ' + identity + ' not found. Giving up.')
           return
         }
-        // try 12 times every 5000 if user not found
+        // try NUMBER_OF_RETRIES times every RETRY_DELAY ms, when the user is not found
         logger.debug(
           '[' +
             messageId +

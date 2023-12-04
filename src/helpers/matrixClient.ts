@@ -107,14 +107,6 @@ export const joinRoom = async (roomId: string, userId: string) => {
   })
 }
 
-export const getRoomSharedData = async (roomId: string) => {
-  const { state }: { state: (RoomSharedDataEvent | StateEvent)[] } = await authedFetchJson(
-    `/_synapse/admin/v1/rooms/${roomId}/state`,
-    'GET'
-  )
-  return state
-}
-
 export const initRoomDeletion = async (roomId: string) => {
   const { delete_id }: { delete_id: string } = await authedFetchJson(`/_synapse/admin/v2/rooms/${roomId}`, 'DELETE', {
     purge: true,
@@ -128,7 +120,7 @@ export const getDeleteStatus = async (deleteId: string) => {
   return status
 }
 
-export const getRooms = async (from?: string, searchTerm?: string) => {
+export const getRooms = async (searchTerm: string, from?: string) => {
   const queryParams = {}
   if (from) queryParams['from'] = from
   if (searchTerm) queryParams['search_term'] = searchTerm
