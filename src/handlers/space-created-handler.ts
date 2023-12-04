@@ -11,7 +11,7 @@ export const spaceCreatedHandler = async (messageId: string, payload: SpaceCreat
 
   try {
     // check if Space already has rooms
-    const rooms = await getRoomIdsForHoliSpace(payload.space.id)
+    const rooms = await getRoomIdsForHoliSpace(payload.space.slug)
     if (rooms.length > 0) return
 
     const parentSpaceRoomId = await logPhase(

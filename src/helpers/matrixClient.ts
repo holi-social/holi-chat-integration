@@ -60,6 +60,19 @@ interface RoomSharedDataEvent {
   age: number
 }
 
+interface RoomStateEvent {
+  type: string
+  event_id: string
+  room_id: string
+  user_id: string
+  state_key: string
+  sender: string
+  content: object
+  origin_server_ts: number
+  unsigned: any
+  age: number
+}
+
 interface DeleteStatus {
   status: 'active' | 'shutting_down' | 'purging' | 'complete' | 'failed'
 }
@@ -67,7 +80,7 @@ interface DeleteStatus {
 export const isRoomSharedDataEvent = (event: RoomSharedDataEvent | StateEvent): event is RoomSharedDataEvent =>
   event.type === ChatRoomEvent.SharedData
 
-export const isSpaceGeneralRoomSharedData = (data: SpaceSharedData): data is SpaceGeneralRoomSharedData => {
+export const isSpaceGeneralRoomSharedData = (data: object): data is SpaceGeneralRoomSharedData => {
   return 'parentSpaceRoomId' in data && 'spaceName' in data
 }
 
@@ -118,7 +131,7 @@ export const getDeleteStatus = async (deleteId: string) => {
 export const getRooms = async (from?: string, searchTerm?: string) => {
   const queryParams = {}
   if (from) queryParams['from'] = from
-  if (searchTerm) queryParams['searchTerm'] = searchTerm
+  if (searchTerm) queryParams['search_term'] = searchTerm
   const queryString = querystring.stringify(queryParams)
   return await authedFetchJson(`/_synapse/admin/v1/rooms${queryString ? '?' + queryString : ''}`, 'GET')
 }
@@ -144,4 +157,18 @@ export const deactivateAccount = async (userId: string) => {
 export const isUsernameAvailable = async (localpart: string) => {
   const response = await authedFetchResponse(`/_synapse/admin/v1/username_available?username=${localpart}`, 'GET')
   return response.status === 200
+}
+
+export const getRoomState = async (roomId: string): Promise<RoomStateEvent[]> => {
+  if (!roomId) return []
+  return await authedFetchJson('/_matrix/client/v3/rooms/' + roomId + '/state', 'GET')
+}
+
+export const getSpaceRoomId = async (spaceSlug: string): Promise<string> => {
+  const response = await authedFetchResponse(
+    '/_matrix/client/v3/directory/room/%23space_' + spaceSlug + '%3A' + CHAT_SERVER_NAME,
+    'GET'
+  )
+  if (response.status != 200) return undefined
+  return response.json.room_id
 }

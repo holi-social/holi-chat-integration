@@ -1,9 +1,13 @@
 import { logPhase } from '../logger'
 import { SpaceUpdatedDataPayload } from '../types'
-import { getHoliSpaceRoomsSharedData, hasRoomUpdatedValues, setRoomAvatar, setRoomSharedData } from '../helpers/rooms'
+import {
+  getGeneralRoomSharedDataForSpace,
+  hasRoomUpdatedValues,
+  setRoomAvatar,
+  setRoomSharedData,
+} from '../helpers/rooms'
 import { isSpaceGeneralRoomSharedData } from '../helpers/matrixClient'
 
-// Handles the SpaceCreated event from Google Cloud Pub/Sub.
 export const spaceUpdatedHandler = async (messageId: string, payload: SpaceUpdatedDataPayload): Promise<void> => {
   try {
     await logPhase(
@@ -11,10 +15,7 @@ export const spaceUpdatedHandler = async (messageId: string, payload: SpaceUpdat
       'spaceUpdatedHandler: ' + payload.space.slug
     )(async () => {
       const { space: spacePayload } = payload
-      const [roomId, sharedData] =
-        Object.entries(await getHoliSpaceRoomsSharedData(spacePayload.id, 'general')).find(([_, data]) =>
-          isSpaceGeneralRoomSharedData(data)
-        ) ?? []
+      const [roomId, sharedData] = await getGeneralRoomSharedDataForSpace(spacePayload.slug)
 
       if (!roomId || !sharedData) {
         console.error(

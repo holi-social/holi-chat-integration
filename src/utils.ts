@@ -28,7 +28,7 @@ export const authedFetchResponse = async (url: string, method: string, body?: ob
 export const authedFetchJson = async (url: string, method: string, body?: object) => {
   const response = await authedFetchResponse(url, method, body)
   if (response.status >= 300) {
-    throw new Error(`Matrix request failed with status ${response.status}: ${response.json}`)
+    throw new Error(`Matrix request failed with status ${response.status}: ${JSON.stringify(response.json)}`)
   }
   return response.json
 }

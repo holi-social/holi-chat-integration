@@ -4,9 +4,9 @@ import { getRoomIdsForHoliSpace } from './rooms'
 
 export const inviteUserToSpace = async ({
   user: { identity },
-  space: { id: holiSpaceId },
+  space: { slug: holiSpaceSlug },
 }: SpaceUserAddedDataPayload): Promise<Response[]> => {
-  const roomsToInvite = await getRoomIdsForHoliSpace(holiSpaceId)
+  const roomsToInvite = await getRoomIdsForHoliSpace(holiSpaceSlug)
 
   const responses = roomsToInvite.map(async (roomId) => {
     return await joinRoom(roomId, getMatrixUserId(identity))
