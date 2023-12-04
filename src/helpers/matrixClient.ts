@@ -159,7 +159,7 @@ export const isUsernameAvailable = async (localpart: string) => {
   return response.status === 200
 }
 
-export const getRoomState = async (roomId: string): Promise<RoomStateEvent[]> => {
+export const getRoomStates = async (roomId: string): Promise<RoomStateEvent[]> => {
   if (!roomId) return []
   return await authedFetchJson('/_matrix/client/v3/rooms/' + roomId + '/state', 'GET')
 }

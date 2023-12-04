@@ -4,8 +4,8 @@ import {
   EventType,
   SpaceGeneralRoomSharedData,
   getDeleteStatus,
-  getRoomState as getRoomStates,
   getSpaceRoomId,
+  getRoomStates,
   isSpaceGeneralRoomSharedData,
   sendStateEvent,
 } from './matrixClient'
