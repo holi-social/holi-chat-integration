@@ -3,11 +3,10 @@ import {
   ChatRoomEvent,
   EventType,
   SpaceGeneralRoomSharedData,
-  SpaceSharedData,
   getDeleteStatus,
-  getRoomSharedData,
-  getRooms,
-  isRoomSharedDataEvent,
+  getSpaceRoomId,
+  getRoomStates,
+  isSpaceGeneralRoomSharedData,
   sendStateEvent,
 } from './matrixClient'
 
@@ -16,36 +15,31 @@ interface Room {
   name: string
 }
 
-export const getHoliSpaceRoomsSharedData = async (
-  holiSpaceId: string,
-  searchTerm?: string
-): Promise<Record<string, SpaceSharedData>> => {
-  var nextBatch = undefined
-  var result = {}
-  do {
-    const { rooms, next_batch }: { rooms: Room[]; next_batch: string } = await getRooms(nextBatch, searchTerm)
-    nextBatch = next_batch
-
-    result = await rooms.reduce<Promise<Record<string, SpaceSharedData>>>(async (accPromise, room) => {
-      let acc = await accPromise
-      const { room_id } = room
-      const state = await getRoomSharedData(room_id)
-      const { content } = state.find(isRoomSharedDataEvent) ?? {}
-
-      return content && content.holiSpaceId === holiSpaceId
-        ? {
-            ...acc,
-            [room_id]: content,
-          }
-        : acc
-    }, Promise.resolve(result))
-  } while (nextBatch)
-  return result
+const getRoomChildren = async (roomId: string): Promise<string[]> => {
+  if (!roomId) return []
+  const roomState = await getRoomStates(roomId)
+  return roomState.filter((state) => state.type === EventType.SpaceChild).map((state) => state.state_key)
 }
 
-export const getRoomIdsForHoliSpace = async (holiSpaceId: string, searchTerm?: string): Promise<string[]> => {
-  const holiSpaceRoomsRecord = await getHoliSpaceRoomsSharedData(holiSpaceId, searchTerm)
-  return Object.keys(holiSpaceRoomsRecord)
+export const getRoomIdsForHoliSpace = async (spaceSlug: string): Promise<string[]> => {
+  const spaceRoomId = await getSpaceRoomId(spaceSlug)
+  if (!spaceRoomId) return []
+  const roomIds = await getRoomChildren(spaceRoomId)
+  roomIds.push(spaceRoomId)
+  return roomIds
+}
+
+export const getGeneralRoomSharedDataForSpace = async (
+  spaceSlug: string
+): Promise<[string, SpaceGeneralRoomSharedData]> => {
+  const spaceRoomId = await getSpaceRoomId(spaceSlug)
+  const roomIds = await getRoomChildren(spaceRoomId)
+  roomIds.forEach(async (roomId) => {
+    const roomStates = await getRoomStates(roomId)
+    const generalRoomState = roomStates.find((roomState) => isSpaceGeneralRoomSharedData(roomState.content))
+    return [roomId, generalRoomState]
+  })
+  return undefined
 }
 
 /**

@@ -3,23 +3,23 @@ import { SpaceUserAddedDataPayload } from '../types'
 import { getMatrixUserId, kick } from './matrixClient'
 import { getRoomIdsForHoliSpace } from './rooms'
 
-const NUMBER_OF_RETRIES = 12
+const NUMBER_OF_RETRIES = 8
 const RETRY_DELAY = 5000
 
 export const kickUserFromSpace = async (
   messageId,
-  { user: { identity }, space: { id: holiSpaceId } }: SpaceUserAddedDataPayload
+  { user: { identity }, space: { slug: holiSpaceSlug } }: SpaceUserAddedDataPayload
 ) => {
-  const roomsIdsToLeave = await getRoomIdsForHoliSpace(holiSpaceId)
+  const roomsIdsToLeave = await getRoomIdsForHoliSpace(holiSpaceSlug)
   if (roomsIdsToLeave.length == 0) {
-    logger.debug('[' + messageId + '] kickUserFromSpace: No rooms found for space: ' + holiSpaceId)
+    logger.debug('[' + messageId + '] kickUserFromSpace: No rooms found for space: ' + holiSpaceSlug)
     return
   }
   const userId = getMatrixUserId(identity)
 
   const roomsDeletedPromises = roomsIdsToLeave.map((roomId) => {
     async function kickUser(roomId, count) {
-      logger.debug('[' + messageId + '] kickUserFromSpace: ' + holiSpaceId + ' - ' + roomId + ' - ' + identity)
+      logger.debug('[' + messageId + '] kickUserFromSpace: ' + holiSpaceSlug + ' - ' + roomId + ' - ' + identity)
       const resp = await kick(roomId, userId)
       if (resp.status == 403 && resp.json.errcode == 'M_FORBIDDEN') {
         count++

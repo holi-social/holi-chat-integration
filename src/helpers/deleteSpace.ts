@@ -2,8 +2,8 @@ import { SpacePayload } from '../types'
 import { initRoomDeletion } from './matrixClient'
 import { awaitDeletionComplete, getRoomIdsForHoliSpace } from './rooms'
 
-export const deleteSpaceRoom = async ({ id }: SpacePayload) => {
-  const roomIdsToDelete = await getRoomIdsForHoliSpace(id)
+export const deleteSpaceRoom = async ({ slug }: SpacePayload) => {
+  const roomIdsToDelete = await getRoomIdsForHoliSpace(slug)
 
   const roomDeletion = roomIdsToDelete.map(async (roomId) => {
     console.debug('**'.repeat(10) + ' FOUND ROOM TO DELETE', roomId)

@@ -3,7 +3,10 @@ import { SpacePayload } from '../types'
 import { setRoomSharedData } from './rooms'
 import { ChatRoomEvent, EventType, Preset, RoomType, Visibility, createRoom, sendStateEvent } from './matrixClient'
 
-export const createSpaceContainer = async ({ id, name }: SpacePayload, inviteUsers: string[]): Promise<string> => {
+export const createSpaceContainer = async (
+  { id, name, slug }: SpacePayload,
+  inviteUsers: string[]
+): Promise<string> => {
   const { room_id: parentSpaceRoomId } = await createRoom({
     name: name,
     preset: Preset.PrivateChat,
@@ -14,7 +17,10 @@ export const createSpaceContainer = async ({ id, name }: SpacePayload, inviteUse
     },
     power_level_content_override: {
       events_default: 100, // prevents users from sending messages into the space room
+      invite: 100, // only chat-admin can invite users
+      state_default: 100, // only chat-admin can send state events
     },
+    room_alias_name: 'space_' + slug, // set the canonical alias for this room
     invite: inviteUsers,
   })
 
@@ -30,6 +36,10 @@ export const createSpaceGeneralRoom = async (inviteUsers: string[]): Promise<str
     preset: Preset.PrivateChat,
     visibility: Visibility.Private,
     is_direct: false,
+    power_level_content_override: {
+      invite: 100, // only chat-admin can invite users
+      state_default: 100, // only chat-admin can send state events
+    },
     invite: inviteUsers,
   })
   return generalSpaceRoomId
