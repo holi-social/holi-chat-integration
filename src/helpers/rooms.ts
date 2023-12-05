@@ -1,3 +1,4 @@
+import { logDebug } from '../logger'
 import { SpacePayload } from '../types'
 import {
   ChatRoomEvent,
@@ -58,17 +59,17 @@ export const setRoomSharedData = async (
   })
 }
 
-export const awaitDeletionComplete = async (roomId: string, delete_id: string) => {
+export const awaitDeletionComplete = async (messageId: string, roomId: string, delete_id: string) => {
   try {
-    console.debug('-*'.repeat(10) + ' ROOM IS DELETING', roomId)
+    logDebug(messageId, '-*'.repeat(10) + ' ROOM IS DELETING ' + roomId)
     const status = await getDeleteStatus(delete_id)
     if (status !== 'complete') {
       await new Promise((resolve) => setTimeout(resolve, 5000))
-      return awaitDeletionComplete(roomId, delete_id)
+      return awaitDeletionComplete(messageId, roomId, delete_id)
     }
   } catch (error) {
     await new Promise((resolve) => setTimeout(resolve, 5000))
-    return awaitDeletionComplete(roomId, delete_id)
+    return awaitDeletionComplete(messageId, roomId, delete_id)
   }
 }
 

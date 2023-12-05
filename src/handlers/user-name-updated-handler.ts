@@ -1,5 +1,5 @@
 import { getMatrixUserId, isUsernameAvailable, setAvatarUrl, setDisplayName } from '../helpers/matrixClient'
-import { logPhase, logger } from '../logger'
+import { logPhase, logWarn, logger } from '../logger'
 import { UserNameUpdatedDataPayload } from '../types'
 
 export const userNameUpdatedHandler = async (
@@ -13,7 +13,7 @@ export const userNameUpdatedHandler = async (
     )(async () => {
       if (user.identity) {
         if (!isUsernameAvailable(user.identity)) {
-          logger.warn(`Could not update user profile for ${user.identity}, because the user was not found.`)
+          logWarn(messageId, `Could not update user profile for ${user.identity}, because the user was not found.`)
           return
         }
         await setDisplayName(user.name, getMatrixUserId(user.identity))

@@ -1,4 +1,4 @@
-import { logPhase } from '../logger'
+import { logError, logInfo, logPhase } from '../logger'
 import { SpaceUpdatedDataPayload } from '../types'
 import {
   getGeneralRoomSharedDataForSpace,
@@ -17,19 +17,19 @@ export const spaceUpdatedHandler = async (messageId: string, payload: SpaceUpdat
       const { space: spacePayload } = payload
       const sharedDataResult = await getGeneralRoomSharedDataForSpace(spacePayload.slug)
       if (!sharedDataResult) {
-        console.error(
-          'spaceUpdatedHandler - getHoliSpaceRoomsSharedData did not find a room for space ',
-          spacePayload.slug
+        logInfo(
+          messageId,
+          'spaceUpdatedHandler - getHoliSpaceRoomsSharedData did not find a room for space ' + spacePayload.slug
         )
         return
       }
       const [roomId, sharedData] = sharedDataResult
 
       if (!roomId || !sharedData) {
-        console.error(
-          'spaceUpdatedHandler - getHoliSpaceRoomsSharedData roomId or sharedData is undefined processing event:',
+        logError(
           messageId,
-          JSON.stringify(payload, null, 4)
+          'spaceUpdatedHandler - getHoliSpaceRoomsSharedData roomId or sharedData is undefined processing event:' +
+            JSON.stringify(payload, null, 4)
         )
         return
       }

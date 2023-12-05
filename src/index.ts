@@ -8,7 +8,7 @@ import { spaceUserRemovedHandler } from './handlers/space-user-removed-handler'
 import { userDeletedHandler } from './handlers/user-deleted-handler'
 import { userNameUpdatedHandler } from './handlers/user-name-updated-handler'
 import { deleteCount } from './helpers/retryCounter'
-import { logPhase, logger } from './logger'
+import { logDebug, logError, logPhase, logger } from './logger'
 
 import { EventType } from './types'
 
@@ -23,7 +23,7 @@ const extractEventDetails = (request) => {
     const buffer = Buffer.from(data, 'base64')
     const eventStr = buffer.toString()
     const event = JSON.parse(eventStr)
-    logger.debug('[' + messageId + '] Event of type ' + eventType + ' extracted successfully: ' + eventStr)
+    logDebug(messageId, 'Event of type ' + eventType + ' extracted successfully: ' + eventStr)
     return { eventType, event, messageId }
   } catch (e) {
     logger.error('Error parsing message:', e)
@@ -33,7 +33,7 @@ const extractEventDetails = (request) => {
 
 export const receiveEvent = async (request, response): Promise<void> => {
   const messageId = request.body.message.messageId
-  logger.debug('[' + messageId + '] Event received')
+  logDebug(messageId, 'Event received')
 
   const { eventType, event } = extractEventDetails(request)
 
@@ -80,7 +80,7 @@ export const processEvent = async (messageId, eventType, event, response) => {
     }
     deleteCount(messageId)
   } catch (e) {
-    logger.error(`[${messageId}] Error while processing message: ${e.name} - ${e.message}`)
+    logError(messageId, `Error while processing message: ${e.name} - ${e.message}`)
     response.sendStatus(500)
     throw e
   }
