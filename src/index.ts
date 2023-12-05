@@ -26,7 +26,9 @@ const extractEventDetails = (request) => {
     logDebug(messageId, 'Event of type ' + eventType + ' extracted successfully: ' + eventStr)
     return { eventType, event, messageId }
   } catch (e) {
-    logger.error('Error parsing message:', e)
+    logger.error(
+      `Could not parse message from request: ${e.name} - ${e.message} - request body: ${JSON.stringify(request.body)}`
+    )
     throw e
   }
 }
