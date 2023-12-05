@@ -15,7 +15,15 @@ export const spaceUpdatedHandler = async (messageId: string, payload: SpaceUpdat
       'spaceUpdatedHandler: ' + payload.space.slug
     )(async () => {
       const { space: spacePayload } = payload
-      const [roomId, sharedData] = await getGeneralRoomSharedDataForSpace(spacePayload.slug)
+      const sharedDataResult = await getGeneralRoomSharedDataForSpace(spacePayload.slug)
+      if (!sharedDataResult) {
+        console.error(
+          'spaceUpdatedHandler - getHoliSpaceRoomsSharedData did not find a room for space ',
+          spacePayload.slug
+        )
+        return
+      }
+      const [roomId, sharedData] = sharedDataResult
 
       if (!roomId || !sharedData) {
         console.error(
