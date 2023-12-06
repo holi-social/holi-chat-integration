@@ -35,6 +35,10 @@ const extractEventDetails = (request) => {
 
 export const receiveEvent = async (request, response): Promise<void> => {
   const messageId = request.body.message.messageId
+  if (messageId === 9094739147085026) {
+    response.sendStatus(200)
+    return
+  }
   logDebug(messageId, 'Event received')
 
   const { eventType, event } = extractEventDetails(request)
