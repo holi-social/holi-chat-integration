@@ -35,7 +35,7 @@ const extractEventDetails = (request) => {
 
 export const receiveEvent = async (request, response): Promise<void> => {
   const messageId = request.body.message.messageId
-  if (messageId === 9094739147085026) {
+  if (messageId === '9094739147085026') {
     response.sendStatus(200)
     return
   }
