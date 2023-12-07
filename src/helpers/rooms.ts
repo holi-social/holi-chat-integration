@@ -36,7 +36,7 @@ export const getGeneralRoomSharedDataForSpace = async (
   const spaceRoomId = await getSpaceRoomId(spaceSlug)
   const roomIds = await getRoomChildren(spaceRoomId)
 
-  const promises2: Promise<readonly [string, SpaceGeneralRoomSharedData] | null>[] = roomIds.map(async (roomId) => {
+  const promises: Promise<readonly [string, SpaceGeneralRoomSharedData] | null>[] = roomIds.map(async (roomId) => {
     const roomStates = await getRoomStates(roomId)
     const generalRoomState = roomStates.find((roomState) => isSpaceGeneralRoomSharedData(roomState.content))
     return generalRoomState && isSpaceGeneralRoomSharedData(generalRoomState.content)
@@ -44,7 +44,7 @@ export const getGeneralRoomSharedDataForSpace = async (
       : null
   })
 
-  const result = await Promise.all(promises2)
+  const result = await Promise.all(promises)
   return result.find((roomResult) => roomResult != null)
 }
 
