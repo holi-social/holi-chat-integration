@@ -32,15 +32,20 @@ export const getRoomIdsForHoliSpace = async (spaceSlug: string): Promise<string[
 
 export const getGeneralRoomSharedDataForSpace = async (
   spaceSlug: string
-): Promise<[string, SpaceGeneralRoomSharedData]> => {
+): Promise<readonly [string, SpaceGeneralRoomSharedData] | undefined> => {
   const spaceRoomId = await getSpaceRoomId(spaceSlug)
   const roomIds = await getRoomChildren(spaceRoomId)
-  roomIds.forEach(async (roomId) => {
+
+  const promises2: Promise<readonly [string, SpaceGeneralRoomSharedData] | null>[] = roomIds.map(async (roomId) => {
     const roomStates = await getRoomStates(roomId)
     const generalRoomState = roomStates.find((roomState) => isSpaceGeneralRoomSharedData(roomState.content))
-    return [roomId, generalRoomState]
+    return generalRoomState && isSpaceGeneralRoomSharedData(generalRoomState.content)
+      ? ([roomId, generalRoomState.content] as const)
+      : null
   })
-  return undefined
+
+  const result = await Promise.all(promises2)
+  return result.find((roomResult) => roomResult != null)
 }
 
 /**
