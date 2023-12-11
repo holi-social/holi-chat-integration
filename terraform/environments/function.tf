@@ -63,7 +63,7 @@ resource "google_cloudfunctions2_function" "holi-chat-integration" {
     environment_variables = {
       ENVIRONMENT      = local.environment_name
       CHAT_SERVER_URL  = local.environment_name == "production" ? "https://chat.holi.social" : "https://development-chat.holi.social"
-      CHAT_SERVER_NAME = local.environment_name == "production" ? "chat.holi.social" : "development-chat.holi.social"
+      CHAT_SERVER_NAME = local.environment_name == "production" ? "holi.social" : "development-chat.holi.social"
     }
     vpc_connector                  = data.terraform_remote_state.holi_infra_state.outputs.vpc_access_connector_name
     vpc_connector_egress_settings  = "PRIVATE_RANGES_ONLY"
