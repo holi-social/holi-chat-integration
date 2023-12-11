@@ -32,7 +32,7 @@ export const logPhase = (messageId: string, phaseName: string) => (fn: () => Pro
     })
     .catch((error) => {
       const duration = Date.now() - before
-      logError(messageId, 'Completed ' + phaseName + ' after ' + duration + ' ms with ERROR: ' + JSON.stringify(error))
+      logError(messageId, `Completed ${phaseName} after ${duration} ms with ERROR: ${error.name} - ${error.message}`)
       throw error
     })
 }
