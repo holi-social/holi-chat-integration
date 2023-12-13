@@ -8,6 +8,9 @@ export const inviteUserToSpace = async ({
 }: SpaceUserAddedDataPayload): Promise<void> => {
   const roomsToInvite = await getRoomIdsForHoliSpace(holiSpaceSlug)
 
+  if (roomsToInvite.length < 2) {
+    throw Error("Could not find space and general room. Retrying later.")
+  }
   const responses = roomsToInvite.map(async (roomId) => {
     await joinRoom(roomId, getMatrixUserId(identity))
   })
