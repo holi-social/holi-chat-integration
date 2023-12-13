@@ -1,4 +1,5 @@
 import { CHAT_SERVER_NAME } from '../constants'
+import { logger } from '../logger'
 import { authedFetchJson, authedFetchResponse } from '../utils'
 import * as querystring from 'querystring'
 
@@ -106,11 +107,16 @@ export const joinRoom = async (roomId: string, userId: string) => {
     user_id: userId,
   })
   if (
-    response.status == 200 ||
+    response.status === 200 ||
     (response.status >= 400 &&
       response.json.errcode === 'M_FORBIDDEN' &&
       response.json.error.includes('is already in the room'))
   ) {
+    logger.info('The user is already in the room: ' + userId)
+    return
+  }
+  if (response.status === 404 && response.json.errcode === 'M_NOT_FOUND') {
+    logger.warn('The user does not exist on this server: ' + userId + '. Doing nothing.')
     return
   }
   throw new Error(`Matrix request failed with status ${response.status}: ${JSON.stringify(response.json)}`)
