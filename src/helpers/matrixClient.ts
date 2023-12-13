@@ -106,11 +106,13 @@ export const joinRoom = async (roomId: string, userId: string) => {
   const response = await authedFetchResponse(`/_synapse/admin/v1/join/${roomId}`, 'POST', {
     user_id: userId,
   })
+  if (response.status === 200) {
+    return
+  }
   if (
-    response.status === 200 ||
-    (response.status >= 400 &&
-      response.json.errcode === 'M_FORBIDDEN' &&
-      response.json.error.includes('is already in the room'))
+    response.status >= 400 &&
+    response.json.errcode === 'M_FORBIDDEN' &&
+    response.json.error.includes('is already in the room')
   ) {
     logger.info('The user is already in the room: ' + userId)
     return
