@@ -102,9 +102,18 @@ export const kick = async (roomId: string, userId: string, reason?: string) => {
 }
 
 export const joinRoom = async (roomId: string, userId: string) => {
-  return await authedFetchJson(`/_synapse/admin/v1/join/${roomId}`, 'POST', {
+  const response = await authedFetchResponse(`/_synapse/admin/v1/join/${roomId}`, 'POST', {
     user_id: userId,
   })
+  if (
+    response.status == 200 ||
+    (response.status === 403 &&
+      response.json.errcode === 'M_FORBIDDEN' &&
+      response.json.error.contains('is already in the room'))
+  ) {
+    return
+  }
+  throw new Error(`Matrix request failed with status ${response.status}: ${JSON.stringify(response.json)}`)
 }
 
 export const initRoomDeletion = async (roomId: string) => {
