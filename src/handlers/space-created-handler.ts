@@ -1,4 +1,4 @@
-import { logPhase } from '../logger'
+import { logInfo, logPhase } from '../logger'
 import { SpaceCreatedDataPayload } from '../types'
 import { addGeneralRoomToSpaceContainer, createSpaceContainer, createSpaceGeneralRoom } from '../helpers/createSpace'
 import { getRoomIdsForHoliSpace } from '../helpers/rooms'
@@ -12,8 +12,10 @@ export const spaceCreatedHandler = async (messageId: string, payload: SpaceCreat
   try {
     // check if Space already has rooms
     const rooms = await getRoomIdsForHoliSpace(payload.space.slug)
-    if (rooms.length > 0) return
-
+    if (rooms.length > 0) {
+      logInfo(messageId, 'Room for Space already exists: ' + payload.space.slug)
+      return
+    }
     const parentSpaceRoomId = await logPhase(
       messageId,
       'spaceCreatedHandler.createSpaceContainer: ' + payload.space.slug
