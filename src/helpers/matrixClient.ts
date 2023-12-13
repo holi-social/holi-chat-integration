@@ -3,6 +3,7 @@ import { authedFetchJson, authedFetchResponse } from '../utils'
 import * as querystring from 'querystring'
 
 export enum EventType {
+  RoomName = 'm.room.name',
   RoomAvatar = 'm.room.avatar',
   SpaceChild = 'm.space.child',
   SpaceParent = 'm.space.parent',
@@ -60,17 +61,27 @@ interface RoomSharedDataEvent {
   age: number
 }
 
-interface RoomStateEvent {
+export interface RoomStateEvent<T = unknown> {
   type: string
   event_id: string
   room_id: string
   user_id: string
   state_key: string
   sender: string
-  content: object
+  content: Record<string, T>
   origin_server_ts: number
-  unsigned: any
+  unsigned: unknown
   age: number
+  replaces_state?: string
+  prev_content?: unknown
+}
+
+export interface RoomNameEventContent {
+  name: string
+}
+
+export interface RoomAvatarEventContent {
+  url: string | null
 }
 
 interface DeleteStatus {
@@ -163,4 +174,8 @@ export const getSpaceRoomId = async (spaceSlug: string): Promise<string> => {
   )
   if (response.status != 200) return undefined
   return response.json.room_id
+}
+
+export const getRoomById = async (roomId: string) => {
+  return await authedFetchJson('/_matrix/client/v3/rooms/' + roomId, 'GET')
 }
