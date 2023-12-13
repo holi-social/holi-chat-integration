@@ -107,9 +107,9 @@ export const joinRoom = async (roomId: string, userId: string) => {
   })
   if (
     response.status == 200 ||
-    (response.status === 403 &&
+    (response.status >= 400 &&
       response.json.errcode === 'M_FORBIDDEN' &&
-      response.json.error.contains('is already in the room'))
+      response.json.error.includes('is already in the room'))
   ) {
     return
   }
