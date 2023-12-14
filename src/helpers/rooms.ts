@@ -113,7 +113,7 @@ export async function handleRoomStateEvents(spaceRoomId: string, payload: SpaceP
     await handleRoomStateEvent(spaceRoomId, {
       events,
       childRoomIds,
-      callback: setRoomAvatar,
+      callback: setRoomName,
       payload: payload,
       eventType: EventType.RoomName,
     })
