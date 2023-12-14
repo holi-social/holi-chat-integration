@@ -188,7 +188,7 @@ export async function handleRoomStateEvent(
  * @description Copy-on-write function that reverses the events to get the
  * latest events first.
  */
-export function findStateEventByType(type: EventType, events: UknownRoomStateEvent[]): UknownRoomStateEvent {
+export function findStateEventByType(type: EventType, events: UknownRoomStateEvent[]): UknownRoomStateEvent | null {
   const eventsCopy = Array.from(events)
   const stateEvent = eventsCopy.reverse().find((event) => event.type === type)
 

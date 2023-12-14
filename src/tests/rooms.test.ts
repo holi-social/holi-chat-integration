@@ -5,7 +5,7 @@ import {
   ROOM_ID_FIXTURE,
   ROOM_STATE_EVENTS_FIXTURE,
 } from '../fixtures/roomstate-fixture'
-import { EventType } from '../helpers/matrixClient'
+import { EventType, UknownRoomStateEvent } from '../helpers/matrixClient'
 import { SpacePayload } from '../types'
 
 const SPACE_PAYLOAD_FIXTURE: SpacePayload = {
@@ -25,7 +25,7 @@ const SPACE_WITH_SAME_CONTENT_PAYLOAD_FIXTURE: SpacePayload = {
 }
 
 describe('Space Updates', () => {
-  const setStateMock = jest.fn().mockImplementation((roomId, avatarUrl) => undefined)
+  const setStateMock = jest.fn()
 
   beforeEach(() => {
     setStateMock.mockReset()
@@ -69,19 +69,17 @@ describe('Space Updates', () => {
   })
 
   it('should handle `m.room.name` event content comparison', () => {
-    const nameEvent = findStateEventByType(EventType.RoomName, ROOM_STATE_EVENTS_FIXTURE)
-    expect(nameEvent).not.toBeNull()
-    if (!nameEvent) return
+    const nameEvent = findStateEventByType(EventType.RoomName, ROOM_STATE_EVENTS_FIXTURE) as UknownRoomStateEvent
 
+    expect(nameEvent).not.toBeNull()
     expect(hasSameEventContent(nameEvent, SPACE_PAYLOAD_FIXTURE)).toBeFalsy()
     expect(hasSameEventContent(nameEvent, SPACE_WITH_SAME_CONTENT_PAYLOAD_FIXTURE)).toBeTruthy()
   })
 
   it('should handle `m.room.avatar` event content comparison', () => {
-    const avatarEvent = findStateEventByType(EventType.RoomAvatar, ROOM_STATE_EVENTS_FIXTURE)
-    expect(avatarEvent).not.toBeNull()
-    if (!avatarEvent) return
+    const avatarEvent = findStateEventByType(EventType.RoomAvatar, ROOM_STATE_EVENTS_FIXTURE) as UknownRoomStateEvent
 
+    expect(avatarEvent).not.toBeNull()
     expect(hasSameEventContent(avatarEvent, SPACE_PAYLOAD_FIXTURE)).toBeFalsy()
     expect(hasSameEventContent(avatarEvent, SPACE_WITH_SAME_CONTENT_PAYLOAD_FIXTURE)).toBeTruthy()
   })
@@ -89,7 +87,6 @@ describe('Space Updates', () => {
   it('should find the `m.room.name` state event', () => {
     const nameEvent = findStateEventByType(EventType.RoomName, ROOM_STATE_EVENTS_FIXTURE)
 
-    expect(nameEvent).not.toBeNull()
     expect(nameEvent).toStrictEqual(
       expect.objectContaining({
         type: EventType.RoomName,
@@ -103,7 +100,6 @@ describe('Space Updates', () => {
   it('should find the `m.room.avatar` state event', () => {
     const avatarEvent = findStateEventByType(EventType.RoomAvatar, ROOM_STATE_EVENTS_FIXTURE)
 
-    expect(avatarEvent).not.toBeNull()
     expect(avatarEvent).toStrictEqual(
       expect.objectContaining({
         type: EventType.RoomAvatar,
