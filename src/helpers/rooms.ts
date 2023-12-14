@@ -1,4 +1,4 @@
-import { logDebug, logError } from '../logger'
+import { logDebug, logError, logInfo } from '../logger'
 import { SpacePayload } from '../types'
 import {
   ChatRoomEvent,
@@ -95,6 +95,41 @@ export const setRoomAvatar = async (roomId: string, avatarUrl: string) => {
   return await sendStateEvent(roomId, EventType.RoomAvatar, { url: avatarUrl })
 }
 
+/**
+ * @description It processes the incoming payload for a Matrix Space Child
+ * shared data state
+ */
+export const handleRoomSharedData = async (spaceRoomId: string, messageId: string, payload: SpacePayload) => {
+  const sharedDataResult = await getGeneralRoomSharedDataForSpace(spaceRoomId)
+  if (!sharedDataResult) {
+    logInfo(
+      messageId,
+      'spaceUpdatedHandler - getHoliSpaceRoomsSharedData did not find a room for space ' + payload.slug
+    )
+    return
+  }
+
+  const [roomId, sharedData] = sharedDataResult
+
+  if (!roomId || !sharedData) {
+    logError(
+      messageId,
+      'spaceUpdatedHandler - getHoliSpaceRoomsSharedData roomId or sharedData is undefined processing event:' +
+        JSON.stringify(payload, null, 4)
+    )
+    return
+  }
+
+  if (!isSpaceGeneralRoomSharedData(sharedData)) return
+  if (!hasRoomUpdatedValues(sharedData, payload)) return
+
+  await setRoomSharedData(roomId, sharedData.parentSpaceRoomId, payload)
+}
+
+/**
+ * @description The incoming Okuna events are handled and set in Matrix Space
+ * Chat -> Space Chat children.
+ */
 export async function handleRoomStateEvents(spaceRoomId: string, payload: SpacePayload): Promise<void> {
   const events = await getRoomStateEvents(spaceRoomId)
   const childRoomIds = await getRoomChildren(spaceRoomId)
