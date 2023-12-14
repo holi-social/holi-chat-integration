@@ -3,7 +3,12 @@ import { authedFetchJson, authedFetchResponse } from '../utils'
 import * as querystring from 'querystring'
 
 export enum EventType {
+  RoomCreate = 'm.room.create',
+  RoomCAlias = 'm.room.canonical_alias',
+  RoomCanonicalAlias = 'm.room.canonical_alias',
+  RoomJoinRules = 'm.room.join_rules',
   RoomName = 'm.room.name',
+  RoomTopic = 'm.room.topic',
   RoomAvatar = 'm.room.avatar',
   SpaceChild = 'm.space.child',
   SpaceParent = 'm.space.parent',
@@ -11,23 +16,14 @@ export enum EventType {
 
 export enum Preset {
   PrivateChat = 'private_chat',
-  TrustedPrivateChat = 'trusted_private_chat',
-  PublicChat = 'public_chat',
 }
 
 export enum Visibility {
-  Public = 'public',
   Private = 'private',
 }
 
 export enum RoomType {
   Space = 'm.space',
-  UnstableCall = 'org.matrix.msc3417.call',
-  ElementVideo = 'io.element.video',
-}
-
-interface StateEvent {
-  type: string
 }
 
 export enum ChatRoomEvent {
@@ -35,61 +31,77 @@ export enum ChatRoomEvent {
   SpaceDeleted = 'holi.room.space.deleted',
 }
 
+interface DeleteStatus {
+  readonly status: 'active' | 'shutting_down' | 'purging' | 'complete' | 'failed'
+}
+
 interface SpaceRoomSharedData {
-  holiSpaceId: string
+  readonly holiSpaceId: string
 }
 
 export interface SpaceGeneralRoomSharedData extends SpaceRoomSharedData {
-  parentSpaceRoomId: string
-  spaceName: string
-  avatar: string
-  avatarDefaultColor: string
+  readonly parentSpaceRoomId: string
+  readonly spaceName: string
+  readonly avatar: string
+  readonly avatarDefaultColor: string
 }
 
-export type SpaceSharedData = SpaceRoomSharedData | SpaceGeneralRoomSharedData
+export type UknownRoomStateEvent = RoomStateEvent<Record<string, unknown>>
 
-interface RoomSharedDataEvent {
-  type: ChatRoomEvent.SharedData
-  room_id: string
-  sender: string
-  content: SpaceSharedData
-  state_key: string
-  origin_server_ts: number
-  unsigned: any
-  event_id: string
-  user_id: string
-  age: number
+export interface RoomStateEvent<T extends RoomStateContent> {
+  readonly type: `${EventType}`
+  readonly event_id: string
+  readonly room_id: string
+  readonly user_id: string
+  readonly state_key: string
+  readonly sender: string
+  readonly content: T
+  readonly origin_server_ts: number
+  readonly unsigned: unknown
+  readonly age: number
+  readonly replaces_state?: string
+  readonly prev_content?: unknown
 }
 
-export interface RoomStateEvent<T = unknown> {
-  type: string
-  event_id: string
-  room_id: string
-  user_id: string
-  state_key: string
-  sender: string
-  content: Record<string, T>
-  origin_server_ts: number
-  unsigned: unknown
-  age: number
-  replaces_state?: string
-  prev_content?: unknown
+export type RoomStateContent =
+  | RoomNameContent
+  | RoomAvatarContent
+  | RoomSpaceChildContent
+  | RoomCreateContent
+  | RoomCanonicalAliasContent
+  | RoomGuestAccessContent
+  | RoomJoinRulesContent
+  | Record<string, unknown>
+
+export interface RoomNameContent {
+  readonly name: string
 }
 
-export interface RoomNameEventContent {
-  name: string
+export interface RoomAvatarContent {
+  readonly url: string | null
 }
 
-export interface RoomAvatarEventContent {
-  url: string | null
+interface RoomCreateContent {
+  readonly type: 'm.space'
+  readonly room_version: string
+  readonly creator: string
 }
 
-interface DeleteStatus {
-  status: 'active' | 'shutting_down' | 'purging' | 'complete' | 'failed'
+interface RoomSpaceChildContent {
+  readonly via: unknown[]
 }
 
-export const isRoomSharedDataEvent = (event: RoomSharedDataEvent | StateEvent): event is RoomSharedDataEvent =>
-  event.type === ChatRoomEvent.SharedData
+interface RoomCanonicalAliasContent {
+  readonly alias: string
+}
+
+interface RoomGuestAccessContent {
+  readonly guest_access: string
+}
+
+interface RoomJoinRulesContent {
+  readonly join_rule: string
+}
 
 export const isSpaceGeneralRoomSharedData = (data: object): data is SpaceGeneralRoomSharedData => {
   return 'parentSpaceRoomId' in data && 'spaceName' in data
@@ -162,7 +174,7 @@ export const isUsernameAvailable = async (localpart: string) => {
   return response.status === 200
 }
 
-export const getRoomStates = async (roomId: string): Promise<RoomStateEvent[]> => {
+export const getRoomStateEvents = async (roomId: string): Promise<UknownRoomStateEvent[]> => {
   if (!roomId) return []
   return await authedFetchJson('/_matrix/client/v3/rooms/' + roomId + '/state', 'GET')
 }
@@ -174,8 +186,4 @@ export const getSpaceRoomId = async (spaceSlug: string): Promise<string> => {
   )
   if (response.status != 200) return undefined
   return response.json.room_id
-}
-
-export const getRoomById = async (roomId: string) => {
-  return await authedFetchJson('/_matrix/client/v3/rooms/' + roomId, 'GET')
 }
