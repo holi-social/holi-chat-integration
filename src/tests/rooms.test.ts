@@ -1,4 +1,4 @@
-import { findStateEventByType, getPayloadFromEvent, handleRoomStateEvent, hasSameEventContent } from '../helpers/rooms'
+import { findStateEventByType, getDataFromEventType, handleRoomStateEvent, hasSameEventContent } from '../helpers/rooms'
 import {
   NEW_ROOM_AVATAR_VALUE_FIXTURE,
   NEW_ROOM_NAME_VALUE_FIXTURE,
@@ -64,8 +64,8 @@ describe('Space Updates', () => {
   })
 
   it('should get the value based on the event type', () => {
-    expect(getPayloadFromEvent(EventType.RoomAvatar, SPACE_PAYLOAD_FIXTURE)).toBe(SPACE_PAYLOAD_FIXTURE.avatar)
-    expect(getPayloadFromEvent(EventType.RoomName, SPACE_PAYLOAD_FIXTURE)).toBe(SPACE_PAYLOAD_FIXTURE.name)
+    expect(getDataFromEventType(EventType.RoomAvatar, SPACE_PAYLOAD_FIXTURE)).toBe(SPACE_PAYLOAD_FIXTURE.avatar)
+    expect(getDataFromEventType(EventType.RoomName, SPACE_PAYLOAD_FIXTURE)).toBe(SPACE_PAYLOAD_FIXTURE.name)
   })
 
   it('should handle `m.room.name` event content comparison', () => {

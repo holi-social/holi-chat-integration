@@ -171,7 +171,7 @@ export async function handleRoomStateEvent(
   const hasSameContent = hasSameEventContent(event, payload)
   if (hasSameContent) return
 
-  const value = getPayloadFromEvent(eventType, payload)
+  const value = getDataFromEventType(eventType, payload)
 
   try {
     await callback(spaceRoomId, value)
@@ -209,7 +209,7 @@ export function hasSameEventContent(event: UknownRoomStateEvent, payload: SpaceP
 /**
  * @description It gets the payload to update for a specific event.
  */
-export function getPayloadFromEvent(type: EventType, payload: SpacePayload) {
+export function getDataFromEventType(type: EventType, payload: SpacePayload) {
   switch (type) {
     case EventType.RoomName:
       return payload.name
