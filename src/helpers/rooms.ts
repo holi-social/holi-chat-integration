@@ -10,6 +10,10 @@ import {
   isSpaceGeneralRoomSharedData,
   sendStateEvent,
   type UknownRoomStateEvent,
+  RoomStateEvent,
+  RoomStateContent,
+  RoomAvatarContent,
+  RoomNameContent,
 } from './matrixClient'
 
 export const getRoomChildren = async (roomId: string): Promise<string[]> => {
@@ -132,55 +136,34 @@ export const handleRoomSharedData = async (spaceRoomId: string, messageId: strin
  */
 export async function handleRoomStateEvents(spaceRoomId: string, payload: SpacePayload): Promise<void> {
   const events = await getRoomStateEvents(spaceRoomId)
-  const childRoomIds = await getRoomChildren(spaceRoomId)
+  const roomIds = await getRoomIdsForHoliSpace(payload.slug)
 
   if (!!payload.avatar) {
-    await handleRoomStateEvent(spaceRoomId, {
-      events,
-      childRoomIds,
-      callback: setRoomAvatar,
-      payload: payload,
-      eventType: EventType.RoomAvatar,
-    })
+    const avatarEvent = findStateEventByType<RoomAvatarContent>(EventType.RoomAvatar, events)
+    if (payload.avatar === avatarEvent.content.url) {
+      await updateStateValue(roomIds, payload.avatar, setRoomAvatar)
+    }
   }
 
   if (!!payload.name) {
-    await handleRoomStateEvent(spaceRoomId, {
-      events,
-      childRoomIds,
-      callback: setRoomName,
-      payload: payload,
-      eventType: EventType.RoomName,
-    })
+    const avatarEvent = findStateEventByType<RoomNameContent>(EventType.RoomName, events)
+    if (payload.name === avatarEvent.content.name) {
+      await updateStateValue(roomIds, payload.avatar, setRoomAvatar)
+    }
   }
 }
 
-interface HandleEventOptions {
-  readonly eventType: EventType
-  readonly payload: SpacePayload
-  readonly childRoomIds: string[]
-  readonly events: UknownRoomStateEvent[]
-  readonly callback: (roomId: string, value: string) => Promise<any>
-}
-
-export async function handleRoomStateEvent(
-  spaceRoomId: string,
-  { eventType, events, payload, childRoomIds, callback }: HandleEventOptions
+export async function updateStateValue(
+  roomIds: string[],
+  value: string,
+  callback: (roomId: string, value: string) => Promise<any>
 ): Promise<void> {
-  const event = findStateEventByType(eventType, events)
-  const hasSameContent = hasSameEventContent(event, payload)
-  if (hasSameContent) return
-
-  const value = getDataFromEventType(eventType, payload)
-
   try {
-    await callback(spaceRoomId, value)
-
-    for (const roomId of childRoomIds) {
+    for (const roomId of roomIds) {
       await callback(roomId, value)
     }
   } catch (err) {
-    logError('spaceUpdatedHandler', 'failed to update room state event:' + JSON.stringify(payload, null, 4))
+    logError('spaceUpdatedHandler', 'failed to update room state event with value ' + value)
   }
 }
 
@@ -188,34 +171,13 @@ export async function handleRoomStateEvent(
  * @description Copy-on-write function that reverses the events to get the
  * latest events first.
  */
-export function findStateEventByType(type: EventType, events: UknownRoomStateEvent[]): UknownRoomStateEvent | null {
-  const eventsCopy = Array.from(events)
-  const stateEvent = eventsCopy.reverse().find((event) => event.type === type)
+export function findStateEventByType<T extends RoomStateContent>(
+  type: EventType,
+  events: UknownRoomStateEvent[]
+): RoomStateEvent<T> | null {
+  const stateEvent = Array.from(events)
+    .reverse()
+    .find((event) => event.type === type) as RoomStateEvent<T>
 
   return stateEvent ?? null
-}
-
-/**
- * @description Verifies if the content is the same for a specific event state
- * content. Currently handling `EventType.RoomName`, `EventType.RoomAvatar`.
- */
-export function hasSameEventContent(event: UknownRoomStateEvent, payload: SpacePayload): boolean {
-  if (event.type === EventType.RoomAvatar) return payload.avatar === event.content.url
-  if (event.type === EventType.RoomName) return payload.name === event.content.name
-
-  return false
-}
-
-/**
- * @description It gets the payload to update for a specific event.
- */
-export function getDataFromEventType(type: EventType, payload: SpacePayload) {
-  switch (type) {
-    case EventType.RoomName:
-      return payload.name
-    case EventType.RoomAvatar:
-      return payload.avatar
-    default:
-      throw new Error(type + ' is not currently handled')
-  }
 }
