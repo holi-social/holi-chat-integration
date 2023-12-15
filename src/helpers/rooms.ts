@@ -3,17 +3,17 @@ import { SpacePayload } from '../types'
 import {
   ChatRoomEvent,
   EventType,
-  type SpaceGeneralRoomSharedData,
   getDeleteStatus,
-  getSpaceRoomId,
   getRoomStateEvents,
+  getSpaceRoomId,
   isSpaceGeneralRoomSharedData,
-  sendStateEvent,
-  type UknownRoomStateEvent,
-  RoomStateEvent,
-  RoomStateContent,
   RoomAvatarContent,
   RoomNameContent,
+  RoomStateContent,
+  RoomStateEvent,
+  sendStateEvent,
+  type SpaceGeneralRoomSharedData,
+  type UknownRoomStateEvent,
 } from './matrixClient'
 
 export const getRoomChildren = async (roomId: string): Promise<string[]> => {
@@ -103,7 +103,7 @@ export const setRoomAvatar = async (roomId: string, avatarUrl: string) => {
  * @description It processes the incoming payload for a Matrix Space Child
  * shared data state
  */
-export const handleRoomSharedData = async (spaceRoomId: string, messageId: string, payload: SpacePayload) => {
+export const updateSpaceRoomSharedData = async (spaceRoomId: string, messageId: string, payload: SpacePayload) => {
   const sharedDataResult = await getGeneralRoomSharedDataForSpace(spaceRoomId)
   if (!sharedDataResult) {
     logInfo(
@@ -134,22 +134,21 @@ export const handleRoomSharedData = async (spaceRoomId: string, messageId: strin
  * @description The incoming Okuna events are handled and set in Matrix Space
  * Chat -> Space Chat children.
  */
-export async function handleRoomStateEvents(spaceRoomId: string, payload: SpacePayload): Promise<void> {
+export async function updateSpaceRoomNameAndAvatar(
+  spaceRoomId: string,
+  { avatar, name, slug }: SpacePayload
+): Promise<void> {
   const events = await getRoomStateEvents(spaceRoomId)
-  const roomIds = await getRoomIdsForHoliSpace(payload.slug)
+  const roomIds = await getRoomIdsForHoliSpace(slug)
 
-  if (!!payload.avatar) {
-    const avatarEvent = findStateEventByType<RoomAvatarContent>(EventType.RoomAvatar, events)
-    if (payload.avatar === avatarEvent.content.url) {
-      await updateStateValue(roomIds, payload.avatar, setRoomAvatar)
-    }
+  const nameEvent = findStateEventByType<RoomNameContent>(EventType.RoomName, events)
+  if (!nameEvent || name !== nameEvent.content.name) {
+    await updateStateValue(roomIds, name, setRoomName)
   }
 
-  if (!!payload.name) {
-    const avatarEvent = findStateEventByType<RoomNameContent>(EventType.RoomName, events)
-    if (payload.name === avatarEvent.content.name) {
-      await updateStateValue(roomIds, payload.avatar, setRoomAvatar)
-    }
+  const avatarEvent = findStateEventByType<RoomAvatarContent>(EventType.RoomAvatar, events)
+  if (!!avatar && (!avatarEvent || avatar !== avatarEvent.content.url)) {
+    await updateStateValue(roomIds, avatar, setRoomAvatar)
   }
 }
 
@@ -175,9 +174,9 @@ export function findStateEventByType<T extends RoomStateContent>(
   type: EventType,
   events: UknownRoomStateEvent[]
 ): RoomStateEvent<T> | null {
-  const stateEvent = Array.from(events)
-    .reverse()
-    .find((event) => event.type === type) as RoomStateEvent<T>
+  const eventsCopy = Array.from(events)
+  eventsCopy.reverse()
+  const stateEvent = eventsCopy.find((event) => event.type === type) as RoomStateEvent<T> | undefined
 
   return stateEvent ?? null
 }

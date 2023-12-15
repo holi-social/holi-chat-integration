@@ -1,10 +1,8 @@
-import {UknownRoomStateEvent } from '../helpers/matrixClient'
+import { UknownRoomStateEvent } from '../helpers/matrixClient'
 
 export const ROOM_ID_FIXTURE = '!TxfHPjeGwRIYwrmRVw:local.chat.holi.social'
-export const NEW_ROOM_NAME_VALUE_FIXTURE = 'new name'
-export const NEW_ROOM_AVATAR_VALUE_FIXTURE =
-  'https://unsplash.com/photos/blue-green-and-red-bird-hanging-decor-uSyy9jljO3s'
-
+export const ROOM_NAME_VALUE_FIXTURE = 'Shuttle'
+export const ROOM_AVATAR_VALUE_FIXTURE = 'https://unsplash.com/photos/blue-green-and-red-bird-hanging-decor-uSyy9jljO3s'
 
 export const ROOM_STATE_EVENTS_FIXTURE = [
   {
@@ -219,7 +217,7 @@ export const ROOM_STATE_EVENTS_FIXTURE = [
     type: 'm.room.name',
     room_id: ROOM_ID_FIXTURE,
     sender: '@chat-admin:local.chat.holi.social',
-    content: { name: NEW_ROOM_NAME_VALUE_FIXTURE },
+    content: { name: ROOM_NAME_VALUE_FIXTURE },
     state_key: '',
     origin_server_ts: 1702395355480,
     unsigned: {
@@ -238,7 +236,7 @@ export const ROOM_STATE_EVENTS_FIXTURE = [
     type: 'm.room.avatar',
     room_id: ROOM_ID_FIXTURE,
     sender: '@chat-admin:local.chat.holi.social',
-    content: { url: NEW_ROOM_AVATAR_VALUE_FIXTURE },
+    content: { url: ROOM_AVATAR_VALUE_FIXTURE },
     state_key: '',
     origin_server_ts: 1702395355374,
     unsigned: { age: 59501669 },
