@@ -1,12 +1,7 @@
-import { logError, logInfo, logPhase } from '../logger'
+import { logPhase } from '../logger'
 import { SpaceUpdatedDataPayload } from '../types'
-import {
-  getGeneralRoomSharedDataForSpace,
-  hasRoomUpdatedValues,
-  setRoomAvatar,
-  setRoomSharedData,
-} from '../helpers/rooms'
-import { isSpaceGeneralRoomSharedData } from '../helpers/matrixClient'
+import { updateSpaceRoomSharedData, updateSpaceRoomNameAndAvatar } from '../helpers/rooms'
+import { getSpaceRoomId } from '../helpers/matrixClient'
 
 export const spaceUpdatedHandler = async (messageId: string, payload: SpaceUpdatedDataPayload): Promise<void> => {
   try {
@@ -15,29 +10,10 @@ export const spaceUpdatedHandler = async (messageId: string, payload: SpaceUpdat
       'spaceUpdatedHandler: ' + payload.space.slug
     )(async () => {
       const { space: spacePayload } = payload
-      const sharedDataResult = await getGeneralRoomSharedDataForSpace(spacePayload.slug)
-      if (!sharedDataResult) {
-        logInfo(
-          messageId,
-          'spaceUpdatedHandler - getHoliSpaceRoomsSharedData did not find a room for space ' + spacePayload.slug
-        )
-        return
-      }
-      const [roomId, sharedData] = sharedDataResult
+      const spaceRoomId = await getSpaceRoomId(spacePayload.slug)
 
-      if (!roomId || !sharedData) {
-        logError(
-          messageId,
-          'spaceUpdatedHandler - getHoliSpaceRoomsSharedData roomId or sharedData is undefined processing event:' +
-            JSON.stringify(payload, null, 4)
-        )
-        return
-      }
-      if (!isSpaceGeneralRoomSharedData(sharedData)) return
-      if (!hasRoomUpdatedValues(sharedData, spacePayload)) return
-
-      await setRoomSharedData(roomId, sharedData.parentSpaceRoomId, spacePayload)
-      await setRoomAvatar(roomId, spacePayload.avatar)
+      await updateSpaceRoomNameAndAvatar(spaceRoomId, spacePayload)
+      await updateSpaceRoomSharedData(spaceRoomId, messageId, spacePayload)
     })
   } catch (error) {
     throw new Error(`Failed to update space with ID '${payload.space.id}': ${error.message}`)
