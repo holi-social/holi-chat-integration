@@ -12,10 +12,12 @@ export const inviteUserToSpace = async (
 
   if (roomsToInvite.length < 2) {
     if (retryExceeded(messageId)) {
-      logDebug(messageId, 'inviteUserToSpace: No rooms found for space: ' + holiSpaceSlug + '. Giving up.')
+      logDebug(messageId, 'inviteUserToSpace: No rooms found for space: "' + holiSpaceSlug + '". Giving up.')
       return
     }
-    throw Error('inviteUserToSpace: Could not find space and general room for ' + holiSpaceSlug + '. Retrying later.')
+    throw Error(
+      'inviteUserToSpace: Could not find space and general room for space: "' + holiSpaceSlug + '". Retrying later.'
+    )
   }
   const responses = roomsToInvite.map(async (roomId) => {
     await joinRoom(roomId, getMatrixUserId(identity))
