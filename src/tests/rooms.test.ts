@@ -18,25 +18,25 @@ const SPACE_PAYLOAD_FIXTURE: SpacePayload = {
 }
 
 describe('Space Updates', () => {
-  let updateStateMock: jest.Mock<any, any, any> = undefined
+  let updateStateMock: jest.Mock<any, any, any> = {} as jest.Mock
   let spySetRoomAvatar: jest.SpyInstance<Promise<unknown>, any, any> | undefined = undefined
   let spySetRoomName: jest.SpyInstance<Promise<unknown>, any, any> | undefined = undefined
 
   beforeEach(() => {
     updateStateMock = jest.fn()
-    spySetRoomAvatar = jest.spyOn(room, 'setRoomAvatar').mockReturnValue(undefined)
-    spySetRoomName = jest.spyOn(room, 'setRoomName').mockReturnValue(undefined)
+    spySetRoomAvatar = jest.spyOn(room, 'setRoomAvatar').mockReturnValue(Promise.resolve(undefined))
+    spySetRoomName = jest.spyOn(room, 'setRoomName').mockReturnValue(Promise.resolve(undefined))
   })
 
   afterEach(() => {
-    updateStateMock.mockRestore()
-    spySetRoomAvatar.mockRestore()
-    spySetRoomName.mockRestore()
+    updateStateMock?.mockRestore()
+    spySetRoomAvatar?.mockRestore()
+    spySetRoomName?.mockRestore()
   })
 
   afterAll(() => {
     jest.restoreAllMocks()
-    updateStateMock = undefined
+    updateStateMock = {} as jest.Mock
     spySetRoomAvatar = undefined
     spySetRoomName = undefined
   })
@@ -148,6 +148,7 @@ describe('Space Updates', () => {
     const payload = SPACE_PAYLOAD_FIXTURE
 
     const avatarEvent = room.findStateEventByType<RoomAvatarContent>(EventType.RoomAvatar, ROOM_STATE_EVENTS_FIXTURE)
+    if (!payload.avatar) throw new Error('payload.avatar is undefined')
     await room.updateStateValue(roomIds, payload.avatar, updateStateMock)
 
     expect(updateStateMock).toHaveBeenCalledTimes(2)

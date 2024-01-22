@@ -1,15 +1,21 @@
+import { logDebug } from '../logger'
 import { SpaceUserAddedDataPayload } from '../types'
 import { getMatrixUserId, joinRoom } from './matrixClient'
+import { retryExceeded } from './retryCounter'
 import { getRoomIdsForHoliSpace } from './rooms'
 
-export const inviteUserToSpace = async ({
-  user: { identity },
-  space: { slug: holiSpaceSlug },
-}: SpaceUserAddedDataPayload): Promise<void> => {
+export const inviteUserToSpace = async (
+  messageId: string,
+  { user: { identity }, space: { slug: holiSpaceSlug } }: SpaceUserAddedDataPayload
+): Promise<void> => {
   const roomsToInvite = await getRoomIdsForHoliSpace(holiSpaceSlug)
 
   if (roomsToInvite.length < 2) {
-    throw Error("Could not find space and general room. Retrying later.")
+    if (retryExceeded(messageId)) {
+      logDebug(messageId, 'inviteUserToSpace: No rooms found for space: ' + holiSpaceSlug + '. Giving up.')
+      return
+    }
+    throw Error('inviteUserToSpace: Could not find space and general room for ' + holiSpaceSlug + '. Retrying later.')
   }
   const responses = roomsToInvite.map(async (roomId) => {
     await joinRoom(roomId, getMatrixUserId(identity))

@@ -8,7 +8,7 @@ export const spaceUserAddedHandler = async (messageId: string, payload: SpaceUse
     await logPhase(
       messageId,
       'spaceUserAddedHandler.inviteUserToSpace: ' + payload.space.slug + ' - ' + payload.user.id
-    )(() => inviteUserToSpace(payload))
+    )(() => inviteUserToSpace(messageId, payload))
   } catch (error) {
     throw new Error(`Failed to add user "${payload.user.id}" to space "${payload.space.id}": ${error.message}`)
   }
