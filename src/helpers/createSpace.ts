@@ -55,11 +55,12 @@ export const addGeneralRoomToSpaceContainer = async (
 
   // add general room as child of space
   await sendStateEvent(parentSpaceRoomId, EventType.SpaceChild, { via: [CHAT_SERVER_URL] }, generalSpaceRoomId)
+
   // add space as parent of general room
   await sendStateEvent(
     generalSpaceRoomId,
     EventType.SpaceParent,
     { canonical: true, via: [CHAT_SERVER_URL] },
-    generalSpaceRoomId
+    parentSpaceRoomId
   )
 }
