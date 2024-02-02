@@ -24,8 +24,8 @@ describe('Space Updates', () => {
 
   beforeEach(() => {
     updateStateMock = jest.fn()
-    spySetRoomAvatar = jest.spyOn(room, 'setRoomAvatar').mockReturnValue(Promise.resolve(undefined))
-    spySetRoomName = jest.spyOn(room, 'setRoomName').mockReturnValue(Promise.resolve(undefined))
+    spySetRoomAvatar = jest.spyOn(room, 'setRoomAvatar').mockResolvedValue(undefined)
+    spySetRoomName = jest.spyOn(room, 'setRoomName').mockResolvedValue(undefined)
   })
 
   afterEach(() => {
@@ -45,8 +45,8 @@ describe('Space Updates', () => {
     const childRoomId = 'child-room-id:local.chat.holi.social'
     const roomIds = [ROOM_ID_FIXTURE, childRoomId]
 
-    jest.spyOn(mxClient, 'getRoomStateEvents').mockReturnValue(Promise.resolve(ROOM_STATE_EVENTS_FIXTURE))
-    jest.spyOn(room, 'getRoomIdsForHoliSpace').mockReturnValue(Promise.resolve(roomIds))
+    jest.spyOn(mxClient, 'getRoomStateEvents').mockResolvedValue(ROOM_STATE_EVENTS_FIXTURE)
+    jest.spyOn(room, 'getRoomIdsForHoliSpace').mockResolvedValue(roomIds)
 
     await room.updateSpaceRoomNameAndAvatar(ROOM_ID_FIXTURE, SPACE_PAYLOAD_FIXTURE)
 
@@ -67,8 +67,8 @@ describe('Space Updates', () => {
       avatar: ROOM_AVATAR_VALUE_FIXTURE,
     }
 
-    jest.spyOn(mxClient, 'getRoomStateEvents').mockReturnValue(Promise.resolve(ROOM_STATE_EVENTS_FIXTURE))
-    jest.spyOn(room, 'getRoomIdsForHoliSpace').mockReturnValue(Promise.resolve(roomIds))
+    jest.spyOn(mxClient, 'getRoomStateEvents').mockResolvedValue(ROOM_STATE_EVENTS_FIXTURE)
+    jest.spyOn(room, 'getRoomIdsForHoliSpace').mockResolvedValue(roomIds)
 
     await room.updateSpaceRoomNameAndAvatar(ROOM_ID_FIXTURE, payload)
 
@@ -86,8 +86,8 @@ describe('Space Updates', () => {
       name: ROOM_NAME_VALUE_FIXTURE,
     }
 
-    jest.spyOn(mxClient, 'getRoomStateEvents').mockReturnValue(Promise.resolve(ROOM_STATE_EVENTS_FIXTURE))
-    jest.spyOn(room, 'getRoomIdsForHoliSpace').mockReturnValue(Promise.resolve(roomIds))
+    jest.spyOn(mxClient, 'getRoomStateEvents').mockResolvedValue(ROOM_STATE_EVENTS_FIXTURE)
+    jest.spyOn(room, 'getRoomIdsForHoliSpace').mockResolvedValue(roomIds)
 
     await room.updateSpaceRoomNameAndAvatar(ROOM_ID_FIXTURE, payload)
 
@@ -106,8 +106,8 @@ describe('Space Updates', () => {
       avatar: ROOM_AVATAR_VALUE_FIXTURE,
     }
 
-    jest.spyOn(mxClient, 'getRoomStateEvents').mockReturnValue(Promise.resolve(ROOM_STATE_EVENTS_FIXTURE))
-    jest.spyOn(room, 'getRoomIdsForHoliSpace').mockReturnValue(Promise.resolve(roomIds))
+    jest.spyOn(mxClient, 'getRoomStateEvents').mockResolvedValue(ROOM_STATE_EVENTS_FIXTURE)
+    jest.spyOn(room, 'getRoomIdsForHoliSpace').mockResolvedValue(roomIds)
 
     await room.updateSpaceRoomNameAndAvatar(ROOM_ID_FIXTURE, payload)
 
@@ -120,8 +120,8 @@ describe('Space Updates', () => {
     const roomIds = [ROOM_ID_FIXTURE, childRoomId]
     const payload = SPACE_PAYLOAD_FIXTURE
 
-    jest.spyOn(mxClient, 'getRoomStateEvents').mockReturnValue(Promise.resolve([]))
-    jest.spyOn(room, 'getRoomIdsForHoliSpace').mockReturnValue(Promise.resolve(roomIds))
+    jest.spyOn(mxClient, 'getRoomStateEvents').mockResolvedValue([])
+    jest.spyOn(room, 'getRoomIdsForHoliSpace').mockResolvedValue(roomIds)
 
     await room.updateSpaceRoomNameAndAvatar(ROOM_ID_FIXTURE, payload)
 
