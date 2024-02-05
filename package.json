@@ -12,7 +12,7 @@
     "format": "prettier --write .",
     "clean": "rimraf dist",
     "clean:all": "yarn clean && rimraf node_modules",
-    "copy-files": "copyfiles -u 1 src/**/*.json dist/"
+    "copy-files": "copyfiles -u 1 'src/**/*.json' dist/"
   },
   "devDependencies": {
     "@google-cloud/functions-framework": "^3.1.3",
