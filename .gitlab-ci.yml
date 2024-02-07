@@ -25,7 +25,8 @@ install_dependencies:
       - .yarn/
   script:
     - yarn install --immutable --check-cache
-    - find .
+    - yarn config get cacheFolder
+    - ls $(yarn config get cacheFolder)
   artifacts:
     paths:
       - .pnp.*
@@ -44,6 +45,8 @@ test:
   image:
     name: 'node:18.16.0'
   script:
+    - yarn config get cacheFolder
+    - ls $(yarn config get cacheFolder)
     - yarn test
 
 build:
