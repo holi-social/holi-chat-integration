@@ -25,9 +25,7 @@ install_dependencies:
       - .yarn/
   script:
     - yarn config set enableGlobalCache false
-    - yarn config get cacheFolder
     - yarn install --immutable --check-cache
-    - ls $(yarn config get cacheFolder)
   artifacts:
     paths:
       - .pnp.*
@@ -47,8 +45,6 @@ test:
     name: 'node:18.16.0'
   script:
     - yarn config set enableGlobalCache false
-    - yarn config get cacheFolder
-    - ls $(yarn config get cacheFolder)
     - yarn test
 
 build:
@@ -63,7 +59,7 @@ build:
   image:
     name: 'node:18.16.0'
   script:
-    - yarn config set cacheFolder "./.yarnCache"
+    - yarn config set enableGlobalCache false
     - yarn build
   artifacts:
     paths:
