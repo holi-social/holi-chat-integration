@@ -9,6 +9,8 @@ This repository contains Google Cloud Functions implementation for the integrati
 
 ### Local Development
 
+A simulation can be started by calling mprocs-start.sh
+
 #### Create Matrix Admin User
 
 In the holi-chat-server project, there is a script `create-synapse-admin-user.sh`` to create an admin user in Synapse. You can use it with the URL http://127.0.0.1:8008
