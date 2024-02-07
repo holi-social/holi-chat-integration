@@ -26,6 +26,9 @@ install_dependencies:
   script:
     - yarn install --immutable --check-cache
     - find .
+  artifacts:
+    paths:
+      - .pnp.*
   # only:
   #   changes:
   #     - yarn.lock
