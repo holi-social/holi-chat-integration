@@ -23,9 +23,9 @@ install_dependencies:
       - node_modules/
   script:
     - yarn install --immutable --check-cache
-  only:
-    changes:
-      - yarn.lock
+  # only:
+  #   changes:
+  #     - yarn.lock
 
 test:
   stage: 'test'
