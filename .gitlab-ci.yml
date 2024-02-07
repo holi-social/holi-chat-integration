@@ -25,6 +25,7 @@ install_dependencies:
       - .yarn/
   script:
     - yarn install --immutable --check-cache
+    - find .
   # only:
   #   changes:
   #     - yarn.lock
