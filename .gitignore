@@ -12,3 +12,12 @@ dist
 coverage
 *.zip
 yarn-error.log
+
+# yarn default ignores
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
