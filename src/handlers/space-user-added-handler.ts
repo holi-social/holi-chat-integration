@@ -1,5 +1,5 @@
 import { inviteUserToSpace } from '../helpers/inviteUserToSpace'
-import { logPhase, logger } from '../logger'
+import { logPhase } from '../logger'
 import { SpaceUserAddedDataPayload } from '../types'
 
 // Handles the SpaceUserAdded event from Google Cloud Pub/Sub.

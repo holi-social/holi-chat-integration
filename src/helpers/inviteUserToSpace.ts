@@ -19,9 +19,7 @@ export const inviteUserToSpace = async (
       'inviteUserToSpace: Could not find space and general room for space: "' + holiSpaceSlug + '". Retrying later.'
     )
   }
-  const responses = roomsToInvite.map(async (roomId) => {
-    await joinRoom(roomId, getMatrixUserId(identity))
-  })
+  const responses = roomsToInvite.map(async (roomId) => await joinRoom(roomId, getMatrixUserId(identity)))
 
   await Promise.all(responses)
 }
