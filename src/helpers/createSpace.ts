@@ -1,12 +1,19 @@
 import { CHAT_SERVER_URL } from '../constants'
 import { SpacePayload } from '../types'
-import { setRoomSharedData } from './rooms'
-import { ChatRoomEvent, EventType, Preset, RoomType, Visibility, createRoom, joinRoom, sendStateEvent } from './matrixClient'
+import {
+  ChatRoomEvent,
+  EventType,
+  Preset,
+  RoomType,
+  Visibility,
+  createRoom,
+  joinRoom,
+  sendStateEvent,
+} from './matrixClient'
+import { setChildRoomSharedData, setSpaceSharedData } from './rooms'
 
-export const createSpaceContainer = async (
-  { id, name, slug }: SpacePayload,
-  inviteUserIds: string[]
-): Promise<string> => {
+export const createSpaceContainer = async (spacePayload: SpacePayload, inviteUserIds: string[]): Promise<string> => {
+  const { id, name, slug } = spacePayload
   const { room_id: parentSpaceRoomId } = await createRoom({
     name: name,
     preset: Preset.PrivateChat,
@@ -28,8 +35,8 @@ export const createSpaceContainer = async (
   inviteUserIds.forEach(async (userId) => {
     await joinRoom(parentSpaceRoomId, userId)
   })
-  
-  await sendStateEvent(parentSpaceRoomId, ChatRoomEvent.SharedData, { holiSpaceId: id })
+
+  await setSpaceSharedData(parentSpaceRoomId, spacePayload)
 
   return parentSpaceRoomId
 }
@@ -61,7 +68,7 @@ export const addGeneralRoomToSpaceContainer = async (
   spacePayload: SpacePayload
 ): Promise<void> => {
   // add custom data to general room
-  await setRoomSharedData(generalSpaceRoomId, parentSpaceRoomId, spacePayload)
+  await setChildRoomSharedData(generalSpaceRoomId, parentSpaceRoomId, spacePayload)
 
   // add general room as child of space
   await sendStateEvent(parentSpaceRoomId, EventType.SpaceChild, { via: [CHAT_SERVER_URL] }, generalSpaceRoomId)

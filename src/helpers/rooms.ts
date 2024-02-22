@@ -47,10 +47,11 @@ export const getGeneralRoomSharedDataForSpace = async (
   return result.find((roomResult) => roomResult != null)
 }
 
-/**
- * Create room helpers
- */
-export const setRoomSharedData = async (
+export const setSpaceSharedData = async (roomId: string, { id }: SpacePayload) => {
+  await sendStateEvent(roomId, ChatRoomEvent.SharedData, { holiSpaceId: id })
+}
+
+export const setChildRoomSharedData = async (
   roomId: string,
   parentSpaceRoomId: string,
   { id, name, avatarDefaultColor }: SpacePayload
@@ -127,7 +128,7 @@ export const updateSpaceRoomSharedData = async (spaceRoomId: string, messageId: 
   if (!isSpaceGeneralRoomSharedData(sharedData)) return
   if (!hasRoomUpdatedValues(sharedData, payload)) return
 
-  await setRoomSharedData(roomId, sharedData.parentSpaceRoomId, payload)
+  await setChildRoomSharedData(roomId, sharedData.parentSpaceRoomId, payload)
 }
 
 /**
