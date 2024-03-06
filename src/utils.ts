@@ -22,16 +22,16 @@ export const authedFetchResponse = async (url: string, method: string, body?: ob
     init['body'] = JSON.stringify(body)
   }
   let response = await fetch(CHAT_SERVER_URL + url, init)
-  let retryCount = 10
-  while (response.status == 429 && retryCount > 0) {
-    retryCount--
+  let retryCount = 0
+  while (response.status == 429 && retryCount < 10) {
+    retryCount++
+    let delay = 3000
     try {
       const json = await response.json()
-      const delay = json.retry_after_ms ? json.retry_after_ms : 3000
-      await new Promise((resolve) => setTimeout(resolve, delay))
-    } catch {
-      await new Promise((resolve) => setTimeout(resolve, 3000))
-    }
+      if (json.retry_after_ms) delay = json.retry_after_ms
+    } catch {}
+    console.log(`Rate exceeded. Schedule retry ${retryCount} after ${delay}ms`)
+    await new Promise((resolve) => setTimeout(resolve, delay))
     response = await fetch(CHAT_SERVER_URL + url, init)
   }
   if (response.status == 429) {
