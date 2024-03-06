@@ -37,7 +37,7 @@ export const authedFetchResponse = async (url: string, method: string, body?: ob
   if (response.status == 429) {
     try {
       const json = await response.json()
-      return { status: response.status, json }
+      throw new Error(`Matrix request failed with status ${response.status}: ${JSON.stringify(json)}`)
     } catch {
       throw new Error('Matrix request failed with status 429: Rate exceeded')
     }
