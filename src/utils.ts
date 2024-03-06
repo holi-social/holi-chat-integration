@@ -22,7 +22,15 @@ export const authedFetchResponse = async (url: string, method: string, body?: ob
     init['body'] = JSON.stringify(body)
   }
   const response = await fetch(CHAT_SERVER_URL + url, init)
-  return { status: response.status, json: await response.json() }
+  if (response.status == 429) {
+    return { status: response.status, json: { errcode: 'RATE_EXCEEDED', error: 'Rate exceeded' } }
+  }
+  try {
+    const json = await response.json()
+    return { status: response.status, json }
+  } catch {
+    return { status: response.status, json: {} }
+  }
 }
 
 export const authedFetchJson = async (url: string, method: string, body?: object) => {
