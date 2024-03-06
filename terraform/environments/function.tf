@@ -58,7 +58,7 @@ resource "google_cloudfunctions2_function" "holi-chat-integration" {
     available_memory                 = "200Mi"
     timeout_seconds                  = 120
     available_cpu                    = 1
-    max_instance_request_concurrency = 50
+    max_instance_request_concurrency = 20
 
     environment_variables = {
       ENVIRONMENT      = local.environment_name
