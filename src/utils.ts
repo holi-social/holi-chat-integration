@@ -23,7 +23,7 @@ export const authedFetchResponse = async (url: string, method: string, body?: ob
   }
   const response = await fetch(CHAT_SERVER_URL + url, init)
   if (response.status == 429) {
-    return { status: response.status, json: { errcode: 'RATE_EXCEEDED', error: 'Rate exceeded' } }
+    throw new Error('Matrix request failed with status 429: Rate exceeded')
   }
   try {
     const json = await response.json()
