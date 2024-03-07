@@ -3,6 +3,7 @@ import { SpaceCreatedDataPayload } from '../types'
 import { addGeneralRoomToSpaceContainer, createSpaceContainer, createSpaceGeneralRoom } from '../helpers/createSpace'
 import { getRoomIdsForHoliSpace } from '../helpers/rooms'
 import { getMatrixUserId } from '../helpers/matrixClient'
+import { ChainedError } from '../helpers/chainedError'
 
 // Handles the SpaceCreated event from Google Cloud Pub/Sub.
 export const spaceCreatedHandler = async (messageId: string, payload: SpaceCreatedDataPayload): Promise<void> => {
@@ -31,6 +32,6 @@ export const spaceCreatedHandler = async (messageId: string, payload: SpaceCreat
       'spaceCreatedHandler.addGeneralRoomToSpaceContainer: ' + payload.space.slug
     )(() => addGeneralRoomToSpaceContainer(parentSpaceRoomId, generalSpaceRoomId, spacePayload))
   } catch (error) {
-    throw new Error(`Failed to create space: ${error.message}`)
+    throw new ChainedError(`Failed to create space: ${error.message}`, error)
   }
 }

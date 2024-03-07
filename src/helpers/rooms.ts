@@ -6,6 +6,7 @@ import {
   getDeleteStatus,
   getRoomStateEvents,
   getSpaceRoomId,
+  initRoomDeletion,
   isSpaceGeneralRoomSharedData,
   RoomAvatarContent,
   RoomNameContent,
@@ -25,9 +26,14 @@ export const getRoomChildren = async (roomId: string): Promise<string[]> => {
 export const getRoomIdsForHoliSpace = async (spaceSlug: string): Promise<string[]> => {
   const spaceRoomId = await getSpaceRoomId(spaceSlug)
   if (!spaceRoomId) return []
+  // try {
   const roomIds = await getRoomChildren(spaceRoomId)
   roomIds.push(spaceRoomId)
   return roomIds
+  // } catch {
+  // deleteRoom(spaceRoomId)
+  // return []
+  // }
 }
 
 export const getGeneralRoomSharedDataForSpace = async (
@@ -47,10 +53,11 @@ export const getGeneralRoomSharedDataForSpace = async (
   return result.find((roomResult) => roomResult != null)
 }
 
-/**
- * Create room helpers
- */
-export const setRoomSharedData = async (
+export const setSpaceSharedData = async (roomId: string, { id }: SpacePayload) => {
+  await sendStateEvent(roomId, ChatRoomEvent.SharedData, { holiSpaceId: id })
+}
+
+export const setChildRoomSharedData = async (
   roomId: string,
   parentSpaceRoomId: string,
   { id, name, avatarDefaultColor }: SpacePayload
@@ -69,17 +76,21 @@ export const setRoomName = async (roomId: string, roomName: string): Promise<voi
   })
 }
 
-export const awaitDeletionComplete = async (messageId: string, roomId: string, delete_id: string) => {
+export const deleteRoom = async (roomId: string) => {
+  const delete_id = await initRoomDeletion(roomId)
+  await awaitDeletionComplete(roomId, delete_id)
+}
+
+export const awaitDeletionComplete = async (roomId: string, delete_id: string) => {
   try {
-    logDebug(messageId, '-*'.repeat(10) + ' ROOM IS DELETING ' + roomId)
     const status = await getDeleteStatus(delete_id)
     if (status !== 'complete') {
       await new Promise((resolve) => setTimeout(resolve, 5000))
-      return awaitDeletionComplete(messageId, roomId, delete_id)
+      return awaitDeletionComplete(roomId, delete_id)
     }
   } catch (error) {
     await new Promise((resolve) => setTimeout(resolve, 5000))
-    return awaitDeletionComplete(messageId, roomId, delete_id)
+    return awaitDeletionComplete(roomId, delete_id)
   }
 }
 
@@ -127,7 +138,7 @@ export const updateSpaceRoomSharedData = async (spaceRoomId: string, messageId: 
   if (!isSpaceGeneralRoomSharedData(sharedData)) return
   if (!hasRoomUpdatedValues(sharedData, payload)) return
 
-  await setRoomSharedData(roomId, sharedData.parentSpaceRoomId, payload)
+  await setChildRoomSharedData(roomId, sharedData.parentSpaceRoomId, payload)
 }
 
 /**

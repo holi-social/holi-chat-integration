@@ -21,8 +21,33 @@ export const authedFetchResponse = async (url: string, method: string, body?: ob
   if (body) {
     init['body'] = JSON.stringify(body)
   }
-  const response = await fetch(CHAT_SERVER_URL + url, init)
-  return { status: response.status, json: await response.json() }
+  let response = await fetch(CHAT_SERVER_URL + url, init)
+  let retryCount = 0
+  while (response.status == 429 && retryCount < 10) {
+    retryCount++
+    let delay = 3000
+    try {
+      const json = await response.json()
+      if (json.retry_after_ms) delay = json.retry_after_ms
+    } catch {}
+    console.log(`Rate exceeded. Schedule retry ${retryCount} after ${delay}ms`)
+    await new Promise((resolve) => setTimeout(resolve, delay))
+    response = await fetch(CHAT_SERVER_URL + url, init)
+  }
+  if (response.status == 429) {
+    try {
+      const json = await response.json()
+      throw new Error(`Matrix request failed with status ${response.status}: ${JSON.stringify(json)}`)
+    } catch {
+      throw new Error('Matrix request failed with status 429: Rate exceeded')
+    }
+  }
+  try {
+    const json = await response.json()
+    return { status: response.status, json }
+  } catch {
+    return { status: response.status, json: {} }
+  }
 }
 
 export const authedFetchJson = async (url: string, method: string, body?: object) => {

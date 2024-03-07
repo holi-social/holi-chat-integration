@@ -1,7 +1,6 @@
 import { logDebug } from '../logger'
 import { SpacePayload } from '../types'
-import { initRoomDeletion } from './matrixClient'
-import { awaitDeletionComplete, getRoomIdsForHoliSpace } from './rooms'
+import { deleteRoom, getRoomIdsForHoliSpace } from './rooms'
 
 export const deleteSpaceRoom = async (messageId: string, { slug }: SpacePayload) => {
   const roomIdsToDelete = await getRoomIdsForHoliSpace(slug)
@@ -10,8 +9,7 @@ export const deleteSpaceRoom = async (messageId: string, { slug }: SpacePayload)
     logDebug(messageId, '**'.repeat(10) + ' FOUND ROOM TO DELETE ' + roomId)
 
     try {
-      const delete_id = await initRoomDeletion(roomId)
-      await awaitDeletionComplete(messageId, roomId, delete_id)
+      await deleteRoom(roomId)
       logDebug(messageId, '--'.repeat(10) + ' ROOM WAS DELETED ' + roomId)
     } catch (error) {
       logDebug(messageId, 'x*'.repeat(10) + ' ERROR OCCURED DURING DELETION ' + error)

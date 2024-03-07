@@ -2,7 +2,7 @@
 export ENVIRONMENT=local
 
 # Chat environment variables
-export CHAT_SERVER_URL="http://192.168.180.44:8008"
+export CHAT_SERVER_URL="http://local.chat.holi.social:8008"
 export CHAT_SERVER_NAME="local.chat.holi.social"
 export CHAT_ADMIN_USERNAME=""
 export CHAT_ADMIN_ACCESS_TOKEN=""

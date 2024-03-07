@@ -1,6 +1,7 @@
 import { getMatrixUserId, isUsernameAvailable, setAvatarUrl, setDisplayName } from '../helpers/matrixClient'
 import { logPhase, logWarn, logger } from '../logger'
 import { UserNameUpdatedDataPayload } from '../types'
+import { ChainedError } from '../helpers/chainedError'
 
 export const userNameUpdatedHandler = async (
   messageId: string,
@@ -21,6 +22,6 @@ export const userNameUpdatedHandler = async (
       }
     })
   } catch (error) {
-    throw new Error(`Failed to update user profile: ${error.message}`)
+    throw new ChainedError(`Failed to update user profile: ${error.message}`, error)
   }
 }

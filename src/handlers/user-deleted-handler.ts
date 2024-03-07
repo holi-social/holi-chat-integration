@@ -1,6 +1,7 @@
 import { deactivateAccount, getMatrixUserId } from '../helpers/matrixClient'
 import { logPhase } from '../logger'
 import { UserDeletedDataPayload } from '../types'
+import { ChainedError } from '../helpers/chainedError'
 
 export const userDeletedHandler = async (messageId: string, { user }: UserDeletedDataPayload): Promise<void> => {
   try {
@@ -13,6 +14,6 @@ export const userDeletedHandler = async (messageId: string, { user }: UserDelete
       }
     })
   } catch (error) {
-    throw new Error(`Failed to delete user profile: ${error.message}`)
+    throw new ChainedError(`Failed to delete user profile: ${error.message}`, error)
   }
 }
