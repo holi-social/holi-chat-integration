@@ -11,11 +11,15 @@ export const spaceUserRemovedHandler = async (
   try {
     await logPhase(
       messageId,
-      'spaceUserRemovedHandler.kickUserFromSpace: ' + payload.space.slug + ' - ' + payload.user.id
-    )(() => kickUserFromSpace(messageId, payload))
+      'spaceUserRemovedHandler.kickUserFromSpace: ' + payload.space.slug + ' - ' + payload.user.id,
+      () => kickUserFromSpace(messageId, payload)
+    )
   } catch (error) {
-    throw new ChainedError(`Failed to kick user "${payload.user.id}" from the space "${payload.space.id}": ${error.message}`, {
-      cause: error,
-    })
+    throw new ChainedError(
+      `Failed to kick user "${payload.user.id}" from the space "${payload.space.id}": ${error.message}`,
+      {
+        cause: error,
+      }
+    )
   }
 }

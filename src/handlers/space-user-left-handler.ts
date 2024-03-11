@@ -8,11 +8,15 @@ export const spaceUserLeftHandler = async (messageId: string, payload: SpaceUser
   try {
     await logPhase(
       messageId,
-      'spaceUserLeftHandler.kickUserFromSpace: ' + payload.space.slug + ' - ' + payload.user.id
-    )(() => kickUserFromSpace(messageId, payload))
+      'spaceUserLeftHandler.kickUserFromSpace: ' + payload.space.slug + ' - ' + payload.user.id,
+      () => kickUserFromSpace(messageId, payload)
+    )
   } catch (error) {
-    throw new ChainedError(`Failed user to leave "${payload.user.id}" the space "${payload.space.id}": ${error.message}`, {
-      cause: error,
-    })
+    throw new ChainedError(
+      `Failed user to leave "${payload.user.id}" the space "${payload.space.id}": ${error.message}`,
+      {
+        cause: error,
+      }
+    )
   }
 }

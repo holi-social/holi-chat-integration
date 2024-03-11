@@ -47,35 +47,35 @@ export const processEvent = async (messageId, eventType, event, response) => {
   try {
     switch (eventType) {
       case EventType.SPACE_CREATED:
-        await logPhase(messageId, 'spaceCreatedHandler')(() => spaceCreatedHandler(messageId, event))
+        await logPhase(messageId, 'spaceCreatedHandler', () => spaceCreatedHandler(messageId, event))
         response.sendStatus(201)
         break
       case EventType.SPACE_UPDATED:
-        await logPhase(messageId, 'spaceUpdatedHandler')(() => spaceUpdatedHandler(messageId, event))
+        await logPhase(messageId, 'spaceUpdatedHandler', () => spaceUpdatedHandler(messageId, event))
         response.sendStatus(201)
         break
       case EventType.SPACE_DELETED:
-        await logPhase(messageId, 'spaceDeletedHandler')(() => spaceDeletedHandler(messageId, event))
+        await logPhase(messageId, 'spaceDeletedHandler', () => spaceDeletedHandler(messageId, event))
         response.sendStatus(204)
         break
       case EventType.SPACE_USER_ADDED:
-        await logPhase(messageId, 'spaceUserAddedHandler')(() => spaceUserAddedHandler(messageId, event))
+        await logPhase(messageId, 'spaceUserAddedHandler', () => spaceUserAddedHandler(messageId, event))
         response.sendStatus(200)
         break
       case EventType.USER_NAME_UPDATED:
-        await logPhase(messageId, 'userNameUpdatedHandler')(() => userNameUpdatedHandler(messageId, event))
+        await logPhase(messageId, 'userNameUpdatedHandler', () => userNameUpdatedHandler(messageId, event))
         response.sendStatus(200)
         break
       case EventType.USER_DELETED:
-        await logPhase(messageId, 'userDeletedHandler')(() => userDeletedHandler(messageId, event))
+        await logPhase(messageId, 'userDeletedHandler', () => userDeletedHandler(messageId, event))
         response.sendStatus(204)
         break
       case EventType.SPACE_USER_LEFT:
-        await logPhase(messageId, 'spaceUserLeftHandler')(() => spaceUserLeftHandler(messageId, event))
+        await logPhase(messageId, 'spaceUserLeftHandler', () => spaceUserLeftHandler(messageId, event))
         response.sendStatus(200)
         break
       case EventType.SPACE_USER_REMOVED:
-        await logPhase(messageId, 'spaceUserRemovedHandler')(() => spaceUserRemovedHandler(messageId, event))
+        await logPhase(messageId, 'spaceUserRemovedHandler', () => spaceUserRemovedHandler(messageId, event))
         response.sendStatus(200)
         break
       default:

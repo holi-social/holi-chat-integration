@@ -19,18 +19,19 @@ export const spaceCreatedHandler = async (messageId: string, payload: SpaceCreat
     }
     const parentSpaceRoomId = await logPhase(
       messageId,
-      'spaceCreatedHandler.createSpaceContainer: ' + payload.space.slug
-    )(() => createSpaceContainer(spacePayload, [creatorId]))
+      'spaceCreatedHandler.createSpaceContainer: ' + payload.space.slug,
+      () => createSpaceContainer(spacePayload, [creatorId])
+    )
 
     const generalSpaceRoomId = await logPhase(
       messageId,
-      'spaceCreatedHandler.createSpaceGeneralRoom: ' + payload.space.slug
-    )(() => createSpaceGeneralRoom([creatorId]))
+      'spaceCreatedHandler.createSpaceGeneralRoom: ' + payload.space.slug,
+      () => createSpaceGeneralRoom([creatorId])
+    )
 
-    await logPhase(
-      messageId,
-      'spaceCreatedHandler.addGeneralRoomToSpaceContainer: ' + payload.space.slug
-    )(() => addGeneralRoomToSpaceContainer(parentSpaceRoomId, generalSpaceRoomId, spacePayload))
+    await logPhase(messageId, 'spaceCreatedHandler.addGeneralRoomToSpaceContainer: ' + payload.space.slug, () =>
+      addGeneralRoomToSpaceContainer(parentSpaceRoomId, generalSpaceRoomId, spacePayload)
+    )
   } catch (error) {
     throw new ChainedError(`Failed to create space: ${error.message}`, { cause: error })
   }

@@ -6,10 +6,7 @@ import { ChainedError } from '../helpers/chainedError'
 
 export const spaceUpdatedHandler = async (messageId: string, payload: SpaceUpdatedDataPayload): Promise<void> => {
   try {
-    await logPhase(
-      messageId,
-      'spaceUpdatedHandler: ' + payload.space.slug
-    )(async () => {
+    await logPhase(messageId, 'spaceUpdatedHandler: ' + payload.space.slug, async () => {
       const { space: spacePayload } = payload
       const spaceRoomId = await getSpaceRoomId(spacePayload.slug)
 

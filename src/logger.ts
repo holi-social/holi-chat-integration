@@ -21,7 +21,7 @@ export const logError = (messageId: string, message: string) => {
   logger.error('[' + messageId + '] ' + message)
 }
 
-export const logPhase = (messageId: string, phaseName: string) => (fn: () => Promise<any>) => {
+export const logPhase = async (messageId: string, phaseName: string, fn: () => Promise<any>) => {
   const before = Date.now()
   logDebug(messageId, 'Starting ' + phaseName)
   return fn()
