@@ -7,6 +7,7 @@ import { spaceUserLeftHandler } from './handlers/space-user-left-handler'
 import { spaceUserRemovedHandler } from './handlers/space-user-removed-handler'
 import { userDeletedHandler } from './handlers/user-deleted-handler'
 import { userNameUpdatedHandler } from './handlers/user-name-updated-handler'
+import { getFullStackTrace } from './helpers/chainedError'
 import { deleteCount } from './helpers/retryCounter'
 import { logDebug, logError, logInfo, logPhase, logger } from './logger'
 
@@ -84,8 +85,9 @@ export const processEvent = async (messageId, eventType, event, response) => {
     deleteCount(messageId)
   } catch (e) {
     logError(messageId, `Error while processing message: ${e.name} - ${e.message}`)
+    logError(messageId, getFullStackTrace(e))
     response.sendStatus(500)
-    throw e
+    throw new Error(`Error while processing message: ${e.message}`)
   }
 }
 

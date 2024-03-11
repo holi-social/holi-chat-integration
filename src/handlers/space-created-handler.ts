@@ -32,6 +32,6 @@ export const spaceCreatedHandler = async (messageId: string, payload: SpaceCreat
       'spaceCreatedHandler.addGeneralRoomToSpaceContainer: ' + payload.space.slug
     )(() => addGeneralRoomToSpaceContainer(parentSpaceRoomId, generalSpaceRoomId, spacePayload))
   } catch (error) {
-    throw new ChainedError(`Failed to create space: ${error.message}`, error)
+    throw new ChainedError(`Failed to create space: ${error.message}`, { cause: error })
   }
 }

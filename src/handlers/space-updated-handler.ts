@@ -17,6 +17,6 @@ export const spaceUpdatedHandler = async (messageId: string, payload: SpaceUpdat
       await updateSpaceRoomSharedData(spaceRoomId, messageId, spacePayload)
     })
   } catch (error) {
-    throw new ChainedError(`Failed to update space with ID '${payload.space.id}': ${error.message}`, error)
+    throw new ChainedError(`Failed to update space with ID '${payload.space.id}': ${error.message}`, { cause: error })
   }
 }

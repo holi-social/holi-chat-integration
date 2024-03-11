@@ -14,6 +14,6 @@ export const userDeletedHandler = async (messageId: string, { user }: UserDelete
       }
     })
   } catch (error) {
-    throw new ChainedError(`Failed to delete user profile: ${error.message}`, error)
+    throw new ChainedError(`Failed to delete user profile: ${error.message}`, { cause: error })
   }
 }

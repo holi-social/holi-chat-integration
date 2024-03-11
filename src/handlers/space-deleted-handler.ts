@@ -11,6 +11,6 @@ export const spaceDeletedHandler = async (messageId: string, { space }: SpaceDel
       'spaceDeletedHandler.deleteSpaceRoom: ' + space.slug
     )(() => deleteSpaceRoom(messageId, space))
   } catch (error) {
-    throw new ChainedError(`Failed to delete space room: ${error.message}`, error)
+    throw new ChainedError(`Failed to delete space room: ${error.message}`, { cause: error })
   }
 }

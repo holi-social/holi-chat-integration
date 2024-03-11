@@ -22,6 +22,6 @@ export const userNameUpdatedHandler = async (
       }
     })
   } catch (error) {
-    throw new ChainedError(`Failed to update user profile: ${error.message}`, error)
+    throw new ChainedError(`Failed to update user profile: ${error.message}`, { cause: error })
   }
 }
