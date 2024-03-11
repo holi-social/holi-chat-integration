@@ -13,7 +13,11 @@ export const sanitizeSpaceName = (name: string): string => {
   return sanitized.replace(/\s+/g, ' ')
 }
 
-export const authedFetchResponse = async (url: string, method: string, body?: object) => {
+export const authedFetchResponse = async (
+  url: string,
+  method: string,
+  body?: object
+): Promise<{ status: number; json: { errcode?: string; error?: string } }> => {
   const init = {
     method: method,
     headers: { Authorization: `Bearer ${CHAT_ADMIN_ACCESS_TOKEN}` },
@@ -27,7 +31,7 @@ export const authedFetchResponse = async (url: string, method: string, body?: ob
     retryCount++
     let delay = 3000
     try {
-      const json = await response.json()
+      const json = (await response.json()) as { retry_after_ms: number }
       if (json.retry_after_ms) delay = json.retry_after_ms
     } catch {}
     console.log(`Rate exceeded. Schedule retry ${retryCount} after ${delay}ms`)

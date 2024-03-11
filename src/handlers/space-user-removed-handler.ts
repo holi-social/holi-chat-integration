@@ -1,7 +1,6 @@
 import { kickUserFromSpace } from '../helpers/kickUserFromSpace'
 import { logPhase } from '../logger'
 import { SpaceUserRemovedDataPayload } from '../types'
-import { ChainedError } from '../helpers/chainedError'
 
 //Handles the spaceUserRemoved event from Google Cloud Pub/Sub.
 export const spaceUserRemovedHandler = async (
@@ -15,7 +14,7 @@ export const spaceUserRemovedHandler = async (
       () => kickUserFromSpace(messageId, payload)
     )
   } catch (error) {
-    throw new ChainedError(
+    throw new Error(
       `Failed to kick user "${payload.user.id}" from the space "${payload.space.id}": ${error.message}`,
       {
         cause: error,

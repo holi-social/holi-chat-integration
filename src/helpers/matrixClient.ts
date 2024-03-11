@@ -32,9 +32,7 @@ export enum ChatRoomEvent {
   SpaceDeleted = 'holi.room.space.deleted',
 }
 
-interface DeleteStatus {
-  readonly status: 'active' | 'shutting_down' | 'purging' | 'complete' | 'failed'
-}
+type DeleteStatus = 'active' | 'shutting_down' | 'purging' | 'complete' | 'failed'
 
 interface SpaceRoomSharedData {
   readonly holiSpaceId: string
@@ -115,7 +113,7 @@ export const sendStateEvent = async (roomId: string, eventType: string, content:
 }
 
 export const createRoom = async (content: object): Promise<{ room_id: string }> => {
-  return await authedFetchJson('/_matrix/client/v3/createRoom', 'POST', content)
+  return (await authedFetchJson('/_matrix/client/v3/createRoom', 'POST', content)) as { room_id: string }
 }
 
 export const kick = async (roomId: string, userId: string, reason?: string) => {
@@ -148,15 +146,17 @@ export const joinRoom = async (roomId: string, userId: string) => {
 }
 
 export const initRoomDeletion = async (roomId: string) => {
-  const { delete_id }: { delete_id: string } = await authedFetchJson(`/_synapse/admin/v2/rooms/${roomId}`, 'DELETE', {
+  const { delete_id } = (await authedFetchJson(`/_synapse/admin/v2/rooms/${roomId}`, 'DELETE', {
     purge: true,
     block: true,
-  })
+  })) as { delete_id: string }
   return delete_id
 }
 
-export const getDeleteStatus = async (deleteId: string) => {
-  const { status }: DeleteStatus = await authedFetchJson(`/_synapse/admin/v2/rooms/delete_status/${deleteId}`, 'GET')
+export const getDeleteStatus = async (deleteId: string): Promise<DeleteStatus> => {
+  const { status } = (await authedFetchJson(`/_synapse/admin/v2/rooms/delete_status/${deleteId}`, 'GET')) as {
+    status: DeleteStatus
+  }
   return status
 }
 
@@ -193,14 +193,14 @@ export const isUsernameAvailable = async (localpart: string) => {
 
 export const getRoomStateEvents = async (roomId: string): Promise<UknownRoomStateEvent[]> => {
   if (!roomId) return []
-  return await authedFetchJson('/_matrix/client/v3/rooms/' + roomId + '/state', 'GET')
+  return (await authedFetchJson('/_matrix/client/v3/rooms/' + roomId + '/state', 'GET')) as UknownRoomStateEvent[]
 }
 
 export const getSpaceRoomId = async (spaceSlug: string): Promise<string> => {
-  const response = await authedFetchResponse(
+  const response = (await authedFetchResponse(
     '/_matrix/client/v3/directory/room/%23space_' + spaceSlug + '%3A' + CHAT_SERVER_NAME,
     'GET'
-  )
+  )) as { status: number; json: { room_id: string } }
   if (response.status != 200) return undefined
   return response.json.room_id
 }

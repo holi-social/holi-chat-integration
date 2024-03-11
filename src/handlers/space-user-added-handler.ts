@@ -1,7 +1,6 @@
 import { inviteUserToSpace } from '../helpers/inviteUserToSpace'
 import { logPhase } from '../logger'
 import { SpaceUserAddedDataPayload } from '../types'
-import { ChainedError } from '../helpers/chainedError'
 
 // Handles the SpaceUserAdded event from Google Cloud Pub/Sub.
 export const spaceUserAddedHandler = async (messageId: string, payload: SpaceUserAddedDataPayload): Promise<void> => {
@@ -12,7 +11,7 @@ export const spaceUserAddedHandler = async (messageId: string, payload: SpaceUse
       () => inviteUserToSpace(messageId, payload)
     )
   } catch (error) {
-    throw new ChainedError(`Failed to add user "${payload.user.id}" to space "${payload.space.id}": ${error.message}`, {
+    throw new Error(`Failed to add user "${payload.user.id}" to space "${payload.space.id}": ${error.message}`, {
       cause: error,
     })
   }
