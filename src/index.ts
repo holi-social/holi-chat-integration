@@ -7,6 +7,7 @@ import { spaceUserLeftHandler } from './handlers/space-user-left-handler'
 import { spaceUserRemovedHandler } from './handlers/space-user-removed-handler'
 import { userDeletedHandler } from './handlers/user-deleted-handler'
 import { userNameUpdatedHandler } from './handlers/user-name-updated-handler'
+import { getFullStackTrace } from './helpers/chainedError'
 import { deleteCount } from './helpers/retryCounter'
 import { logDebug, logError, logInfo, logPhase, logger } from './logger'
 
@@ -46,35 +47,35 @@ export const processEvent = async (messageId, eventType, event, response) => {
   try {
     switch (eventType) {
       case EventType.SPACE_CREATED:
-        await logPhase(messageId, 'spaceCreatedHandler')(() => spaceCreatedHandler(messageId, event))
+        await logPhase(messageId, 'spaceCreatedHandler', () => spaceCreatedHandler(messageId, event))
         response.sendStatus(201)
         break
       case EventType.SPACE_UPDATED:
-        await logPhase(messageId, 'spaceUpdatedHandler')(() => spaceUpdatedHandler(messageId, event))
+        await logPhase(messageId, 'spaceUpdatedHandler', () => spaceUpdatedHandler(messageId, event))
         response.sendStatus(201)
         break
       case EventType.SPACE_DELETED:
-        await logPhase(messageId, 'spaceDeletedHandler')(() => spaceDeletedHandler(messageId, event))
+        await logPhase(messageId, 'spaceDeletedHandler', () => spaceDeletedHandler(messageId, event))
         response.sendStatus(204)
         break
       case EventType.SPACE_USER_ADDED:
-        await logPhase(messageId, 'spaceUserAddedHandler')(() => spaceUserAddedHandler(messageId, event))
+        await logPhase(messageId, 'spaceUserAddedHandler', () => spaceUserAddedHandler(messageId, event))
         response.sendStatus(200)
         break
       case EventType.USER_NAME_UPDATED:
-        await logPhase(messageId, 'userNameUpdatedHandler')(() => userNameUpdatedHandler(messageId, event))
+        await logPhase(messageId, 'userNameUpdatedHandler', () => userNameUpdatedHandler(messageId, event))
         response.sendStatus(200)
         break
       case EventType.USER_DELETED:
-        await logPhase(messageId, 'userDeletedHandler')(() => userDeletedHandler(messageId, event))
+        await logPhase(messageId, 'userDeletedHandler', () => userDeletedHandler(messageId, event))
         response.sendStatus(204)
         break
       case EventType.SPACE_USER_LEFT:
-        await logPhase(messageId, 'spaceUserLeftHandler')(() => spaceUserLeftHandler(messageId, event))
+        await logPhase(messageId, 'spaceUserLeftHandler', () => spaceUserLeftHandler(messageId, event))
         response.sendStatus(200)
         break
       case EventType.SPACE_USER_REMOVED:
-        await logPhase(messageId, 'spaceUserRemovedHandler')(() => spaceUserRemovedHandler(messageId, event))
+        await logPhase(messageId, 'spaceUserRemovedHandler', () => spaceUserRemovedHandler(messageId, event))
         response.sendStatus(200)
         break
       default:
@@ -84,8 +85,9 @@ export const processEvent = async (messageId, eventType, event, response) => {
     deleteCount(messageId)
   } catch (e) {
     logError(messageId, `Error while processing message: ${e.name} - ${e.message}`)
+    logError(messageId, getFullStackTrace(e))
     response.sendStatus(500)
-    throw e
+    throw new Error(`Error while processing message: ${e.message}`)
   }
 }
 
