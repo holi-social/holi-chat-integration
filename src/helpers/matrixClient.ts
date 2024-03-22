@@ -70,6 +70,7 @@ export type RoomStateContent =
   | RoomCanonicalAliasContent
   | RoomGuestAccessContent
   | RoomJoinRulesContent
+  | MembeshipContent
   | Record<string, unknown>
 
 export interface RoomNameContent {
@@ -102,11 +103,16 @@ interface RoomJoinRulesContent {
   readonly join_rule: string
 }
 
+interface MembeshipContent {
+  readonly membership: string
+  readonly displayname?: string
+}
+
 export const isSpaceGeneralRoomSharedData = (data: object): data is SpaceGeneralRoomSharedData => {
   return 'parentSpaceRoomId' in data && 'spaceName' in data
 }
 
-export const getMatrixUserId = (holiIdentity: string) => `@${holiIdentity}:${CHAT_SERVER_NAME}`
+export const getMatrixId = (holiIdentity: string) => `@${holiIdentity}:${CHAT_SERVER_NAME}`
 
 export const sendStateEvent = async (roomId: string, eventType: string, content: object, stateKey = '') => {
   return await authedFetchJson(`/_matrix/client/v3/rooms/${roomId}/state/${eventType}/${stateKey}`, 'PUT', content)
@@ -116,33 +122,41 @@ export const createRoom = async (content: object): Promise<{ room_id: string }> 
   return (await authedFetchJson('/_matrix/client/v3/createRoom', 'POST', content)) as { room_id: string }
 }
 
-export const kick = async (roomId: string, userId: string, reason?: string) => {
+export const kick = async (roomId: string, matrixId: string, reason?: string) => {
   return await authedFetchResponse(`/_matrix/client/v3/rooms/${roomId}/kick`, 'POST', {
-    user_id: userId,
+    user_id: matrixId,
     reason: reason,
   })
 }
 
-export const joinRoom = async (roomId: string, userId: string) => {
-  const response = await authedFetchResponse(`/_synapse/admin/v1/join/${roomId}`, 'POST', {
-    user_id: userId,
-  })
-  if (response.status === 200) {
-    return
+export const joinRoom = async (roomId: string, matrixId: string) => {
+  for (let i = 1; i <= 10; i++) {
+    const response = await authedFetchResponse(`/_synapse/admin/v1/join/${roomId}`, 'POST', {
+      user_id: matrixId,
+    })
+    if (response.status === 200) {
+      const joinedMember = await getRoomMember(roomId, matrixId, 'join')
+      if (joinedMember) {
+        return
+      } else {
+        logger.info(`The user is not joined in the room: ${matrixId}. Retry ${i} in 1s.`)
+        await new Promise((res) => setTimeout(res, 1000))
+      }
+    } else if (
+      response.status >= 400 &&
+      response.json.errcode === 'M_FORBIDDEN' &&
+      response.json.error.includes('is already in the room')
+    ) {
+      logger.info('The user is already in the room: ' + matrixId)
+      return
+    } else if (response.status === 404 && response.json.errcode === 'M_NOT_FOUND') {
+      logger.warn('The user does not exist on this server: ' + matrixId + '. Doing nothing.')
+      return
+    } else {
+      throw new Error(`Matrix request failed with status ${response.status}: ${JSON.stringify(response.json)}`)
+    }
   }
-  if (
-    response.status >= 400 &&
-    response.json.errcode === 'M_FORBIDDEN' &&
-    response.json.error.includes('is already in the room')
-  ) {
-    logger.info('The user is already in the room: ' + userId)
-    return
-  }
-  if (response.status === 404 && response.json.errcode === 'M_NOT_FOUND') {
-    logger.warn('The user does not exist on this server: ' + userId + '. Doing nothing.')
-    return
-  }
-  throw new Error(`Matrix request failed with status ${response.status}: ${JSON.stringify(response.json)}`)
+  throw new Error(`Member ${matrixId} still not joined after 10 retries. Giving up.`)
 }
 
 export const initRoomDeletion = async (roomId: string) => {
@@ -168,20 +182,20 @@ export const getRooms = async (searchTerm: string, from?: string) => {
   return await authedFetchJson(`/_synapse/admin/v1/rooms${queryString ? '?' + queryString : ''}`, 'GET')
 }
 
-export const setDisplayName = async (displayname: string, userId: string) => {
-  await authedFetchJson(`/_matrix/client/v3/profile/${userId}/displayname`, 'PUT', {
+export const setDisplayName = async (displayname: string, matrixId: string) => {
+  await authedFetchJson(`/_matrix/client/v3/profile/${matrixId}/displayname`, 'PUT', {
     displayname,
   })
 }
 
-export const setAvatarUrl = async (avatarUrl: string, userId: string) => {
-  await authedFetchJson(`/_matrix/client/v3/profile/${userId}/avatar_url`, 'PUT', {
+export const setAvatarUrl = async (avatarUrl: string, matrixId: string) => {
+  await authedFetchJson(`/_matrix/client/v3/profile/${matrixId}/avatar_url`, 'PUT', {
     avatar_url: avatarUrl || '',
   })
 }
 
-export const deactivateAccount = async (userId: string) => {
-  const response = await authedFetchResponse(`/_synapse/admin/v1/deactivate/${userId}`, 'POST', { erase: true })
+export const deactivateAccount = async (matrixId: string) => {
+  const response = await authedFetchResponse(`/_synapse/admin/v1/deactivate/${matrixId}`, 'POST', { erase: true })
   if (response.status >= 300 && response.status !== 404)
     throw new Error(`Deactivating account did not succeed ${response.status}: ${response.json}`)
 }
@@ -203,4 +217,25 @@ export const getSpaceRoomId = async (spaceSlug: string): Promise<string> => {
   )) as { status: number; json: { room_id: string } }
   if (response.status != 200) return undefined
   return response.json.room_id
+}
+
+export const getRoomMember = async (
+  roomId: string,
+  matrixId: string,
+  status?: string
+): Promise<RoomStateEvent<MembeshipContent>> => {
+  const members = await getRoomMembers(roomId, status)
+  const filteredMembers = members?.filter((m) => m.state_key === matrixId)
+  return filteredMembers?.[0]
+}
+
+export const getRoomMembers = async (roomId: string, status?: string): Promise<RoomStateEvent<MembeshipContent>[]> => {
+  const queryParams = {}
+  if (status) queryParams['membership'] = status
+  const queryString = querystring.stringify(queryParams)
+  const json = (await authedFetchJson(
+    `/_matrix/client/v3/rooms/${roomId}/members${queryString ? '?' + queryString : ''}`,
+    'GET'
+  )) as { chunk: RoomStateEvent<MembeshipContent>[] }
+  return json?.chunk
 }

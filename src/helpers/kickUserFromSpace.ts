@@ -1,6 +1,6 @@
 import { logDebug, logInfo, logger } from '../logger'
 import { SpaceUserAddedDataPayload } from '../types'
-import { getMatrixUserId, kick } from './matrixClient'
+import { getMatrixId, kick } from './matrixClient'
 import { getRoomIdsForHoliSpace } from './rooms'
 
 const NUMBER_OF_RETRIES = 10
@@ -15,7 +15,7 @@ export const kickUserFromSpace = async (
     logDebug(messageId, 'kickUserFromSpace: No rooms found for space: ' + holiSpaceSlug)
     return
   }
-  const userId = getMatrixUserId(identity)
+  const userId = getMatrixId(identity)
 
   const roomsDeletedPromises = roomsIdsToLeave.map((roomId) => {
     async function kickUser(roomId, count) {

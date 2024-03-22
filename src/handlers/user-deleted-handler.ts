@@ -1,4 +1,4 @@
-import { deactivateAccount, getMatrixUserId } from '../helpers/matrixClient'
+import { deactivateAccount, getMatrixId } from '../helpers/matrixClient'
 import { logPhase } from '../logger'
 import { UserDeletedDataPayload } from '../types'
 
@@ -6,7 +6,7 @@ export const userDeletedHandler = async (messageId: string, { user }: UserDelete
   try {
     await logPhase(messageId, 'userDeleteHandler.deleteUser: ' + user.identity, async () => {
       if (user.identity) {
-        await deactivateAccount(getMatrixUserId(user.identity))
+        await deactivateAccount(getMatrixId(user.identity))
       }
     })
   } catch (error) {
