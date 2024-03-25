@@ -35,7 +35,7 @@ export const authedFetchResponse = async (
       if (json.retry_after_ms) delay = json.retry_after_ms
     } catch {}
     console.log(`Rate exceeded. Schedule retry ${retryCount} after ${delay}ms`)
-    await new Promise((resolve) => setTimeout(resolve, delay))
+    await wait(delay)
     response = await fetch(CHAT_SERVER_URL + url, init)
   }
   if (response.status == 429) {
@@ -60,4 +60,8 @@ export const authedFetchJson = async (url: string, method: string, body?: object
     throw new Error(`Matrix request failed with status ${response.status}: ${JSON.stringify(response.json)}`)
   }
   return response.json
+}
+
+export const wait = async (delay: number) => {
+  await new Promise((resolve) => setTimeout(resolve, delay))
 }

@@ -1,6 +1,6 @@
 import { CHAT_SERVER_NAME } from '../constants'
 import { logger } from '../logger'
-import { authedFetchJson, authedFetchResponse } from '../utils'
+import { authedFetchJson, authedFetchResponse, wait } from '../utils'
 import * as querystring from 'querystring'
 
 export enum EventType {
@@ -140,7 +140,7 @@ export const joinRoom = async (roomId: string, matrixId: string) => {
         return
       } else {
         logger.info(`The user is not joined in the room: ${matrixId}. Retry ${i} in 1s.`)
-        await new Promise((res) => setTimeout(res, 1000))
+        wait(1000)
       }
     } else if (
       response.status >= 400 &&
