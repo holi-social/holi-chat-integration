@@ -24,7 +24,7 @@ describe('Space Updates', () => {
 
   beforeEach(() => {
     updateStateMock = jest.fn()
-    spySetRoomAvatar = jest.spyOn(room, 'setRoomAvatar').mockResolvedValue(undefined)
+    spySetRoomAvatar = jest.spyOn(room, 'setRoomAvatar').mockResolvedValue({})
     spySetRoomName = jest.spyOn(room, 'setRoomName').mockResolvedValue(undefined)
   })
 

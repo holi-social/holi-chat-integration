@@ -12,7 +12,7 @@ import {
 } from './matrixClient'
 import { setChildRoomSharedData, setSpaceSharedData } from './rooms'
 
-export const createSpaceContainer = async (spacePayload: SpacePayload, inviteUserIds: string[]): Promise<string> => {
+export const createSpaceContainer = async (spacePayload: SpacePayload, inviteUserId: string): Promise<string> => {
   const { id, name, slug } = spacePayload
   const { room_id: parentSpaceRoomId } = await createRoom({
     name: name,
@@ -28,21 +28,17 @@ export const createSpaceContainer = async (spacePayload: SpacePayload, inviteUse
       state_default: 100, // only chat-admin can send state events
     },
     room_alias_name: 'space_' + slug, // set the canonical alias for this room
-    invite: inviteUserIds,
+    invite: [inviteUserId],
   })
 
   // Auto join the holi space creator
-  inviteUserIds.forEach(async (userId) => {
-    await joinRoom(parentSpaceRoomId, userId)
-  })
-
+  await joinRoom(parentSpaceRoomId, inviteUserId)
   await setSpaceSharedData(parentSpaceRoomId, spacePayload)
-
   return parentSpaceRoomId
 }
 
 // Shares the new space with the user with the "admin" role
-export const createSpaceGeneralRoom = async (inviteUserIds: string[]): Promise<string> => {
+export const createSpaceGeneralRoom = async (inviteUserId: string): Promise<string> => {
   const { room_id: generalSpaceRoomId } = await createRoom({
     name: '#general',
     preset: Preset.PrivateChat,
@@ -52,13 +48,11 @@ export const createSpaceGeneralRoom = async (inviteUserIds: string[]): Promise<s
       invite: 100, // only chat-admin can invite users
       state_default: 100, // only chat-admin can send state events
     },
-    invite: inviteUserIds,
+    invite: [inviteUserId],
   })
 
   // Auto join the holi space creator
-  inviteUserIds.forEach(async (userId) => {
-    await joinRoom(generalSpaceRoomId, userId)
-  })
+  await joinRoom(generalSpaceRoomId, inviteUserId)
   return generalSpaceRoomId
 }
 

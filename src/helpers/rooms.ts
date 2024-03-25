@@ -1,5 +1,6 @@
 import { logDebug, logError, logInfo } from '../logger'
 import { SpacePayload } from '../types'
+import { wait } from '../utils'
 import {
   ChatRoomEvent,
   EventType,
@@ -85,11 +86,11 @@ export const awaitDeletionComplete = async (roomId: string, delete_id: string) =
   try {
     const status = await getDeleteStatus(delete_id)
     if (status !== 'complete') {
-      await new Promise((resolve) => setTimeout(resolve, 5000))
+      wait(5000)
       return awaitDeletionComplete(roomId, delete_id)
     }
   } catch (error) {
-    await new Promise((resolve) => setTimeout(resolve, 5000))
+    wait(5000)
     return awaitDeletionComplete(roomId, delete_id)
   }
 }
