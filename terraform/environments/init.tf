@@ -21,7 +21,7 @@ data "terraform_remote_state" "holi_infra_state" {
   }
 }
 
-data "terraform_remote_state" "okuna-common_state" {
+data "terraform_remote_state" "okuna_common_state" {
   backend = "gcs"
   config = {
     bucket = "holi-shared-terraform-state"
