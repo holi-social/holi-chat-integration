@@ -6,7 +6,7 @@ cache:
 
 default:
   tags:
-    - holi-small
+    - 1cpu-4gb
 
 stages:
   - 'install_dependencies'
