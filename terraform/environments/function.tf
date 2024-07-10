@@ -12,16 +12,10 @@ resource "random_id" "main" {
   byte_length = 2
   prefix      = "chat-integration-${local.environment_name}-"
 }
-resource "google_storage_bucket" "sources" {
-  project                     = data.terraform_remote_state.holi_infra_state.outputs.shared_project_id
-  name                        = random_id.main.hex
-  location                    = local.default_location
-  uniform_bucket_level_access = true
-}
 
 resource "google_storage_bucket_object" "function_source" {
-  name   = "receiveEvent.zip"
-  bucket = google_storage_bucket.sources.name
+  name   = "${random_id.main.hex}/receiveEvent.zip"
+  bucket = data.terraform_remote_state.holi_infra_state.outputs.gcf_sources_upload_bucket_name
   source = "../../receiveEvent.zip"
 }
 
@@ -46,7 +40,7 @@ resource "google_cloudfunctions2_function" "holi-chat-integration" {
 
     source {
       storage_source {
-        bucket = google_storage_bucket.sources.name
+        bucket = data.terraform_remote_state.holi_infra_state.outputs.gcf_sources_upload_bucket_name
         object = google_storage_bucket_object.function_source.name
       }
     }
