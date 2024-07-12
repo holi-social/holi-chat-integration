@@ -1,13 +1,5 @@
 # see https://cloud.google.com/functions/docs/tutorials/terraform-pubsub
 
-locals {
-  # predefined environment names are staging, production, and <branchname>
-  environment      = terraform.workspace
-  environment_name = trim(substr(local.environment, 0, 22), ".-") # limits the length of the name that it fits constraints google imposes for some resources, e.g. project ids
-
-  default_location = "europe-north1"
-}
-
 resource "random_id" "main" {
   byte_length = 2
   prefix      = "chat-integration-${local.environment_name}-"
@@ -32,7 +24,7 @@ data "google_secret_manager_secret" "chat_admin_access_token" {
 resource "google_cloudfunctions2_function" "holi-chat-integration" {
   project  = data.terraform_remote_state.holi_infra_state.outputs.shared_project_id
   name     = random_id.main.hex
-  location = local.default_location
+  location = local.default_region
 
   build_config {
     runtime     = "nodejs18"
