@@ -31,9 +31,9 @@ data "terraform_remote_state" "okuna_common_state" {
 
 # provider google including beta features
 provider "google" {
-  region = "europe-north1"
+  region = local.default_region
 }
 
 provider "google-beta" {
-  region = "europe-north1"
+  region = local.default_region
 }

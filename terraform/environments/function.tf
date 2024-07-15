@@ -1,27 +1,13 @@
 # see https://cloud.google.com/functions/docs/tutorials/terraform-pubsub
 
-locals {
-  # predefined environment names are staging, production, and <branchname>
-  environment      = terraform.workspace
-  environment_name = trim(substr(local.environment, 0, 22), ".-") # limits the length of the name that it fits constraints google imposes for some resources, e.g. project ids
-
-  default_location = "europe-north1"
-}
-
 resource "random_id" "main" {
   byte_length = 2
   prefix      = "chat-integration-${local.environment_name}-"
 }
-resource "google_storage_bucket" "sources" {
-  project                     = data.terraform_remote_state.holi_infra_state.outputs.shared_project_id
-  name                        = random_id.main.hex
-  location                    = local.default_location
-  uniform_bucket_level_access = true
-}
 
 resource "google_storage_bucket_object" "function_source" {
-  name   = "receiveEvent.zip"
-  bucket = google_storage_bucket.sources.name
+  name   = "${random_id.main.hex}/receiveEvent.zip"
+  bucket = data.terraform_remote_state.holi_infra_state.outputs.gcf_sources_upload_bucket_name
   source = "../../receiveEvent.zip"
 }
 
@@ -38,7 +24,7 @@ data "google_secret_manager_secret" "chat_admin_access_token" {
 resource "google_cloudfunctions2_function" "holi-chat-integration" {
   project  = data.terraform_remote_state.holi_infra_state.outputs.shared_project_id
   name     = random_id.main.hex
-  location = local.default_location
+  location = local.default_region
 
   build_config {
     runtime     = "nodejs18"
@@ -46,7 +32,7 @@ resource "google_cloudfunctions2_function" "holi-chat-integration" {
 
     source {
       storage_source {
-        bucket = google_storage_bucket.sources.name
+        bucket = data.terraform_remote_state.holi_infra_state.outputs.gcf_sources_upload_bucket_name
         object = google_storage_bucket_object.function_source.name
       }
     }
