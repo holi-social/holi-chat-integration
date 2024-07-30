@@ -77,7 +77,6 @@ build:
   script:
     - apk add zip
     - zip -r receiveEvent.zip dist package.json yarn.lock .yarn/ .yarnrc*
-    - export GOOGLE_APPLICATION_CREDENTIALS=${GOOGLE_CLOUD_SERVICE_ACCOUNT}
     - terraform/environments/scripts/create-or-update-env.sh $ENVIRONMENT_ID $CI_COMMIT_SHA
 
 staging_deploy:
