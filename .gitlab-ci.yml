@@ -61,7 +61,7 @@ build:
 .deploy:
   stage: 'deploy'
   image:
-    name: 'hashicorp/terraform:1.6.1'
+    name: 'europe-north1-docker.pkg.dev/holi-shared/docker-hub-remote/hashicorp/terraform:1.6.1'
     # default entrypoint is terraform command, but we want to run shell scripts
     entrypoint: ['/bin/sh', '-c']
   artifacts:
@@ -77,7 +77,6 @@ build:
   script:
     - apk add zip
     - zip -r receiveEvent.zip dist package.json yarn.lock .yarn/ .yarnrc*
-    - export GOOGLE_APPLICATION_CREDENTIALS=${GOOGLE_CLOUD_SERVICE_ACCOUNT}
     - terraform/environments/scripts/create-or-update-env.sh $ENVIRONMENT_ID $CI_COMMIT_SHA
 
 staging_deploy:
