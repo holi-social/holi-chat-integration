@@ -22,9 +22,10 @@ data "google_secret_manager_secret" "chat_admin_access_token" {
 }
 
 resource "google_cloudfunctions2_function" "holi-chat-integration" {
-  project  = data.terraform_remote_state.holi_infra_state.outputs.shared_project_id
-  name     = random_id.main.hex
-  location = local.default_region
+  project      = data.terraform_remote_state.holi_infra_state.outputs.shared_project_id
+  name         = random_id.main.hex
+  location     = local.default_region
+  kms_key_name = data.terraform_remote_state.holi_infra_state.outputs.artifact_registry_cloudfunctions_key_id
 
   build_config {
     runtime     = "nodejs18"
