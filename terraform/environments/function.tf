@@ -74,6 +74,11 @@ resource "google_cloudfunctions2_function" "holi-chat-integration" {
     }
   }
 
+  labels = {
+    "environment_type" = local.environment_type
+    "holi_service"     = "chat-integration"
+  }
+
   # taken from https://github.com/hashicorp/terraform-provider-google/issues/1938#issuecomment-1229042663
   lifecycle {
     replace_triggered_by = [
