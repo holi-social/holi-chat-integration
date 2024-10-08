@@ -16,8 +16,7 @@ stages:
 
 install_dependencies:
   stage: install_dependencies
-  image:
-    name: 'node:18.16.0'
+  image: 'europe-north1-docker.pkg.dev/holi-shared/docker-hub-remote/node:18.16.0'
   cache:
     key: $CI_COMMIT_REF_SLUG
     paths:
@@ -37,8 +36,7 @@ test:
       - node_modules
       - .yarn/
     policy: pull
-  image:
-    name: 'node:18.16.0'
+  image: 'europe-north1-docker.pkg.dev/holi-shared/docker-hub-remote/node:18.16.0'
   script:
     - yarn test
 
@@ -50,8 +48,7 @@ build:
       - node_modules
       - .yarn/
     policy: pull
-  image:
-    name: 'node:18.16.0'
+  image: 'europe-north1-docker.pkg.dev/holi-shared/docker-hub-remote/node:18.16.0'
   script:
     - yarn build
   artifacts:
