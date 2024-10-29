@@ -74,7 +74,7 @@ build:
   script:
     - apk add zip
     - zip -r receiveEvent.zip dist package.json yarn.lock .yarn/ .yarnrc*
-    - terraform/environments/scripts/create-or-update-env.sh $ENVIRONMENT_ID $CI_COMMIT_SHA
+    - terraform/environments/scripts/create-or-update-env.sh "$ENVIRONMENT_ID" "$CI_COMMIT_SHA"
 
 staging_deploy:
   extends: .deploy
