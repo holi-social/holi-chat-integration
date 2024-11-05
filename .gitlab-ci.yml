@@ -16,7 +16,7 @@ stages:
 
 install_dependencies:
   stage: install_dependencies
-  image: 'europe-north1-docker.pkg.dev/holi-shared/docker-hub-remote/node:18.16.0'
+  image: 'europe-north1-docker.pkg.dev/holi-shared/docker-hub-remote/node:18.20.4'
   cache:
     key: $CI_COMMIT_REF_SLUG
     paths:
@@ -24,9 +24,10 @@ install_dependencies:
       - .yarn/
   script:
     - yarn install --immutable --check-cache
-  only:
-    changes:
-      - yarn.lock
+  # only:
+  #   changes:
+  #     - yarn.lock
+  interruptible: true
 
 test:
   stage: 'test'
@@ -36,9 +37,10 @@ test:
       - node_modules
       - .yarn/
     policy: pull
-  image: 'europe-north1-docker.pkg.dev/holi-shared/docker-hub-remote/node:18.16.0'
+  image: 'europe-north1-docker.pkg.dev/holi-shared/docker-hub-remote/node:18.20.4'
   script:
     - yarn test
+  interruptible: true
 
 build:
   stage: 'build'
@@ -48,12 +50,13 @@ build:
       - node_modules
       - .yarn/
     policy: pull
-  image: 'europe-north1-docker.pkg.dev/holi-shared/docker-hub-remote/node:18.16.0'
+  image: 'europe-north1-docker.pkg.dev/holi-shared/docker-hub-remote/node:18.20.4'
   script:
     - yarn build
   artifacts:
     paths:
       - dist/
+  interruptible: true
 
 .deploy:
   stage: 'deploy'
@@ -74,7 +77,8 @@ build:
   script:
     - apk add zip
     - zip -r receiveEvent.zip dist package.json yarn.lock .yarn/ .yarnrc*
-    - terraform/environments/scripts/create-or-update-env.sh $ENVIRONMENT_ID $CI_COMMIT_SHA
+    - terraform/environments/scripts/create-or-update-env.sh "$ENVIRONMENT_ID" "$CI_COMMIT_SHA"
+  interruptible: false
 
 staging_deploy:
   extends: .deploy
@@ -82,6 +86,7 @@ staging_deploy:
     ENVIRONMENT_ID: 'staging'
   only:
     - main
+  resource_group: staging
 
 production_deploy:
   extends: .deploy
@@ -89,3 +94,4 @@ production_deploy:
     ENVIRONMENT_ID: 'production'
   only:
     - production
+  resource_group: production
