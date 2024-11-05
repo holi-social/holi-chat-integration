@@ -436,12 +436,12 @@ __metadata:
   linkType: hard
 
 "@google-cloud/functions-framework@npm:^3.3.0":
-  version: 3.3.0
-  resolution: "@google-cloud/functions-framework@npm:3.3.0"
+  version: 3.4.2
+  resolution: "@google-cloud/functions-framework@npm:3.4.2"
   dependencies:
-    "@types/express": "npm:4.17.17"
+    "@types/express": "npm:4.17.21"
     body-parser: "npm:^1.18.3"
-    cloudevents: "npm:^7.0.0"
+    cloudevents: "npm:^8.0.0"
     express: "npm:^4.16.4"
     minimist: "npm:^1.2.7"
     on-finished: "npm:^2.3.0"
@@ -450,7 +450,7 @@ __metadata:
   bin:
     functions-framework: build/src/main.js
     functions-framework-nodejs: build/src/main.js
-  checksum: 10c0/9e6b3008e4a2794c757bb8b3e0793749c397ab1cd4c321eff4f84e8f582b943cd30262e505cce4d0f281ffdb6bf1ccae6dfaf286366920c8cbb6a1001b165831
+  checksum: 10c0/09a5a97f24b2f12b8efc01512270a38e3c66dc986530a4532e87fe72d23191bf7f074ec24840c92d8c255c9a6ffac2479a4f499f614d0d515c88fe3349c7abd5
   languageName: node
   linkType: hard
 
@@ -924,15 +924,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/express@npm:4.17.17":
-  version: 4.17.17
-  resolution: "@types/express@npm:4.17.17"
+"@types/express@npm:4.17.21":
+  version: 4.17.21
+  resolution: "@types/express@npm:4.17.21"
   dependencies:
     "@types/body-parser": "npm:*"
     "@types/express-serve-static-core": "npm:^4.17.33"
     "@types/qs": "npm:*"
     "@types/serve-static": "npm:*"
-  checksum: 10c0/5802a0a28f7473744dd6a118479440d8c5c801c973d34fb6f31b5ee645a41fee936193978a8e905d55deefda9b675d19924167bf11a31339874c3161a3fc2922
+  checksum: 10c0/12e562c4571da50c7d239e117e688dc434db1bac8be55613294762f84fd77fbd0658ccd553c7d3ab02408f385bc93980992369dd30e2ecd2c68c358e6af8fabf
   languageName: node
   linkType: hard
 
@@ -1639,9 +1639,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cloudevents@npm:^7.0.0":
-  version: 7.0.2
-  resolution: "cloudevents@npm:7.0.2"
+"cloudevents@npm:^8.0.0":
+  version: 8.0.2
+  resolution: "cloudevents@npm:8.0.2"
   dependencies:
     ajv: "npm:^8.11.0"
     ajv-formats: "npm:^2.1.1"
@@ -1649,7 +1649,7 @@ __metadata:
     process: "npm:^0.11.10"
     util: "npm:^0.12.4"
     uuid: "npm:^8.3.2"
-  checksum: 10c0/cabcd5273c5720ee65e93b7d00dbabd6cdb8d50e29a890c053f4ea731c608852856402f4d50c887a8ac380d9a90c2d1f440e39200e65acf83b719bc496ce4e4a
+  checksum: 10c0/18fe538a37d6446dda6cbae15868e6a1dfa34baee8f63f018dd2f924048785c959c803452a78a46e215c5139d9aa56dd625f1eea4431ca2b645fcbfc06baa99b
   languageName: node
   linkType: hard
 
