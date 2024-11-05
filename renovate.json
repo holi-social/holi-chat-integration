@@ -3,19 +3,34 @@
   "extends": [
     "config:recommended",
     ":configMigration",
-    ":label('renovatebot')",
-    ":enableVulnerabilityAlertsWithLabel('renovatebot/security')",
+    ":label(renovatebot)",
+    ":enableVulnerabilityAlertsWithLabel(renovatebot/security)",
     ":semanticCommits",
+    ":automergeMinor",
     ":automergePatch",
     ":automergeTesters",
-    ":automergeLinters"
+    ":automergeLinters",
+    ":automergeTypes"
   ],
   "packageRules": [
+    {
+      "matchCurrentVersion": "/^0/",
+      "automerge": false
+    },
     {
       "matchSourceUrls": [
         "https://github.com/hashicorp/terraform"
       ],
       "groupName": "terraform"
+    },
+    {
+      "matchDepTypes": [
+        "devDependencies"
+      ],
+      "matchManagers": [
+        "npm"
+      ],
+      "automerge": true
     }
   ],
   "reviewers": [
