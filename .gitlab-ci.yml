@@ -24,9 +24,10 @@ install_dependencies:
       - .yarn/
   script:
     - yarn install --immutable --check-cache
-  only:
-    changes:
-      - yarn.lock
+  # only:
+  #   changes:
+  #     - yarn.lock
+  interruptible: true
 
 test:
   stage: 'test'
@@ -39,6 +40,7 @@ test:
   image: 'europe-north1-docker.pkg.dev/holi-shared/docker-hub-remote/node:20-slim'
   script:
     - yarn test
+  interruptible: true
 
 build:
   stage: 'build'
@@ -54,11 +56,12 @@ build:
   artifacts:
     paths:
       - dist/
+  interruptible: true
 
 .deploy:
   stage: 'deploy'
   image:
-    name: 'europe-north1-docker.pkg.dev/holi-shared/docker-hub-remote/hashicorp/terraform:1.6.6'
+    name: 'europe-north1-docker.pkg.dev/holi-shared/docker-hub-remote/hashicorp/terraform:1.9.8'
     # default entrypoint is terraform command, but we want to run shell scripts
     entrypoint: ['/bin/sh', '-c']
   artifacts:
@@ -74,7 +77,8 @@ build:
   script:
     - apk add zip
     - zip -r receiveEvent.zip dist package.json yarn.lock .yarn/ .yarnrc*
-    - terraform/environments/scripts/create-or-update-env.sh $ENVIRONMENT_ID $CI_COMMIT_SHA
+    - terraform/environments/scripts/create-or-update-env.sh "$ENVIRONMENT_ID" "$CI_COMMIT_SHA"
+  interruptible: false
 
 staging_deploy:
   extends: .deploy
@@ -82,6 +86,7 @@ staging_deploy:
     ENVIRONMENT_ID: 'staging'
   only:
     - main
+  resource_group: staging
 
 production_deploy:
   extends: .deploy
@@ -89,3 +94,4 @@ production_deploy:
     ENVIRONMENT_ID: 'production'
   only:
     - production
+  resource_group: production
