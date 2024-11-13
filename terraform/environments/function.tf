@@ -28,7 +28,7 @@ resource "google_cloudfunctions2_function" "holi-chat-integration" {
   kms_key_name = data.terraform_remote_state.holi_infra_state.outputs.artifact_registry_cloudfunctions_key_id
 
   build_config {
-    runtime           = "nodejs18"
+    runtime           = "nodejs20"
     entry_point       = "receiveEvent"
     docker_repository = data.terraform_remote_state.holi_infra_state.outputs.cloudfunctions_repository_id
 
