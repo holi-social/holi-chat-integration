@@ -7,7 +7,7 @@ export const userNameUpdatedHandler = async (
   { user }: UserNameUpdatedDataPayload
 ): Promise<void> => {
   try {
-    await logPhase(messageId, 'userNameUpdateHandler.updateName: ' + user.identity + ' to ' + user.name, async () => {
+    await logPhase(messageId, 'userNameUpdateHandler.updateName for identity ' + user.identity + ' to ' + user.name + 'and avatar to ' + user.avatar, async () => {
       if (user.identity) {
         if (!isUsernameAvailable(user.identity)) {
           logWarn(messageId, `Could not update user profile for ${user.identity}, because the user was not found.`)
