@@ -200,11 +200,6 @@ export const deactivateAccount = async (matrixId: string) => {
     throw new Error(`Deactivating account did not succeed ${response.status}: ${response.json}`)
 }
 
-export const isUsernameAvailable = async (localpart: string) => {
-  const response = await authedFetchResponse(`/_synapse/admin/v1/username_available?username=${localpart}`, 'GET')
-  return response.status === 200
-}
-
 export const getRoomStateEvents = async (roomId: string): Promise<UknownRoomStateEvent[]> => {
   if (!roomId) return []
   return (await authedFetchJson('/_matrix/client/v3/rooms/' + roomId + '/state', 'GET')) as UknownRoomStateEvent[]
