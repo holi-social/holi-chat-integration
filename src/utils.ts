@@ -28,16 +28,11 @@ export const authedFetchResponse = async (
 
   let response = await fetch(CHAT_SERVER_URL + url, init)
 
-  if (response.ok) {
-    try {
-      const json = await response.json()
-      return { status: response.status, json }
-    } catch {
-      console.error(`Failed to parse Matrix response: ${JSON.stringify(response)}`)
-      return { status: response.status, json: {} }
-    }
-  } else {
-    console.error(`Matrix request failed with status ${response.status}: ${JSON.stringify(response)}`)
+  try {
+    const json = await response.json()
+    return { status: response.status, json }
+  } catch {
+    console.error(`Failed to parse Matrix response: ${JSON.stringify(response)}`)
     return { status: response.status, json: {} }
   }
 }
