@@ -5,4 +5,6 @@ locals {
   environment_type = contains(["staging", "production"], local.environment) ? local.environment : "review"
 
   default_region = data.terraform_remote_state.holi_infra_state.outputs.default_region
+
+  is_production = local.environment_name == "production"
 }
