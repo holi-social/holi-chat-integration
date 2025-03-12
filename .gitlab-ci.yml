@@ -16,13 +16,14 @@ stages:
 
 install_dependencies:
   stage: install_dependencies
-  image: 'europe-north1-docker.pkg.dev/holi-shared/docker-hub-remote/node:20-slim'
+  image: 'europe-north1-docker.pkg.dev/holi-shared/docker-hub-remote/node:22-slim'
   cache:
     key: $CI_COMMIT_REF_SLUG
     paths:
       - node_modules
       - .yarn/
   script:
+    - corepack enable
     - yarn install --immutable --check-cache
   # only:
   #   changes:
@@ -37,8 +38,9 @@ test:
       - node_modules
       - .yarn/
     policy: pull
-  image: 'europe-north1-docker.pkg.dev/holi-shared/docker-hub-remote/node:20-slim'
+  image: 'europe-north1-docker.pkg.dev/holi-shared/docker-hub-remote/node:22-slim'
   script:
+    - corepack enable
     - yarn test
   interruptible: true
 
@@ -50,8 +52,9 @@ build:
       - node_modules
       - .yarn/
     policy: pull
-  image: 'europe-north1-docker.pkg.dev/holi-shared/docker-hub-remote/node:20-slim'
+  image: 'europe-north1-docker.pkg.dev/holi-shared/docker-hub-remote/node:22-slim'
   script:
+    - corepack enable
     - yarn build
   artifacts:
     paths:
@@ -61,7 +64,7 @@ build:
 .deploy:
   stage: 'deploy'
   image:
-    name: 'europe-north1-docker.pkg.dev/holi-shared/docker-hub-remote/hashicorp/terraform:1.10.5'
+    name: 'europe-north1-docker.pkg.dev/holi-shared/docker-hub-remote/hashicorp/terraform:1.11.2'
     # default entrypoint is terraform command, but we want to run shell scripts
     entrypoint: ['/bin/sh', '-c']
   artifacts:
