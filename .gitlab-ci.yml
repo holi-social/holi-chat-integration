@@ -25,9 +25,15 @@ install_dependencies:
   script:
     - corepack enable
     - yarn install --immutable --check-cache
-  # only:
-  #   changes:
-  #     - yarn.lock
+  rules:
+    # always run when triggered manually
+    - if: $CI_COMMIT_BRANCH && $CI_PIPELINE_SOURCE == "web"
+      when: on_success
+    # only run on specific file changes when triggered by git push
+    - if: $CI_COMMIT_BRANCH
+      changes:
+        - package.json
+        - yarn.lock
   interruptible: true
 
 test:
@@ -87,14 +93,16 @@ staging_deploy:
   extends: .deploy
   variables:
     ENVIRONMENT_ID: 'staging'
-  only:
-    - main
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+      when: on_success
   resource_group: staging
 
 production_deploy:
   extends: .deploy
   variables:
     ENVIRONMENT_ID: 'production'
-  only:
-    - production
+  rules:
+    - if: $CI_COMMIT_BRANCH == "production"
+      when: on_success
   resource_group: production
