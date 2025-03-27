@@ -436,8 +436,8 @@ __metadata:
   linkType: hard
 
 "@google-cloud/functions-framework@npm:^3.3.0":
-  version: 3.5.0
-  resolution: "@google-cloud/functions-framework@npm:3.5.0"
+  version: 3.5.1
+  resolution: "@google-cloud/functions-framework@npm:3.5.1"
   dependencies:
     "@types/express": "npm:^4.17.21"
     body-parser: "npm:^1.18.3"
@@ -450,7 +450,7 @@ __metadata:
   bin:
     functions-framework: build/src/main.js
     functions-framework-nodejs: build/src/main.js
-  checksum: 10c0/eabf8ec9a4157983f55a65a8ab9880aaee7b6c0000b0f02448f9a02d426589b21d0ec17a8edc838307bf34a3b07c8f515e56eea417b605537e7b0f41a7100d00
+  checksum: 10c0/d8e3baf891a2c7ac0bc46a926ab4702104b19ea34c9fe7356fc6eabd758d9db40b69f4c207cf799ffbef4fb799cb703c8bd7993b287a1d0639eda8c3c68ea760
   languageName: node
   linkType: hard
 
