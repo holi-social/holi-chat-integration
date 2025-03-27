@@ -436,10 +436,10 @@ __metadata:
   linkType: hard
 
 "@google-cloud/functions-framework@npm:^3.3.0":
-  version: 3.4.6
-  resolution: "@google-cloud/functions-framework@npm:3.4.6"
+  version: 3.5.0
+  resolution: "@google-cloud/functions-framework@npm:3.5.0"
   dependencies:
-    "@types/express": "npm:^5.0.0"
+    "@types/express": "npm:^4.17.21"
     body-parser: "npm:^1.18.3"
     cloudevents: "npm:^8.0.2"
     express: "npm:^4.21.2"
@@ -450,7 +450,7 @@ __metadata:
   bin:
     functions-framework: build/src/main.js
     functions-framework-nodejs: build/src/main.js
-  checksum: 10c0/dbef84a77a1303b9c5d1ad77e3edadeda1213f3d5e2f9ae535d8a454a12cd95ac6d357cee8d77dd38d4489e5ac01f23177ac6fd6768c85c5df062fa10a1d44e3
+  checksum: 10c0/eabf8ec9a4157983f55a65a8ab9880aaee7b6c0000b0f02448f9a02d426589b21d0ec17a8edc838307bf34a3b07c8f515e56eea417b605537e7b0f41a7100d00
   languageName: node
   linkType: hard
 
@@ -912,27 +912,27 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/express-serve-static-core@npm:^5.0.0":
-  version: 5.0.2
-  resolution: "@types/express-serve-static-core@npm:5.0.2"
+"@types/express-serve-static-core@npm:^4.17.33":
+  version: 4.19.6
+  resolution: "@types/express-serve-static-core@npm:4.19.6"
   dependencies:
     "@types/node": "npm:*"
     "@types/qs": "npm:*"
     "@types/range-parser": "npm:*"
     "@types/send": "npm:*"
-  checksum: 10c0/9f6ee50bd81f0aa6cc9df6ad2c2d221a3a63249da944db58ec8bb8681e77a5b3b3fdb1931bda73beb13cfaf9125731f835fe5256afb6a6da35b0eb08ccbdbfdf
+  checksum: 10c0/4281f4ead71723f376b3ddf64868ae26244d434d9906c101cf8d436d4b5c779d01bd046e4ea0ed1a394d3e402216fabfa22b1fa4dba501061cd7c81c54045983
   languageName: node
   linkType: hard
 
-"@types/express@npm:^5.0.0":
-  version: 5.0.0
-  resolution: "@types/express@npm:5.0.0"
+"@types/express@npm:^4.17.21":
+  version: 4.17.21
+  resolution: "@types/express@npm:4.17.21"
   dependencies:
     "@types/body-parser": "npm:*"
-    "@types/express-serve-static-core": "npm:^5.0.0"
+    "@types/express-serve-static-core": "npm:^4.17.33"
     "@types/qs": "npm:*"
     "@types/serve-static": "npm:*"
-  checksum: 10c0/0d74b53aefa69c3b3817ee9b5145fd50d7dbac52a8986afc2d7500085c446656d0b6dc13158c04e2d9f18f4324d4d93b0452337c5ff73dd086dca3e4ff11f47b
+  checksum: 10c0/12e562c4571da50c7d239e117e688dc434db1bac8be55613294762f84fd77fbd0658ccd553c7d3ab02408f385bc93980992369dd30e2ecd2c68c358e6af8fabf
   languageName: node
   linkType: hard
 
