@@ -4219,10 +4219,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pg-connection-string@npm:^2.8.0":
-  version: 2.8.0
-  resolution: "pg-connection-string@npm:2.8.0"
-  checksum: 10c0/5600e3992ddacaa1022e4260a7bb8f24cc187cec1fc5d1526a274a4edc8db8b446f2a9c7f552c6f71f2dc7b3b391ceedebfef93de26b4943b6a26dfaecdd5bbc
+"pg-connection-string@npm:^2.8.1":
+  version: 2.8.1
+  resolution: "pg-connection-string@npm:2.8.1"
+  checksum: 10c0/87cb519d97a5bdc756f71a6b051eea4d4887e2e102bc694ecda935fe636a037666a0444729b08c7a26c2e9e4b052b2b366af58492ccc49704bacd6876f946ce8
   languageName: node
   linkType: hard
 
@@ -4233,12 +4233,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pg-pool@npm:^3.9.0":
-  version: 3.9.0
-  resolution: "pg-pool@npm:3.9.0"
+"pg-pool@npm:^3.9.1":
+  version: 3.9.1
+  resolution: "pg-pool@npm:3.9.1"
   peerDependencies:
     pg: ">=8.0"
-  checksum: 10c0/53b7cec43cd5afcaf22bece24e7eca54ff814605f77a981e511a8da36e014df79ea7443ceb95b1c9637f44890529695020e2d5a8e6a6a960dcb2c15f7b9b0905
+  checksum: 10c0/2bbc0892ab7325486b7d5ad8ade59ec925476666ac3959cb4850814c5334bb2f1344258707f8d0445093b59dd6e94401508cebcee490d4827821549147a2ebd9
   languageName: node
   linkType: hard
 
@@ -4263,12 +4263,12 @@ __metadata:
   linkType: hard
 
 "pg@npm:^8.4.0":
-  version: 8.15.0
-  resolution: "pg@npm:8.15.0"
+  version: 8.15.1
+  resolution: "pg@npm:8.15.1"
   dependencies:
     pg-cloudflare: "npm:^1.2.0"
-    pg-connection-string: "npm:^2.8.0"
-    pg-pool: "npm:^3.9.0"
+    pg-connection-string: "npm:^2.8.1"
+    pg-pool: "npm:^3.9.1"
     pg-protocol: "npm:^1.9.0"
     pg-types: "npm:^2.1.0"
     pgpass: "npm:1.x"
@@ -4280,7 +4280,7 @@ __metadata:
   peerDependenciesMeta:
     pg-native:
       optional: true
-  checksum: 10c0/de1b5c3834105346254fa92a96b24d864327aa942d4c726c8d56e270043d0b8f0ae74ab4a9d1bd491f107bfe2773464ede89ba5761a53755b01b73c2a79789d9
+  checksum: 10c0/c6e5fd9cd6af7fc3208e48f860fd9ec9f7bc20192e449b0b36b096a9d5889de50706c705f6996e51a765bd4b7331179d7ffb43528a141bb996ee6f2c8f994c9a
   languageName: node
   linkType: hard
 
