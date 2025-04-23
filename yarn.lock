@@ -1002,11 +1002,11 @@ __metadata:
   linkType: hard
 
 "@types/node@npm:*, @types/node@npm:^22.0.0":
-  version: 22.14.0
-  resolution: "@types/node@npm:22.14.0"
+  version: 22.14.1
+  resolution: "@types/node@npm:22.14.1"
   dependencies:
     undici-types: "npm:~6.21.0"
-  checksum: 10c0/9d79f3fa1af9c2c869514f419c4a4905b34c10e12915582fd1784868ac4e74c6d306cf5eb47ef889b6750ab85a31be96618227b86739c4a3e0b1c15063f384c6
+  checksum: 10c0/d49c4d00403b1c2348cf0701b505fd636d80aabe18102105998dc62fdd36dcaf911e73c7a868c48c21c1022b825c67b475b65b1222d84b704d8244d152bb7f86
   languageName: node
   linkType: hard
 
@@ -4212,17 +4212,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pg-cloudflare@npm:^1.1.1":
-  version: 1.1.1
-  resolution: "pg-cloudflare@npm:1.1.1"
-  checksum: 10c0/a68b957f755be6af813d68ccaf4c906a000fd2ecb362cd281220052cc9e2f6c26da3b88792742387008c30b3bf0d2fa3a0eff04aeb8af4414023c99ae78e07bd
+"pg-cloudflare@npm:^1.2.0":
+  version: 1.2.0
+  resolution: "pg-cloudflare@npm:1.2.0"
+  checksum: 10c0/d6f2d032aeab291b17d627b051aae85420aea86a3371895a77b55fec93e3dac05880fbf09e5de33486ad3a2e6d7d56a025a8aa66f0d5883984f9834e4cd6f6a4
   languageName: node
   linkType: hard
 
-"pg-connection-string@npm:^2.7.0":
-  version: 2.7.0
-  resolution: "pg-connection-string@npm:2.7.0"
-  checksum: 10c0/50a1496a1c858f9495d78a2c7a66d93ef3602e718aff2953bb5738f3ea616d7f727f32fc20513c9bed127650cd14c1ddc7b458396f4000e689d4b64c65c5c51e
+"pg-connection-string@npm:^2.8.1":
+  version: 2.8.1
+  resolution: "pg-connection-string@npm:2.8.1"
+  checksum: 10c0/87cb519d97a5bdc756f71a6b051eea4d4887e2e102bc694ecda935fe636a037666a0444729b08c7a26c2e9e4b052b2b366af58492ccc49704bacd6876f946ce8
   languageName: node
   linkType: hard
 
@@ -4233,19 +4233,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pg-pool@npm:^3.8.0":
-  version: 3.8.0
-  resolution: "pg-pool@npm:3.8.0"
+"pg-pool@npm:^3.9.1":
+  version: 3.9.1
+  resolution: "pg-pool@npm:3.9.1"
   peerDependencies:
     pg: ">=8.0"
-  checksum: 10c0/c05287b0caafeab43807e6ad22d153c09c473dbeb5b2cea13b83102376e9a56f46b91fa9adf9d53885ce198280c6a95555390987c42b3858d1936d3e0cdc83aa
+  checksum: 10c0/2bbc0892ab7325486b7d5ad8ade59ec925476666ac3959cb4850814c5334bb2f1344258707f8d0445093b59dd6e94401508cebcee490d4827821549147a2ebd9
   languageName: node
   linkType: hard
 
-"pg-protocol@npm:^1.8.0":
-  version: 1.8.0
-  resolution: "pg-protocol@npm:1.8.0"
-  checksum: 10c0/2be784955599d84b564795952cee52cc2b8eab0be43f74fc1061506353801e282c1d52c9e0691a9b72092c1f3fde370e9b181e80fef6bb82a9b8d1618bfa91e6
+"pg-protocol@npm:^1.9.0":
+  version: 1.9.0
+  resolution: "pg-protocol@npm:1.9.0"
+  checksum: 10c0/c37e61d7fafa97f22eabf12de69863f42fdabb3671df9cc2623bd0ffd6bdedc212e7e8460ad2c721c8a08d8477b4f128a923bf2381905d68a23a532ec7517c77
   languageName: node
   linkType: hard
 
@@ -4263,13 +4263,13 @@ __metadata:
   linkType: hard
 
 "pg@npm:^8.4.0":
-  version: 8.14.1
-  resolution: "pg@npm:8.14.1"
+  version: 8.15.1
+  resolution: "pg@npm:8.15.1"
   dependencies:
-    pg-cloudflare: "npm:^1.1.1"
-    pg-connection-string: "npm:^2.7.0"
-    pg-pool: "npm:^3.8.0"
-    pg-protocol: "npm:^1.8.0"
+    pg-cloudflare: "npm:^1.2.0"
+    pg-connection-string: "npm:^2.8.1"
+    pg-pool: "npm:^3.9.1"
+    pg-protocol: "npm:^1.9.0"
     pg-types: "npm:^2.1.0"
     pgpass: "npm:1.x"
   peerDependencies:
@@ -4280,7 +4280,7 @@ __metadata:
   peerDependenciesMeta:
     pg-native:
       optional: true
-  checksum: 10c0/221741cfcea4ab32c8b57bd60703bc36cfb5622dcac56c19e45f504ef8669f2f2e0429af8850f58079cfc89055da35b5a5e12de19e0505e3f61a4b4349388dcb
+  checksum: 10c0/c6e5fd9cd6af7fc3208e48f860fd9ec9f7bc20192e449b0b36b096a9d5889de50706c705f6996e51a765bd4b7331179d7ffb43528a141bb996ee6f2c8f994c9a
   languageName: node
   linkType: hard
 
@@ -5221,8 +5221,8 @@ __metadata:
   linkType: hard
 
 "ts-jest@npm:^29.1.0":
-  version: 29.3.1
-  resolution: "ts-jest@npm:29.3.1"
+  version: 29.3.2
+  resolution: "ts-jest@npm:29.3.2"
   dependencies:
     bs-logger: "npm:^0.2.6"
     ejs: "npm:^3.1.10"
@@ -5232,7 +5232,7 @@ __metadata:
     lodash.memoize: "npm:^4.1.2"
     make-error: "npm:^1.3.6"
     semver: "npm:^7.7.1"
-    type-fest: "npm:^4.38.0"
+    type-fest: "npm:^4.39.1"
     yargs-parser: "npm:^21.1.1"
   peerDependencies:
     "@babel/core": ">=7.0.0-beta.0 <8"
@@ -5254,7 +5254,7 @@ __metadata:
       optional: true
   bin:
     ts-jest: cli.js
-  checksum: 10c0/5df9239223b974fc61bbe018d4e72bbdbea530c4b624fab0936a152438a58e97ce0d0cee2258d10e7ecebbf0ab699ab41d0a52fc5b5f13201cdac4419ab0fe04
+  checksum: 10c0/84762720dbef45c1644348d67d0dcb8b7ad6369a16628c4752aceeb47f0ccdad63ae14485048b641c20ce096337a160ab816881361ef5517325bac6a5b3756e0
   languageName: node
   linkType: hard
 
@@ -5324,10 +5324,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"type-fest@npm:^4.38.0":
-  version: 4.38.0
-  resolution: "type-fest@npm:4.38.0"
-  checksum: 10c0/db9990d682a08697cf8ae67ac3cdbca734c742c96615e8888401d7d54e376b390e6a5d3be25fe3b4b439e1bb88a7da461da678a614ece8caccd9c0a07dd2e5f4
+"type-fest@npm:^4.39.1":
+  version: 4.39.1
+  resolution: "type-fest@npm:4.39.1"
+  checksum: 10c0/f5bf302eb2e2f70658be1757aa578f4a09da3f65699b0b12b7ae5502ccea76e5124521a6e6b69540f442c3dc924c394202a2ab58718d0582725c7ac23c072594
   languageName: node
   linkType: hard
 
