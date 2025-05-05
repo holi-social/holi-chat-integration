@@ -1002,11 +1002,11 @@ __metadata:
   linkType: hard
 
 "@types/node@npm:*, @types/node@npm:^22.0.0":
-  version: 22.15.4
-  resolution: "@types/node@npm:22.15.4"
+  version: 22.15.6
+  resolution: "@types/node@npm:22.15.6"
   dependencies:
     undici-types: "npm:~6.21.0"
-  checksum: 10c0/542ba210aa0352ee1c76bbf5e6463005d1565b930348dd8cced35d6455f4c73cb7013b7349636b9c46cc33b1304ebacb2c4dc1492c65ca142c85b8092861f1a9
+  checksum: 10c0/9b77c184a320a5ba3900350a1b5e80559f42ca7ec9b0e1fa8399cd6fd8f23bda17eb5f3e58d7bf98fd1abd81854948cc92c7bee6c2de9afdccb11c26c5d27d82
   languageName: node
   linkType: hard
 
