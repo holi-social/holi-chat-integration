@@ -13,6 +13,16 @@ import { logDebug, logError, logInfo, logPhase, logger } from './logger'
 
 import { EventType } from './types'
 
+const parseData = (data: string | undefined): any | undefined => {
+  if (!data) {
+    return undefined
+  }
+
+  const buffer = Buffer.from(data, 'base64')
+  const eventStr = buffer.toString()
+  return JSON.parse(eventStr)
+}
+
 // Processes events received from both the Google Pub/Sub Emulator and Cloud Pub/Sub, which have different body structures.
 const extractEventDetails = (request) => {
   try {
@@ -21,11 +31,11 @@ const extractEventDetails = (request) => {
       attributes: { eventType },
       messageId,
     } = request.body.message
-    const buffer = Buffer.from(data, 'base64')
-    const eventStr = buffer.toString()
-    const event = JSON.parse(eventStr)
-    logDebug(messageId, 'Event of type ' + eventType + ' extracted successfully: ' + eventStr)
-    return { eventType, event, messageId }
+
+    const parsedData: any | undefined = parseData(data);
+    logDebug(messageId, 'Event of type ' + eventType + ' extracted successfully: ' + JSON.stringify)
+
+    return { eventType, event: parsedData, messageId }
   } catch (e) {
     logger.error(
       `Could not parse message from request: ${e.name} - ${e.message} - request body: ${JSON.stringify(request.body)}`
