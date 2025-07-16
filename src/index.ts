@@ -33,7 +33,7 @@ const extractEventDetails = (request) => {
     } = request.body.message
 
     const parsedData: any | undefined = parseData(data);
-    logDebug(messageId, 'Event of type ' + eventType + ' extracted successfully: ' + JSON.stringify)
+    logDebug(messageId, 'Event of type ' + eventType + ' extracted successfully: ' + JSON.stringify(parseData))
 
     return { eventType, event: parsedData, messageId }
   } catch (e) {
