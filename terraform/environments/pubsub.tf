@@ -16,4 +16,9 @@ resource "google_pubsub_subscription" "holi-chat-integration-okuna-sub" {
       service_account_email = data.terraform_remote_state.holi_chat_integration_common_state.outputs.function_service_account
     }
   }
+
+  retry_policy {
+    minimum_backoff = "1s"
+    maximum_backoff = "60s"
+  }
 }
