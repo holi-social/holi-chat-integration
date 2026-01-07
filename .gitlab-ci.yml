@@ -62,8 +62,6 @@ build:
   script:
     - corepack enable
     - yarn build
-    - rm -rf .yarn/
-    - yarn workspaces focus --production
   artifacts:
     paths:
       - dist/
@@ -87,6 +85,8 @@ build:
     ENVIRONMENT_ID: $CI_ENVIRONMENT_SLUG
   script:
     - apk add zip
+    - rm -rf .yarn/
+    - yarn workspaces focus --production # only install dependencies needed for production
     - zip -r receiveEvent.zip dist package.json yarn.lock .yarn/ .yarnrc*
     - terraform/environments/scripts/create-or-update-env.sh "$ENVIRONMENT_ID" "$CI_COMMIT_SHA"
   interruptible: false
